@@ -1,0 +1,2753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedSphere | Campus Lifestyle Blog</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #2563eb;
+            --accent: #f59e0b;
+            --dark: #111827;
+            --light: #f8fafc;
+            --gray: #6b7280;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ===== AUTH MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .auth-modal {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary), #ef4444);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .modal-header h2 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-tabs {
+            display: flex;
+            background: #fef2f2;
+            border-bottom: 2px solid #fee2e2;
+        }
+
+        .modal-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .modal-tab.active {
+            background: white;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .modal-body {
+            padding: 2.5rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .form-group.checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group.checkbox input {
+            width: auto;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-login {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-login:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-signup {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-signup:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #b91c1c;
+        }
+
+        .btn-auth {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-auth:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        /* ===== HEADER & NAVIGATION ===== */
+        header {
+            background: white;
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            font-size: 2.2rem;
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            font-size: 1.05rem;
+            transition: all 0.3s;
+            padding: 8px 0;
+            position: relative;
+            color: #374151;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #fef2f2;
+            border-radius: 50px;
+            padding: 0.6rem 1.2rem;
+            border: 2px solid #fecaca;
+        }
+
+        .search-box input {
+            border: none;
+            background: transparent;
+            padding: 0.3rem 0.8rem;
+            outline: none;
+            width: 180px;
+            font-size: 0.95rem;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 0.6rem 1rem;
+            border-radius: 50px;
+            transition: background 0.3s;
+            background: #fef2f2;
+            position: relative;
+        }
+
+        .user-profile:hover {
+            background: #fee2e2;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #ef4444);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            min-width: 220px;
+            z-index: 1001;
+            margin-top: 10px;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 1.5rem;
+            color: #374151;
+            transition: all 0.3s;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: #fef2f2;
+            color: var(--primary);
+            padding-left: 1.8rem;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 0.5rem 0;
+        }
+
+        .dropdown-item.logout {
+            color: var(--danger);
+        }
+
+        .dropdown-item.logout:hover {
+            background: #fef2f2;
+            color: #b91c1c;
+        }
+
+        .mobile-toggle {
+            display: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--dark);
+        }
+
+        /* ===== HERO BANNER ===== */
+        .hero-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.95)), 
+                        url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 6rem 0;
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--primary);
+        }
+
+        .hero-banner h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+
+        .hero-banner p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.95;
+            line-height: 1.7;
+        }
+
+        .btn-hero {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+            margin-top: 1rem;
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(220, 38, 38, 0.5);
+        }
+
+        /* ===== BLOG POSTS ===== */
+        .section-title {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 1rem;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 5rem;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #f3f4f6;
+        }
+
+        .post-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+            border-color: #fee2e2;
+        }
+
+        .post-image {
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .post-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .post-card:hover .post-image img {
+            transform: scale(1.08);
+        }
+
+        .post-content {
+            padding: 1.8rem;
+        }
+
+        .post-category {
+            display: inline-block;
+            background: #fef2f2;
+            color: var(--primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            letter-spacing: 0.5px;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            line-height: 1.4;
+            font-weight: 700;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 1.2rem;
+            align-items: center;
+        }
+
+        .post-meta i {
+            margin-right: 6px;
+        }
+
+        .author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .post-excerpt {
+            color: #4b5563;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+        }
+
+        .read-more {
+            color: var(--primary);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            transition: gap 0.3s;
+        }
+
+        .read-more:hover {
+            gap: 15px;
+        }
+
+        /* ===== MEMBERS SECTION ===== */
+        .members-section {
+            background: linear-gradient(135deg, #fff5f5 0%, #fef2f2 100%);
+            border-radius: 20px;
+            padding: 4rem;
+            margin-bottom: 5rem;
+        }
+
+        .members-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .members-cta {
+            text-align: center;
+            background: white;
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 3rem;
+            border: 2px dashed var(--primary);
+        }
+
+        .members-cta h3 {
+            font-size: 2rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .members-cta p {
+            color: #4b5563;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* ===== NEWSLETTER ===== */
+        .newsletter {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .newsletter h3 {
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter p {
+            color: #d1d5db;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-size: 1.1rem;
+        }
+
+        .newsletter-form {
+            display: flex;
+            max-width: 500px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .newsletter-form button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        /* ===== DASHBOARD STYLES ===== */
+        .dashboard-header {
+            text-align: center;
+            margin: 3rem 0 4rem;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 3rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .dashboard-header p {
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stats-card .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .stats-card h3 {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+        
+        .stats-card .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-link {
+            color: var(--primary);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .dashboard-section {
+            margin-bottom: 4rem;
+        }
+        
+        .dashboard-section h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f3f4f6;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .action-btn {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.1);
+        }
+        
+        .action-btn.primary {
+            border-color: var(--primary);
+            background: #fef2f2;
+        }
+        
+        .action-btn i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .action-btn span {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .user-posts {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .user-post-item {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #f3f4f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .user-post-item:last-child {
+            border-bottom: none;
+        }
+        
+        .post-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .post-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .post-action-btn {
+            background: #f3f4f6;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .post-action-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray);
+        }
+        
+        .empty-state a {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ===== CREATE POST STYLES ===== */
+        .create-post-header {
+            text-align: center;
+            margin: 3rem 0 4rem;
+        }
+        
+        .create-post-header h1 {
+            font-size: 3rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+        
+        .create-post-header p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .create-post-form {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 4rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 200px;
+        }
+        
+        .form-hint {
+            display: block;
+            margin-top: 0.5rem;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        
+        .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .editor-btn {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .editor-btn:hover {
+            background: #f3f4f6;
+            border-color: var(--primary);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #f3f4f6;
+        }
+        
+        .btn-large {
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .post-preview {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-top: 2rem;
+        }
+        
+        .post-preview h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+        
+        .preview-content {
+            border: 2px dashed #e5e7eb;
+            border-radius: 10px;
+            padding: 2rem;
+            min-height: 200px;
+            margin-bottom: 2rem;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #111827;
+            color: #d1d5db;
+            padding: 5rem 0 2rem;
+            margin-top: auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-col h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.8rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 1rem;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.2rem;
+            margin-top: 2rem;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: #374151;
+            color: white;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 3rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 0.95rem;
+        }
+
+        .privacy-link, .terms-link {
+            color: var(--primary);
+            margin: 0 10px;
+        }
+
+        /* ===== TOAST NOTIFICATIONS ===== */
+        .toast {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            min-width: 300px;
+            max-width: 400px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 9999;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        .toast-success {
+            border-left-color: var(--success);
+        }
+        
+        .toast-error {
+            border-left-color: var(--danger);
+        }
+        
+        .toast-info {
+            border-left-color: var(--secondary);
+        }
+        
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast-content i {
+            font-size: 1.2rem;
+        }
+        
+        .toast-success .toast-content i {
+            color: var(--success);
+        }
+        
+        .toast-error .toast-content i {
+            color: var(--danger);
+        }
+        
+        .toast-info .toast-content i {
+            color: var(--secondary);
+        }
+        
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .toast-close:hover {
+            background: #f3f4f6;
+            color: var(--dark);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .posts-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .members-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hero-banner h1 {
+                font-size: 2.8rem;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .create-post-header h1 {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
+            
+            .nav-links, .header-actions {
+                display: none;
+            }
+            
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 120px;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 2rem;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                z-index: 999;
+                gap: 1.5rem;
+                text-align: center;
+            }
+            
+            .header-actions.active {
+                display: flex;
+                flex-direction: column;
+                position: fixed;
+                top: 320px;
+                left: 0;
+                width: 100%;
+                background: white;
+                padding: 2rem;
+                z-index: 999;
+                gap: 1.5rem;
+            }
+            
+            .hero-banner {
+                padding: 4rem 0;
+            }
+            
+            .hero-banner h1 {
+                font-size: 2.2rem;
+            }
+            
+            .members-section, .members-cta {
+                padding: 2.5rem 1.5rem;
+            }
+            
+            .members-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .newsletter-form {
+                flex-direction: column;
+            }
+            
+            .dropdown-menu {
+                position: fixed;
+                top: auto;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                border-radius: 20px 20px 0 0;
+                animation: slideUp 0.3s ease;
+            }
+            
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                }
+                to {
+                    transform: translateY(0);
+                }
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-post-item {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .post-actions {
+                justify-content: center;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn-large {
+                width: 100%;
+            }
+            
+            .toast {
+                top: 20px;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Auth Modal -->
+    <div class="modal-overlay hidden" id="authModal">
+        <div class="auth-modal">
+            <div class="modal-header">
+                <h2>Join MedSphere</h2>
+                <p>Create your account</p>
+            </div>
+            <div class="modal-tabs">
+                <div class="modal-tab active" data-tab="login">Login</div>
+                <div class="modal-tab" data-tab="signup">Sign Up</div>
+            </div>
+            
+            <div class="modal-body">
+                <div class="tab-content active" id="loginTab">
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email Address</label>
+                            <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" placeholder="Enter password" required>
+                        </div>
+                        <button type="submit" class="btn btn-auth">Login</button>
+                    </form>
+                </div>
+                
+                <div class="tab-content" id="signupTab">
+                    <form id="signupForm">
+                        <div class="form-group">
+                            <label for="signupName">Full Name</label>
+                            <input type="text" id="signupName" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupEmail">Email Address</label>
+                            <input type="email" id="signupEmail" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupUsername">Username</label>
+                            <input type="text" id="signupUsername" placeholder="johndoe_25" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupCampus">Campus/University</label>
+                            <select id="signupCampus" required>
+                                <option value="">Select campus</option>
+                                <option value="unimed">UNIMED</option>
+                                <option value="unilag">University of Lagos</option>
+                                <option value="ui">University of Ibadan</option>
+                                <option value="other">Other University</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupPassword">Password</label>
+                            <input type="password" id="signupPassword" placeholder="Create password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signupConfirm">Confirm Password</label>
+                            <input type="password" id="signupConfirm" placeholder="Confirm password" required>
+                        </div>
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="terms" required>
+                            <label for="terms">I agree to the <a href="#" class="terms-link">Terms & Conditions</a></label>
+                        </div>
+                        <button type="submit" class="btn btn-auth">Create Account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <div class="logo" id="goHome">
+                    <i class="fas fa-fire logo-icon"></i>
+                    <div class="logo-text">MedSphere</div>
+                </div>
+                
+                <div class="mobile-toggle" id="mobileToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#posts">Blog</a></li>
+                    <li><a href="#dashboard" class="hidden" id="navDashboard">Dashboard</a></li>
+                    <li><a href="#create-post" class="hidden" id="navCreatePost">Create Post</a></li>
+                    <li><a href="#members">Members</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                
+                <div class="header-actions" id="headerActions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search posts..." id="searchInput">
+                    </div>
+                    
+                    <!-- Guest Buttons -->
+                    <div class="auth-buttons" id="guestButtons">
+                        <button class="btn btn-login" id="openLogin">Log In</button>
+                        <button class="btn btn-signup" id="openSignup">Sign Up</button>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <div class="user-profile hidden" id="userProfile">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">User</div>
+                            <div class="user-role" id="userRole">Member</div>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                        
+                        <!-- Dropdown Menu -->
+                        <div class="dropdown-menu hidden" id="userDropdown">
+                            <a href="#dashboard" class="dropdown-item" id="dropdownDashboard">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                            <a href="#create-post" class="dropdown-item" id="dropdownCreatePost">
+                                <i class="fas fa-edit"></i> Create Post
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-bookmark"></i> Saved Posts
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i> Settings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item logout" id="logoutBtn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main id="mainContent">
+        <!-- Home Page Content -->
+        <section id="home" class="page-content active">
+            <!-- Hero Banner -->
+            <section class="hero-banner">
+                <div class="container">
+                    <h1>Welcome to MedSphere</h1>
+                    <p>Your premier campus lifestyle community. Share stories, discover events, and connect with students nationwide.</p>
+                    <button class="btn btn-hero" id="exploreBtn">
+                        <i class="fas fa-compass"></i> Explore Community
+                    </button>
+                </div>
+            </section>
+
+            <!-- Main Content -->
+            <div class="container">
+                <!-- Blog Posts -->
+                <div class="section-title" id="posts">
+                    <h2>Latest Blog Posts</h2>
+                    <p>Trending campus stories and lifestyle content</p>
+                </div>
+
+                <div class="posts-grid" id="postsContainer">
+                    <!-- Posts will be loaded dynamically -->
+                </div>
+
+                <!-- Members Section -->
+                <div class="members-section" id="members">
+                    <div class="section-title">
+                        <h2>Our Community Members</h2>
+                        <p>Join thousands of students sharing their campus experiences</p>
+                    </div>
+                    
+                    <div class="members-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-number" id="totalMembers">0</div>
+                            <div class="stat-label">Total Members</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-newspaper"></i>
+                            </div>
+                            <div class="stat-number" id="totalPosts">0</div>
+                            <div class="stat-label">Blog Posts</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="stat-number" id="totalEvents">0</div>
+                            <div class="stat-label">Events Posted</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div class="stat-number" id="totalComments">0</div>
+                            <div class="stat-label">Comments</div>
+                        </div>
+                    </div>
+                    
+                    <div class="members-cta">
+                        <h3>Become a MedSphere Member Today</h3>
+                        <p>Create your free account to start sharing your campus stories, join discussions, and connect with fellow students.</p>
+                        <button class="btn btn-primary" id="joinBtn">
+                            <i class="fas fa-user-plus"></i> Join Free
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="newsletter" id="contact">
+                    <h3>Stay Updated</h3>
+                    <p>Subscribe to our newsletter for weekly campus updates and exclusive content.</p>
+                    <div class="newsletter-form">
+                        <input type="email" id="newsletterEmail" placeholder="Enter your email">
+                        <button type="button" id="subscribeBtn">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dashboard Page Content -->
+        <section id="dashboard" class="page-content hidden">
+            <div class="container">
+                <div class="dashboard-header">
+                    <h1>Member Dashboard</h1>
+                    <p>Welcome back, <span id="dashboardUserName">User</span>! Manage your content and account.</p>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <!-- Stats Cards -->
+                    <div class="dashboard-card stats-card">
+                        <div class="card-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <h3>Your Posts</h3>
+                        <div class="stat-number" id="userPostCount">0</div>
+                        <a href="#your-posts" class="card-link">View All</a>
+                    </div>
+                    
+                    <div class="dashboard-card stats-card">
+                        <div class="card-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>Comments</h3>
+                        <div class="stat-number" id="userCommentCount">0</div>
+                        <a href="#comments" class="card-link">View All</a>
+                    </div>
+                    
+                    <div class="dashboard-card stats-card">
+                        <div class="card-icon">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <h3>Total Views</h3>
+                        <div class="stat-number" id="userViewCount">0</div>
+                        <a href="#analytics" class="card-link">Analytics</a>
+                    </div>
+                    
+                    <div class="dashboard-card stats-card">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Events Created</h3>
+                        <div class="stat-number" id="userEventCount">0</div>
+                        <a href="#events" class="card-link">Manage Events</a>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="dashboard-section">
+                    <h2>Quick Actions</h2>
+                    <div class="action-buttons">
+                        <a href="#create-post" class="action-btn primary">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create New Post</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-cog"></i>
+                            <span>Account Settings</span>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Recent Posts -->
+                <div class="dashboard-section">
+                    <h2>Your Recent Posts</h2>
+                    <div class="user-posts" id="userPostsContainer">
+                        <p class="empty-state" id="noPostsMessage">You haven't created any posts yet. <a href="#create-post">Create your first post!</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Create Post Page Content -->
+        <section id="create-post" class="page-content hidden">
+            <div class="container">
+                <div class="create-post-header">
+                    <h1>Create New Post</h1>
+                    <p>Share your campus story, event, or experience with the MedSphere community.</p>
+                </div>
+                
+                <div class="create-post-form">
+                    <form id="postForm">
+                        <div class="form-group">
+                            <label for="postTitle">Post Title *</label>
+                            <input type="text" id="postTitle" placeholder="Enter a compelling title" required>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postCategory">Category *</label>
+                                <select id="postCategory" required>
+                                    <option value="">Select category</option>
+                                    <option value="CAMPUS LIFE">Campus Life</option>
+                                    <option value="EVENT">Event</option>
+                                    <option value="LIFESTYLE">Lifestyle</option>
+                                    <option value="ACADEMICS">Academics</option>
+                                    <option value="ENTERTAINMENT">Entertainment</option>
+                                    <option value="NEWS">News</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postImage">Featured Image URL</label>
+                                <input type="url" id="postImage" placeholder="https://example.com/image.jpg">
+                                <small class="form-hint">Leave blank for default image</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="postContent">Post Content *</label>
+                            <textarea id="postContent" rows="10" placeholder="Write your post here... (Supports basic HTML)" required></textarea>
+                            <div class="editor-toolbar">
+                                <button type="button" class="editor-btn" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
+                                <button type="button" class="editor-btn" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
+                                <button type="button" class="editor-btn" onclick="formatText('link')"><i class="fas fa-link"></i></button>
+                                <button type="button" class="editor-btn" onclick="formatText('image')"><i class="fas fa-image"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="postTags">Tags</label>
+                                <input type="text" id="postTags" placeholder="campus, student-life, events">
+                                <small class="form-hint">Separate tags with commas</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="postStatus">Status</label>
+                                <select id="postStatus">
+                                    <option value="draft">Save as Draft</option>
+                                    <option value="publish" selected>Publish Immediately</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="postTerms" required>
+                            <label for="postTerms">I confirm that this content follows MedSphere's community guidelines</label>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary btn-large">
+                                <i class="fas fa-paper-plane"></i> Publish Post
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="saveDraftBtn">
+                                <i class="fas fa-save"></i> Save Draft
+                            </button>
+                            <button type="button" class="btn" id="previewBtn">
+                                <i class="fas fa-eye"></i> Preview
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Post Preview -->
+                <div class="post-preview hidden" id="postPreview">
+                    <h3>Post Preview</h3>
+                    <div class="preview-content" id="previewContent">
+                        <!-- Preview will be generated here -->
+                    </div>
+                    <button class="btn" id="closePreviewBtn">
+                        <i class="fas fa-times"></i> Close Preview
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>MedSphere</h3>
+                    <p>Campus lifestyle community connecting students nationwide.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#posts">Blog</a></li>
+                        <li><a href="#members">Members</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Community</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" id="createAccountLink">Create Account</a></li>
+                        <li><a href="#" id="memberLoginLink">Member Login</a></li>
+                        <li><a href="#">Member Guidelines</a></li>
+                        <li><a href="#">Contribute Content</a></li>
+                        <li><a href="#">Community Forum</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> medsphere@gmail.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Campus Lifestyle Blog</li>
+                        <li><i class="fas fa-clock"></i> Content Updated Daily</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 MedSphere. All rights reserved.</p>
+                <p><a href="#" class="privacy-link">Privacy Policy</a> | <a href="#" class="terms-link">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== MEDSPHERE MEMBER SYSTEM =====
+
+        // DOM Elements
+        const authModal = document.getElementById('authModal');
+        const openLoginBtn = document.getElementById('openLogin');
+        const openSignupBtn = document.getElementById('openSignup');
+        const modalTabs = document.querySelectorAll('.modal-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const guestButtons = document.getElementById('guestButtons');
+        const userProfile = document.getElementById('userProfile');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userRole = document.getElementById('userRole');
+        const userDropdown = document.getElementById('userDropdown');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+        const headerActions = document.getElementById('headerActions');
+        const postsContainer = document.getElementById('postsContainer');
+        const newsletterForm = document.querySelector('.newsletter-form');
+        const subscribeBtn = document.getElementById('subscribeBtn');
+        const joinBtn = document.getElementById('joinBtn');
+        const exploreBtn = document.getElementById('exploreBtn');
+        const searchInput = document.getElementById('searchInput');
+        const createAccountLink = document.getElementById('createAccountLink');
+        const memberLoginLink = document.getElementById('memberLoginLink');
+        const navDashboard = document.getElementById('navDashboard');
+        const navCreatePost = document.getElementById('navCreatePost');
+        const dropdownDashboard = document.getElementById('dropdownDashboard');
+        const dropdownCreatePost = document.getElementById('dropdownCreatePost');
+        const mainContent = document.getElementById('mainContent');
+        const pageContents = document.querySelectorAll('.page-content');
+
+        // User data (in real app, this would be from backend/API)
+        let currentUser = JSON.parse(localStorage.getItem('medsphere_user')) || null;
+        let members = JSON.parse(localStorage.getItem('medsphere_members')) || [
+            { id: 1, name: "Admin", email: "admin@medsphere.com", username: "medsphere_admin", campus: "unimed", role: "admin" }
+        ];
+        let posts = JSON.parse(localStorage.getItem('medsphere_posts')) || [
+            {
+                id: 1,
+                title: "Top 10 Study Spots for December Finals 2025",
+                excerpt: "Discover the most productive and peaceful study locations on campus to help you ace your December 2025 final examinations.",
+                category: "CAMPUS LIFE",
+                author: "MedSphere Admin",
+                date: "Dec 15, 2025",
+                image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                comments: 24,
+                views: 1200
+            },
+            {
+                id: 2,
+                title: "Campus Music Festival Returns in January 2026",
+                excerpt: "After a successful 2025 season, the annual campus music festival is returning bigger and better in January 2026.",
+                category: "EVENT",
+                author: "MedSphere Admin",
+                date: "Dec 12, 2025",
+                image: "https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                comments: 42,
+                views: 856
+            },
+            {
+                id: 3,
+                title: "Balancing Academics and Social Life in 2025",
+                excerpt: "Practical tips from top students on maintaining academic excellence while enjoying a vibrant social life on campus.",
+                category: "LIFESTYLE",
+                author: "MedSphere Admin",
+                date: "Dec 8, 2025",
+                image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                comments: 31,
+                views: 2100
+            }
+        ];
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update UI based on login status
+            updateUI();
+            
+            // Load blog posts
+            loadPosts();
+            
+            // Update member statistics
+            updateMemberStats();
+            
+            // Set current year in footer
+            document.querySelector('.copyright p').innerHTML = `&copy; ${new Date().getFullYear()} MedSphere. All rights reserved.`;
+            
+            // Setup page navigation
+            setupPageNavigation();
+            
+            // Load current page from URL hash
+            loadPageFromHash();
+        });
+
+        // ===== PAGE NAVIGATION =====
+        function setupPageNavigation() {
+            // Navigation links
+            document.querySelectorAll('.nav-links a, .dropdown-item').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (link.getAttribute('href')?.startsWith('#')) {
+                        e.preventDefault();
+                        const pageId = link.getAttribute('href').substring(1);
+                        navigateToPage(pageId);
+                    }
+                });
+            });
+
+            // Logo click goes to home
+            document.getElementById('goHome').addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToPage('home');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        function navigateToPage(pageId) {
+            // Hide all pages
+            pageContents.forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                
+                // Update URL hash
+                window.location.hash = pageId;
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${pageId}`) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Load page-specific content
+                switch(pageId) {
+                    case 'dashboard':
+                        loadDashboard();
+                        break;
+                    case 'create-post':
+                        loadCreatePost();
+                        break;
+                    case 'home':
+                        loadPosts();
+                        updateMemberStats();
+                        break;
+                }
+            }
+        }
+
+        function loadPageFromHash() {
+            const hash = window.location.hash.substring(1) || 'home';
+            navigateToPage(hash);
+        }
+
+        // ===== AUTHENTICATION FUNCTIONS =====
+
+        // Open modal for login
+        openLoginBtn?.addEventListener('click', () => {
+            authModal.classList.remove('hidden');
+            switchTab('login');
+        });
+
+        // Open modal for signup
+        openSignupBtn?.addEventListener('click', () => {
+            authModal.classList.remove('hidden');
+            switchTab('signup');
+        });
+
+        // Create account link
+        createAccountLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            authModal.classList.remove('hidden');
+            switchTab('signup');
+        });
+
+        // Member login link
+        memberLoginLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            authModal.classList.remove('hidden');
+            switchTab('login');
+        });
+
+        // Join button
+        joinBtn?.addEventListener('click', () => {
+            authModal.classList.remove('hidden');
+            switchTab('signup');
+        });
+
+        // Explore button
+        exploreBtn?.addEventListener('click', () => {
+            navigateToPage('posts');
+            document.getElementById('posts').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Switch between login/signup tabs
+        modalTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                switchTab(tabId);
+            });
+        });
+
+        function switchTab(tabId) {
+            // Update active tab
+            modalTabs.forEach(tab => {
+                tab.classList.toggle('active', tab.getAttribute('data-tab') === tabId);
+            });
+
+            // Show active content
+            tabContents.forEach(content => {
+                content.classList.toggle('active', content.id === tabId + 'Tab');
+            });
+        }
+
+        // Close modal when clicking outside
+        authModal.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.classList.add('hidden');
+            }
+        });
+
+        // Login form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Find user in members array
+            const user = members.find(member => member.email === email);
+            
+            if (!user) {
+                showToast('Account not found. Please sign up first.', 'error');
+                return;
+            }
+
+            // In real app, verify password with backend
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            // Set current user
+            currentUser = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                username: user.username,
+                campus: user.campus,
+                role: user.role || 'member',
+                joined: new Date().toISOString()
+            };
+
+            // Save to localStorage
+            localStorage.setItem('medsphere_user', JSON.stringify(currentUser));
+
+            // Update UI
+            updateUI();
+            authModal.classList.add('hidden');
+            showToast(`Welcome back, ${user.name}!`, 'success');
+            
+            // Reset form
+            loginForm.reset();
+            
+            // Navigate to dashboard
+            navigateToPage('dashboard');
+        });
+
+        // Signup form submission
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const username = document.getElementById('signupUsername').value.trim();
+            const campus = document.getElementById('signupCampus').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            const terms = document.getElementById('terms').checked;
+
+            // Validation
+            if (!name || !email || !username || !campus || !password || !confirm) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password !== confirm) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            if (!terms) {
+                showToast('Please agree to the Terms & Conditions', 'error');
+                return;
+            }
+
+            // Check if email already exists
+            if (members.find(member => member.email === email)) {
+                showToast('Email already registered. Please log in.', 'error');
+                switchTab('login');
+                return;
+            }
+
+            // Check if username already exists
+            if (members.find(member => member.username === username)) {
+                showToast('Username already taken. Please choose another.', 'error');
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                id: Date.now(),
+                name: name,
+                email: email,
+                username: username,
+                campus: campus,
+                password: password, // In real app, hash this!
+                role: 'member',
+                joined: new Date().toISOString(),
+                posts: 0,
+                comments: 0
+            };
+
+            // Add to members array
+            members.push(newUser);
+            localStorage.setItem('medsphere_members', JSON.stringify(members));
+
+            // Set as current user
+            currentUser = {
+                id: newUser.id,
+                name: newUser.name,
+                email: newUser.email,
+                username: newUser.username,
+                campus: newUser.campus,
+                role: newUser.role,
+                joined: newUser.joined
+            };
+
+            localStorage.setItem('medsphere_user', JSON.stringify(currentUser));
+
+            // Update UI
+            updateUI();
+            updateMemberStats();
+            authModal.classList.add('hidden');
+            showToast(`Account created successfully! Welcome to MedSphere, ${name}!`, 'success');
+            
+            // Reset form
+            signupForm.reset();
+            
+            // Navigate to dashboard
+            navigateToPage('dashboard');
+        });
+
+        // Update UI based on login status
+        function updateUI() {
+            if (currentUser) {
+                // User is logged in
+                guestButtons.classList.add('hidden');
+                userProfile.classList.remove('hidden');
+                navDashboard.classList.remove('hidden');
+                navCreatePost.classList.remove('hidden');
+                
+                // Update user info
+                userName.textContent = currentUser.name;
+                userRole.textContent = currentUser.role === 'admin' ? 'Admin' : 'Member';
+                userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+                
+                // Update avatar color based on role
+                userAvatar.style.background = currentUser.role === 'admin' 
+                    ? 'linear-gradient(135deg, var(--primary), var(--accent))'
+                    : 'linear-gradient(135deg, var(--primary), #ef4444)';
+            } else {
+                // User is logged out
+                guestButtons.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+                navDashboard.classList.add('hidden');
+                navCreatePost.classList.add('hidden');
+            }
+        }
+
+        // Toggle user dropdown
+        userProfile?.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown-menu')) {
+                userDropdown.classList.toggle('hidden');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.user-profile')) {
+                userDropdown.classList.add('hidden');
+            }
+        });
+
+        // Logout functionality
+        logoutBtn?.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            if (confirm('Are you sure you want to logout?')) {
+                currentUser = null;
+                localStorage.removeItem('medsphere_user');
+                updateUI();
+                showToast('Logged out successfully', 'success');
+                userDropdown.classList.add('hidden');
+                
+                // Navigate to home
+                navigateToPage('home');
+            }
+        });
+
+        // ===== BLOG POSTS FUNCTIONS =====
+
+        function loadPosts() {
+            if (!postsContainer) return;
+            
+            postsContainer.innerHTML = '';
+            
+            posts.forEach(post => {
+                const postElement = document.createElement('article');
+                postElement.className = 'post-card';
+                postElement.innerHTML = `
+                    <div class="post-image">
+                        <img src="${post.image}" alt="${post.title}" loading="lazy">
+                    </div>
+                    <div class="post-content">
+                        <span class="post-category">${post.category}</span>
+                        <h3 class="post-title">${post.title}</h3>
+                        <div class="post-meta">
+                            <div class="author">
+                                <div class="author-avatar">${post.author.charAt(0)}</div>
+                                <span>${post.author}</span>
+                            </div>
+                            <span><i class="far fa-calendar"></i> ${post.date}</span>
+                            <span><i class="far fa-comment"></i> ${post.comments}</span>
+                        </div>
+                        <p class="post-excerpt">${post.excerpt}</p>
+                        <a href="#" class="read-more" data-post-id="${post.id}">
+                            Read More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                `;
+                
+                postsContainer.appendChild(postElement);
+            });
+            
+            // Add event listeners to read more buttons
+            document.querySelectorAll('.read-more').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const postId = e.target.closest('.read-more').getAttribute('data-post-id');
+                    showToast(`Opening post #${postId}...`, 'info');
+                });
+            });
+        }
+
+        // ===== MEMBER STATISTICS =====
+
+        function updateMemberStats() {
+            // Update member count
+            const totalMembers = members.length;
+            document.getElementById('totalMembers')?.textContent = totalMembers.toLocaleString();
+            
+            // Update post count
+            const totalPosts = posts.length;
+            document.getElementById('totalPosts')?.textContent = totalPosts;
+            
+            // Update events count (posts with EVENT category)
+            const totalEvents = posts.filter(post => post.category === 'EVENT').length;
+            document.getElementById('totalEvents')?.textContent = totalEvents;
+            
+            // Update comments count
+            const totalComments = posts.reduce((sum, post) => sum + (post.comments || 0), 0);
+            document.getElementById('totalComments')?.textContent = totalComments.toLocaleString();
+        }
+
+        // ===== NEWSLETTER SUBSCRIPTION =====
+
+        subscribeBtn?.addEventListener('click', () => {
+            const emailInput = document.getElementById('newsletterEmail');
+            const email = emailInput.value.trim();
+            
+            if (!email || !email.includes('@')) {
+                showToast('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Save subscription (in real app, send to backend)
+            let subscriptions = JSON.parse(localStorage.getItem('medsphere_newsletter')) || [];
+            if (!subscriptions.includes(email)) {
+                subscriptions.push(email);
+                localStorage.setItem('medsphere_newsletter', JSON.stringify(subscriptions));
+            }
+            
+            showToast('Thank you for subscribing to MedSphere!', 'success');
+            emailInput.value = '';
+        });
+
+        // ===== SEARCH FUNCTIONALITY =====
+
+        searchInput?.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            
+            if (searchTerm.length < 2) {
+                loadPosts(); // Reset to all posts
+                return;
+            }
+            
+            // Filter posts
+            const filteredPosts = posts.filter(post => 
+                post.title.toLowerCase().includes(searchTerm) ||
+                post.excerpt.toLowerCase().includes(searchTerm) ||
+                post.category.toLowerCase().includes(searchTerm) ||
+                post.author.toLowerCase().includes(searchTerm)
+            );
+            
+            // Display filtered posts
+            if (postsContainer) {
+                postsContainer.innerHTML = '';
+                
+                if (filteredPosts.length === 0) {
+                    postsContainer.innerHTML = `
+                        <div class="no-results">
+                            <i class="fas fa-search"></i>
+                            <h3>No posts found for "${searchTerm}"</h3>
+                            <p>Try a different search term</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filteredPosts.forEach(post => {
+                    const postElement = document.createElement('article');
+                    postElement.className = 'post-card';
+                    postElement.innerHTML = `
+                        <div class="post-image">
+                            <img src="${post.image}" alt="${post.title}">
+                        </div>
+                        <div class="post-content">
+                            <span class="post-category">${post.category}</span>
+                            <h3 class="post-title">${post.title}</h3>
+                            <div class="post-meta">
+                                <div class="author">
+                                    <div class="author-avatar">${post.author.charAt(0)}</div>
+                                    <span>${post.author}</span>
+                                </div>
+                                <span><i class="far fa-calendar"></i> ${post.date}</span>
+                                <span><i class="far fa-comment"></i> ${post.comments}</span>
+                            </div>
+                            <p class="post-excerpt">${post.excerpt}</p>
+                            <a href="#" class="read-more" data-post-id="${post.id}">
+                                Read More <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
+            }
+        });
+
+        // ===== MOBILE MENU =====
+
+        mobileToggle?.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            headerActions.classList.toggle('active');
+            mobileToggle.innerHTML = navLinks.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                headerActions.classList.remove('active');
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // ===== DASHBOARD FUNCTIONS =====
+
+        function loadDashboard() {
+            if (!currentUser) {
+                navigateToPage('home');
+                return;
+            }
+
+            // Update user info
+            document.getElementById('dashboardUserName').textContent = currentUser.name;
+            
+            // Update user stats
+            updateUserStats();
+            
+            // Load user posts
+            loadUserPosts();
+        }
+
+        function updateUserStats() {
+            const userPosts = posts.filter(post => post.author === currentUser.name);
+            
+            document.getElementById('userPostCount').textContent = userPosts.length;
+            
+            // Count user's comments (simulated)
+            const commentCount = userPosts.reduce((sum, post) => sum + (post.comments || 0), 0);
+            document.getElementById('userCommentCount').textContent = commentCount;
+            
+            // Count user's views (simulated)
+            const viewCount = userPosts.reduce((sum, post) => sum + (post.views || 0), 0);
+            document.getElementById('userViewCount').textContent = viewCount.toLocaleString();
+            
+            // Count user's events
+            const eventCount = userPosts.filter(post => post.category === 'EVENT').length;
+            document.getElementById('userEventCount').textContent = eventCount;
+        }
+
+        function loadUserPosts() {
+            const userPosts = posts.filter(post => post.author === currentUser.name);
+            const container = document.getElementById('userPostsContainer');
+            
+            if (userPosts.length === 0) {
+                document.getElementById('noPostsMessage').classList.remove('hidden');
+                container.innerHTML = '<p class="empty-state" id="noPostsMessage">You haven\'t created any posts yet. <a href="#create-post">Create your first post!</a></p>';
+                return;
+            }
+            
+            document.getElementById('noPostsMessage')?.classList.add('hidden');
+            container.innerHTML = '';
+            
+            // Show only recent 3 posts
+            userPosts.slice(0, 3).forEach(post => {
+                const postElement = document.createElement('div');
+                postElement.className = 'user-post-item';
+                postElement.innerHTML = `
+                    <div class="post-info">
+                        <h4>${post.title}</h4>
+                        <div class="post-meta">
+                            <span><i class="fas fa-calendar"></i> ${post.date}</span>
+                            <span><i class="fas fa-comment"></i> ${post.comments} comments</span>
+                            <span><i class="fas fa-eye"></i> ${post.views || 0} views</span>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-action-btn" onclick="editPost(${post.id})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="post-action-btn" onclick="deletePost(${post.id})">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                `;
+                container.appendChild(postElement);
+            });
+            
+            // Add "View All" link if more than 3 posts
+            if (userPosts.length > 3) {
+                const viewAll = document.createElement('div');
+                viewAll.className = 'user-post-item';
+                viewAll.style.textAlign = 'center';
+                viewAll.innerHTML = `<a href="#" style="color: var(--primary); font-weight: 600;">View All ${userPosts.length} Posts →</a>`;
+                container.appendChild(viewAll);
+            }
+        }
+
+        function editPost(postId) {
+            showToast(`Editing post #${postId} - This feature is coming soon!`, 'info');
+        }
+
+        function deletePost(postId) {
+            if (confirm('Are you sure you want to delete this post?')) {
+                const updatedPosts = posts.filter(post => post.id !== postId);
+                localStorage.setItem('medsphere_posts', JSON.stringify(updatedPosts));
+                posts = updatedPosts;
+                showToast('Post deleted successfully!', 'success');
+                loadUserPosts();
+                updateUserStats();
+                updateMemberStats();
+            }
+        }
+
+        // ===== CREATE POST FUNCTIONS =====
+
+        function loadCreatePost() {
+            if (!currentUser) {
+                navigateToPage('home');
+                showToast('Please log in to create posts', 'error');
+                return;
+            }
+
+            // Setup form submission
+            const postForm = document.getElementById('postForm');
+            const saveDraftBtn = document.getElementById('saveDraftBtn');
+            const previewBtn = document.getElementById('previewBtn');
+            const closePreviewBtn = document.getElementById('closePreviewBtn');
+            const postPreview = document.getElementById('postPreview');
+
+            // Clear form
+            postForm.reset();
+
+            // Remove existing event listeners
+            const newPostForm = postForm.cloneNode(true);
+            postForm.parentNode.replaceChild(newPostForm, postForm);
+
+            // Add new event listeners
+            document.getElementById('postForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                createPost('publish');
+            });
+
+            saveDraftBtn.addEventListener('click', () => {
+                createPost('draft');
+            });
+
+            previewBtn.addEventListener('click', generatePreview);
+            closePreviewBtn.addEventListener('click', () => {
+                postPreview.classList.add('hidden');
+            });
+        }
+
+        function createPost(status) {
+            const title = document.getElementById('postTitle').value.trim();
+            const category = document.getElementById('postCategory').value;
+            let imageUrl = document.getElementById('postImage').value.trim();
+            const content = document.getElementById('postContent').value.trim();
+            const tags = document.getElementById('postTags').value.trim();
+
+            if (!title || !category || !content) {
+                showToast('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Default images for categories
+            const defaultImages = {
+                'CAMPUS LIFE': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                'EVENT': 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                'LIFESTYLE': 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                'ACADEMICS': 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                'ENTERTAINMENT': 'https://images.unsplash.com/photo-1492684223066-dd23140edf6d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                'NEWS': 'https://images.unsplash.com/photo-1588681664899-f142ff2dc9b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+            };
+
+            // Use default image if none provided
+            if (!imageUrl && defaultImages[category]) {
+                imageUrl = defaultImages[category];
+            }
+
+            // Create post object
+            const newPost = {
+                id: Date.now(),
+                title: title,
+                excerpt: content.substring(0, 150) + '...',
+                category: category,
+                author: currentUser.name,
+                date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                image: imageUrl || 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+                content: content,
+                tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+                status: status,
+                comments: 0,
+                views: 0,
+                created: new Date().toISOString()
+            };
+
+            // Add to posts array
+            posts.push(newPost);
+            localStorage.setItem('medsphere_posts', JSON.stringify(posts));
+
+            // Update member's post count
+            const memberIndex = members.findIndex(m => m.id === currentUser.id);
+            if (memberIndex !== -1) {
+                members[memberIndex].posts = (members[memberIndex].posts || 0) + 1;
+                localStorage.setItem('medsphere_members', JSON.stringify(members));
+            }
+
+            // Show success message
+            const message = status === 'draft' ? 'Post saved as draft!' : 'Post published successfully!';
+            showToast(message, 'success');
+
+            // Reset form
+            document.getElementById('postForm').reset();
+
+            // Navigate to dashboard
+            navigateToPage('dashboard');
+        }
+
+        function generatePreview() {
+            const title = document.getElementById('postTitle').value.trim() || 'Sample Title';
+            const category = document.getElementById('postCategory').value || 'CAMPUS LIFE';
+            const content = document.getElementById('postContent').value.trim() || 'Sample content goes here...';
+            
+            const previewHTML = `
+                <article class="post-card" style="transform: none; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                    <div class="post-content">
+                        <span class="post-category">${category}</span>
+                        <h3 class="post-title">${title}</h3>
+                        <div class="post-meta">
+                            <div class="author">
+                                <div class="author-avatar">${currentUser?.name?.charAt(0) || 'U'}</div>
+                                <span>${currentUser?.name || 'You'}</span>
+                            </div>
+                            <span><i class="far fa-calendar"></i> ${new Date().toLocaleDateString()}</span>
+                        </div>
+                        <div class="post-excerpt">
+                            ${content.substring(0, 200)}${content.length > 200 ? '...' : ''}
+                        </div>
+                    </div>
+                </article>
+                <p style="margin-top: 2rem; color: #6b7280; font-style: italic;">
+                    This is a preview of how your post will appear on the blog.
+                </p>
+            `;
+            
+            document.getElementById('previewContent').innerHTML = previewHTML;
+            document.getElementById('postPreview').classList.remove('hidden');
+        }
+
+        // Text formatting functions for editor
+        function formatText(format) {
+            const textarea = document.getElementById('postContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            let formattedText = '';
+            
+            switch(format) {
+                case 'bold':
+                    formattedText = `<strong>${selectedText}</strong>`;
+                    break;
+                case 'italic':
+                    formattedText = `<em>${selectedText}</em>`;
+                    break;
+                case 'link':
+                    const url = prompt('Enter URL:');
+                    if (url) {
+                        formattedText = `<a href="${url}" target="_blank">${selectedText || 'Link'}</a>`;
+                    }
+                    break;
+                case 'image':
+                    const imageUrl = prompt('Enter image URL:');
+                    if (imageUrl) {
+                        formattedText = `<img src="${imageUrl}" alt="Image" style="max-width: 100%; height: auto;">`;
+                    }
+                    break;
+            }
+            
+            if (formattedText) {
+                textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+                textarea.focus();
+            }
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+
+        function showToast(message, type = 'info') {
+            // Remove existing toasts
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="toast-close"><i class="fas fa-times"></i></button>
+            `;
+            
+            // Add to body
+            document.body.appendChild(toast);
+            
+            // Show toast with animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 4000);
+            
+            // Close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            });
+        }
+
+        // ===== DEMO DATA INITIALIZATION =====
+
+        // Initialize demo data if empty
+        if (!localStorage.getItem('medsphere_members')) {
+            localStorage.setItem('medsphere_members', JSON.stringify(members));
+        }
+
+        if (!localStorage.getItem('medsphere_posts')) {
+            localStorage.setItem('medsphere_posts', JSON.stringify(posts));
+        }
+
+        // Demo user for testing (uncomment to auto-login)
+        /*
+        window.addEventListener('load', () => {
+            if (!currentUser && members.length > 0) {
+                currentUser = { 
+                    id: members[0].id, 
+                    name: members[0].name, 
+                    email: members[0].email, 
+                    username: members[0].username, 
+                    campus: members[0].campus, 
+                    role: members[0].role,
+                    joined: new Date().toISOString()
+                };
+                localStorage.setItem('medsphere_user', JSON.stringify(currentUser));
+                updateUI();
+                showToast('Demo user logged in automatically', 'info');
+            }
+        });
+        */
+
+        // Handle hash changes
+        window.addEventListener('hashchange', loadPageFromHash);
+    </script>
+</body>
+</html>
