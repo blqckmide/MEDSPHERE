@@ -13,33 +13,23 @@
       padding: 0;
       box-sizing: border-box;
     }
-
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f7fc;
       color: #1a2c3e;
       line-height: 1.4;
     }
-
-    /* Header */
     .hero {
       background: linear-gradient(135deg, #c8102e 0%, #a00c26 100%);
       padding: 1.8rem 1rem;
       text-align: center;
     }
-
     .hero h1 {
       font-size: 1.8rem;
       font-weight: 800;
       color: white;
-      letter-spacing: -0.3px;
     }
-
-    .hero h1 span {
-      font-weight: 500;
-      opacity: 0.9;
-    }
-
+    .hero h1 span { font-weight: 500; opacity: 0.9; }
     .tournament-badge {
       display: inline-block;
       background: rgba(255,255,255,0.2);
@@ -50,8 +40,6 @@
       color: white;
       margin-top: 8px;
     }
-
-    /* Matches container */
     .matches-container {
       max-width: 800px;
       margin: 1.8rem auto;
@@ -60,23 +48,13 @@
       flex-direction: column;
       gap: 1.2rem;
     }
-
-    /* Match card */
     .match-card {
       background: white;
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      transition: all 0.2s;
       border: 1px solid #eef2f8;
     }
-
-    .match-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    /* Status row */
     .status-row {
       display: flex;
       justify-content: space-between;
@@ -85,7 +63,6 @@
       background: #fefefe;
       border-bottom: 1px solid #edf2f7;
     }
-
     .period {
       background: #c8102e;
       color: white;
@@ -93,9 +70,7 @@
       border-radius: 40px;
       font-size: 0.85rem;
       font-weight: 700;
-      letter-spacing: 0.3px;
     }
-
     .status {
       background: #eef2f8;
       color: #2c3e50;
@@ -104,8 +79,6 @@
       font-size: 0.85rem;
       font-weight: 600;
     }
-
-    /* Score section */
     .score-section {
       display: flex;
       justify-content: space-between;
@@ -113,25 +86,9 @@
       padding: 1.2rem 1.5rem;
       gap: 1rem;
     }
-
-    .team {
-      flex: 1;
-      text-align: center;
-    }
-
-    .team-name {
-      font-weight: 700;
-      font-size: 1rem;
-      color: #1e2f3e;
-      margin-bottom: 6px;
-    }
-
-    .team-score {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #c8102e;
-    }
-
+    .team { flex: 1; text-align: center; }
+    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+    .team-score { font-size: 2rem; font-weight: 800; color: #c8102e; }
     .vs-divider {
       background: #eef2f8;
       width: 36px;
@@ -144,8 +101,6 @@
       font-size: 0.8rem;
       color: #5a6e7c;
     }
-
-    /* Stats grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -155,116 +110,47 @@
       border-radius: 16px;
       overflow: hidden;
     }
-
     .stat-card {
       background: white;
       padding: 0.8rem 0.5rem;
       text-align: center;
     }
-
     .stat-card h4 {
       font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       color: #5a6e7c;
       margin-bottom: 8px;
     }
-
-    .stat-list {
-      list-style: none;
-      padding: 0;
-      font-size: 0.7rem;
-    }
-
-    .stat-list li {
-      padding: 3px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: #2c3e50;
-    }
-
+    .stat-list { list-style: none; font-size: 0.7rem; }
+    .stat-list li { padding: 3px 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .goal-marker { color: #16a34a; font-weight: 600; }
     .yellow-marker { color: #eab308; font-weight: 600; }
     .red-marker { color: #dc2626; font-weight: 600; }
     .event-marker { color: #3b82f6; }
-
-    .empty-stats {
-      color: #9aaebf;
-      font-style: italic;
-      font-size: 0.7rem;
-      padding: 4px 0;
-    }
-
-    /* Line-ups section */
-    .lineup-section {
-      padding: 0 1rem 1rem;
-      border-top: 1px solid #eef2f8;
-      margin-top: 0.5rem;
-    }
-
+    .empty-stats { color: #9aaebf; font-style: italic; font-size: 0.7rem; padding: 4px 0; }
+    .lineup-section { padding: 0 1rem 1rem; border-top: 1px solid #eef2f8; }
     .lineup-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-top: 0.5rem;
     }
-
     .lineup-box {
       background: #fafcff;
       border-radius: 14px;
       padding: 0.7rem;
       border: 1px solid #eef2f8;
     }
-
-    .lineup-box h4 {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #c8102e;
-      margin-bottom: 6px;
-    }
-
-    .lineup-list {
-      list-style: none;
-      padding: 0;
-      font-size: 0.7rem;
-      color: #334155;
-    }
-
-    .lineup-list li {
-      padding: 3px 0;
-    }
-
-    /* No matches */
-    .no-matches {
-      text-align: center;
-      padding: 2rem;
-      background: white;
-      border-radius: 24px;
-      color: #6c7a8e;
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 1.5rem;
-      font-size: 0.7rem;
-      color: #6f7c8f;
-      border-top: 1px solid #eef2f8;
-      margin-top: 2rem;
-      background: white;
-    }
-
-    footer strong {
-      color: #c8102e;
-    }
-
+    .lineup-box h4 { font-size: 0.7rem; font-weight: 700; color: #c8102e; margin-bottom: 6px; }
+    .lineup-list { list-style: none; font-size: 0.7rem; }
+    .lineup-list li { padding: 3px 0; }
+    .no-matches { text-align: center; padding: 2rem; background: white; border-radius: 24px; color: #6c7a8e; }
+    footer { text-align: center; padding: 1.5rem; font-size: 0.7rem; color: #6f7c8f; border-top: 1px solid #eef2f8; margin-top: 2rem; background: white; }
+    footer strong { color: #c8102e; }
     @media (max-width: 600px) {
       .hero h1 { font-size: 1.4rem; }
       .team-score { font-size: 1.5rem; }
-      .team-name { font-size: 0.85rem; }
       .stats-grid { margin: 0 0.8rem 0.8rem; }
       .lineup-grid { grid-template-columns: 1fr; }
       .status-row { flex-direction: column; gap: 6px; text-align: center; }
@@ -276,13 +162,11 @@
     <h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1>
     <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
   </div>
-
   <main>
     <div class="matches-container" id="matchesList">
       <div class="no-matches">📢 Loading matches...</div>
     </div>
   </main>
-
   <footer>
     <p>Powered by <strong>MEDSPHERE</strong> | Real‑time updates</p>
   </footer>
@@ -330,59 +214,16 @@
             <div class="status">${escapeHtml(match.status || 'Not started')}</div>
           </div>
           <div class="score-section">
-            <div class="team">
-              <div class="team-name">${escapeHtml(match.homeTeam)}</div>
-              <div class="team-score">${match.homeScore || 0}</div>
-            </div>
+            <div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore || 0}</div></div>
             <div class="vs-divider">VS</div>
-            <div class="team">
-              <div class="team-name">${escapeHtml(match.awayTeam)}</div>
-              <div class="team-score">${match.awayScore || 0}</div>
-            </div>
+            <div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore || 0}</div></div>
           </div>
-
-          <!-- STATS GRID -->
           <div class="stats-grid">
-            <div class="stat-card">
-              <h4>⚽ GOALS</h4>
-              <ul class="stat-list">
-                ${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} <span style="color:#6c7a8e;">${s.time}</span></li>`).join('') || '<li class="empty-stats">— No goals —</li>'}
-              </ul>
-            </div>
-            <div class="stat-card">
-              <h4>🟨 BOOKINGS</h4>
-              <ul class="stat-list">
-                ${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} <span style="color:#6c7a8e;">${c.time}</span></li>`).join('') || '<li class="empty-stats">— None —</li>'}
-                ${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} <span style="color:#6c7a8e;">${c.time}</span></li>`).join('')}
-              </ul>
-            </div>
-            <div class="stat-card">
-              <h4>📋 EVENTS</h4>
-              <ul class="stat-list">
-                ${(match.events || []).map(e => `<li><span class="event-marker">📌</span> ${escapeHtml(e)}</li>`).join('') || '<li class="empty-stats">— No events —</li>'}
-              </ul>
-            </div>
+            <div class="stat-card"><h4>⚽ GOALS</h4><ul class="stat-list">${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} ${s.time}</li>`).join('') || '<li class="empty-stats">— No goals —</li>'}</ul></div>
+            <div class="stat-card"><h4>🟨 BOOKINGS</h4><ul class="stat-list">${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('') || '<li class="empty-stats">— None —</li>'}</ul></div>
+            <div class="stat-card"><h4>📋 EVENTS</h4><ul class="stat-list">${(match.events || []).map(e => `<li><span class="event-marker">📌</span> ${escapeHtml(e)}</li>`).join('') || '<li class="empty-stats">— No events —</li>'}</ul></div>
           </div>
-
-          <!-- LINE-UPS (if any) -->
-          ${(match.homeLineup?.length || match.awayLineup?.length) ? `
-          <div class="lineup-section">
-            <div class="lineup-grid">
-              <div class="lineup-box">
-                <h4>📋 ${escapeHtml(match.homeTeam)} XI</h4>
-                <ul class="lineup-list">
-                  ${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('') || '<li>—</li>'}
-                </ul>
-              </div>
-              <div class="lineup-box">
-                <h4>📋 ${escapeHtml(match.awayTeam)} XI</h4>
-                <ul class="lineup-list">
-                  ${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('') || '<li>—</li>'}
-                </ul>
-              </div>
-            </div>
-          </div>
-          ` : ''}
+          ${(match.homeLineup?.length || match.awayLineup?.length) ? `<div class="lineup-section"><div class="lineup-grid"><div class="lineup-box"><h4>📋 ${escapeHtml(match.homeTeam)} XI</h4><ul class="lineup-list">${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}</ul></div><div class="lineup-box"><h4>📋 ${escapeHtml(match.awayTeam)} XI</h4><ul class="lineup-list">${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}</ul></div></div></div>` : ''}
         </div>
       `).join('');
     }
