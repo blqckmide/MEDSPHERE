@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head> 
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin | Student Union Cup</title>
@@ -106,44 +106,14 @@
   let matches = {};
   let currentMatchId = null;
 
-  // Save selected match to localStorage
   function saveSelectedMatch(matchId) {
     if (matchId) localStorage.setItem('selectedMatchId', matchId);
+    else localStorage.removeItem('selectedMatchId');
   }
 
   function getSelectedMatch() {
     return localStorage.getItem('selectedMatchId');
   }
-
-  onValue(matchesRef, (snapshot) => {
-    matches = snapshot.val() || {};
-    const select = document.getElementById('matchSelect');
-    const matchIds = Object.keys(matches);
-    const options = matchIds.map(key => `<option value="${key}">${matches[key].homeTeam} vs ${matches[key].awayTeam}</option>`).join('');
-    select.innerHTML = options || '<option value="">No matches yet</option>';
-    
-    // Try to load previously selected match
-    let selectedId = getSelectedMatch();
-    
-    // If selected match doesn't exist or not set, pick first match
-    if (matchIds.length > 0 && (!selectedId || !matches[selectedId])) {
-      selectedId = matchIds[0];
-      saveSelectedMatch(selectedId);
-    }
-    
-    if (selectedId && matches[selectedId]) {
-      currentMatchId = selectedId;
-      select.value = currentMatchId;
-      loadMatchToEdit(currentMatchId);
-    } else if (matchIds.length > 0) {
-      currentMatchId = matchIds[0];
-      select.value = currentMatchId;
-      saveSelectedMatch(currentMatchId);
-      loadMatchToEdit(currentMatchId);
-    } else {
-      document.getElementById('editArea').innerHTML = '<p style="color:#9aaebf; text-align:center;">No matches yet. Create one.</p>';
-    }
-  });
 
   function loadMatchToEdit(matchId) {
     currentMatchId = matchId;
@@ -263,10 +233,18 @@
 
   window.deleteMatch = async () => {
     if (!confirm('Delete this match permanently?')) return;
-    await remove(ref(db, `matches/${currentMatchId}`));
-    localStorage.removeItem('selectedMatchId');
-    currentMatchId = null;
-    alert('Match deleted');
+    try {
+      await remove(ref(db, `matches/${currentMatchId}`));
+      // Clear selection after delete
+      currentMatchId = null;
+      saveSelectedMatch(null);
+      document.getElementById('matchSelect').value = '';
+      document.getElementById('editArea').innerHTML = '<p style="color:#9aaebf; text-align:center;">Match deleted. Select another or create a new one.</p>';
+      alert('Match deleted successfully');
+    } catch (error) {
+      console.error('Delete failed:', error);
+      alert('Delete failed. Check console for details.');
+    }
   };
 
   window.createMatch = async () => {
@@ -285,6 +263,32 @@
     document.getElementById('newAwayTeam').value = '';
     alert('Match created');
   };
+
+  // Real-time listener for matches
+  onValue(matchesRef, (snapshot) => {
+    matches = snapshot.val() || {};
+    const select = document.getElementById('matchSelect');
+    const matchIds = Object.keys(matches);
+    const options = matchIds.map(key => `<option value="${key}">${matches[key].homeTeam} vs ${matches[key].awayTeam}</option>`).join('');
+    select.innerHTML = options || '<option value="">No matches yet</option>';
+    
+    let selectedId = getSelectedMatch();
+    
+    if (matchIds.length > 0 && selectedId && matches[selectedId]) {
+      currentMatchId = selectedId;
+      select.value = currentMatchId;
+      loadMatchToEdit(currentMatchId);
+    } else if (matchIds.length > 0) {
+      selectedId = matchIds[0];
+      currentMatchId = selectedId;
+      select.value = currentMatchId;
+      saveSelectedMatch(currentMatchId);
+      loadMatchToEdit(currentMatchId);
+    } else {
+      currentMatchId = null;
+      document.getElementById('editArea').innerHTML = '<p style="color:#9aaebf; text-align:center;">No matches yet. Create one above.</p>';
+    }
+  });
 
   function escapeHtml(str) {
     if (!str) return '';
