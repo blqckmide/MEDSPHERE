@@ -6,39 +6,22 @@
   <title>MEDSPHERE Live Score | Student Union Cup 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: #f4f6fa;
       color: #1e2a3a;
       line-height: 1.4;
     }
-
-    /* Header */
     .hero {
       background: linear-gradient(135deg, #c8102e 0%, #a00c26 100%);
       padding: 1.8rem 1rem;
       text-align: center;
     }
-
-    .hero h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: white;
-    }
-
-    .hero h1 span {
-      font-weight: 500;
-      opacity: 0.9;
-    }
-
+    .hero h1 { font-size: 1.8rem; font-weight: 800; color: white; }
+    .hero h1 span { font-weight: 500; opacity: 0.9; }
     .tournament-badge {
       display: inline-block;
       background: rgba(255,255,255,0.2);
@@ -49,33 +32,21 @@
       font-weight: 600;
       color: white;
     }
-
-    /* Matches container */
     .matches-container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 2rem auto;
       padding: 0 1rem;
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
     }
-
-    /* Match card */
     .match-card {
       background: white;
       border-radius: 24px;
       overflow: hidden;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      transition: all 0.2s;
       border: 1px solid #eef2f8;
     }
-
-    .match-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-    }
-
-    /* Status bar */
     .status-bar {
       display: flex;
       justify-content: space-between;
@@ -84,7 +55,6 @@
       background: #fefefe;
       border-bottom: 1px solid #edf2f7;
     }
-
     .period {
       background: #c8102e;
       color: white;
@@ -93,7 +63,6 @@
       font-size: 0.7rem;
       font-weight: 700;
     }
-
     .status {
       background: #eef2f8;
       color: #2c3e50;
@@ -102,34 +71,16 @@
       font-size: 0.7rem;
       font-weight: 600;
     }
-
-    /* Score row */
     .score-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.2rem 1.5rem;
+      padding: 1rem 1.5rem;
       gap: 1rem;
     }
-
-    .team {
-      flex: 1;
-      text-align: center;
-    }
-
-    .team-name {
-      font-weight: 700;
-      font-size: 1rem;
-      margin-bottom: 6px;
-      color: #1e2a3a;
-    }
-
-    .team-score {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #c8102e;
-    }
-
+    .team { flex: 1; text-align: center; }
+    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
+    .team-score { font-size: 1.8rem; font-weight: 800; color: #c8102e; }
     .vs-divider {
       background: #eef2f8;
       width: 36px;
@@ -142,8 +93,17 @@
       font-size: 0.8rem;
       color: #5a6e7c;
     }
-
-    /* Stats grid */
+    .motm {
+      text-align: center;
+      background: #fff9e6;
+      margin: 0 1rem;
+      padding: 6px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #c8102e;
+      border: 1px solid #ffdf7e;
+    }
     .stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -153,90 +113,70 @@
       border-radius: 20px;
       overflow: hidden;
     }
-
     .stat-card {
       background: white;
       padding: 0.8rem 0.5rem;
       text-align: center;
     }
-
     .stat-card h4 {
       font-size: 0.65rem;
       font-weight: 700;
       text-transform: uppercase;
       color: #5a6e7c;
       margin-bottom: 8px;
-      letter-spacing: 0.5px;
     }
-
-    .stat-list {
-      list-style: none;
-      font-size: 0.7rem;
-    }
-
-    .stat-list li {
-      padding: 4px 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: #2c3e50;
-    }
-
+    .stat-list { list-style: none; font-size: 0.7rem; }
+    .stat-list li { padding: 4px 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .goal-marker { color: #16a34a; font-weight: 600; }
     .yellow-marker { color: #eab308; font-weight: 600; }
     .red-marker { color: #dc2626; font-weight: 600; }
+    .empty-stats { color: #9aaebf; font-style: italic; }
 
     /* Line-up section */
-    .lineup-section {
-      padding: 0 1rem 1rem;
-      border-top: 1px solid #eef2f8;
-    }
-
-    .lineup-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-top: 0.5rem;
-    }
-
-    .lineup-box {
-      background: #fafcff;
-      border-radius: 16px;
-      padding: 0.7rem;
-      border: 1px solid #eef2f8;
-    }
-
-    .lineup-box h4 {
-      font-size: 0.7rem;
-      font-weight: 700;
+    .lineup-section { padding: 0 1rem 1rem; }
+    .lineup-toggle {
+      background: #f0f3fa;
+      border: none;
+      width: 100%;
+      padding: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
       color: #c8102e;
-      margin-bottom: 6px;
+      border-radius: 40px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: 0.2s;
     }
-
-    .lineup-list {
-      list-style: none;
-      font-size: 0.7rem;
-    }
-
-    .lineup-list li {
-      padding: 3px 0;
-      border-bottom: 1px dashed #f0f2f6;
-    }
-
-    .lineup-list li:last-child {
-      border-bottom: none;
-    }
-
-    /* No matches */
-    .no-matches {
-      text-align: center;
-      padding: 2rem;
-      background: white;
+    .lineup-toggle:hover { background: #e6eaf2; }
+    .lineup-container { display: none; margin-top: 10px; }
+    .lineup-container.show { display: block; }
+    .pitch {
+      background: #1a5d3c;
       border-radius: 24px;
-      color: #6c7a8e;
+      padding: 1rem;
+      position: relative;
+      background-image: radial-gradient(circle at 50% 50%, #2a6e48 2%, transparent 2%);
+      background-size: 20px 20px;
     }
-
+    .pitch-row {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .player {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      min-width: 70px;
+      text-align: center;
+    }
+    .player-pos { font-weight: 700; color: #ffd966; margin-right: 4px; }
     footer {
       text-align: center;
       padding: 1.2rem;
@@ -246,17 +186,11 @@
       margin-top: 2rem;
       background: white;
     }
-
-    footer strong {
-      color: #c8102e;
-    }
-
-    @media (max-width: 600px) {
+    footer strong { color: #c8102e; }
+    @media (max-width: 650px) {
       .hero h1 { font-size: 1.3rem; }
       .team-score { font-size: 1.4rem; }
-      .team-name { font-size: 0.85rem; }
-      .stats-grid { margin: 0 0.8rem 0.8rem; }
-      .lineup-grid { grid-template-columns: 1fr; }
+      .player { font-size: 0.6rem; min-width: 55px; }
     }
   </style>
 </head>
@@ -265,13 +199,11 @@
     <h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1>
     <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
   </div>
-
   <main>
     <div class="matches-container" id="matchesList">
-      <div class="no-matches">📢 Loading matches...</div>
+      <div class="no-matches" style="text-align:center; padding:2rem;">📢 Loading matches...</div>
     </div>
   </main>
-
   <footer>
     <p>Powered by <strong>MEDSPHERE</strong> | Real‑time updates</p>
   </footer>
@@ -289,88 +221,75 @@
       appId: "1:962864542783:web:b59e6abda9c6f1a9fc348a",
       measurementId: "G-HPQ46648M4"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const matchesRef = ref(db, 'matches');
 
     function escapeHtml(str) {
       if (!str) return '';
-      return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
+      return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m);
+    }
+
+    function renderLineup(players, teamName) {
+      if (!players || players.length === 0) return '';
+      const posOrder = ['GK','LB','CB','RB','LWB','RWB','DMF','CMF','AMF','LMF','RMF','LWF','RWF','SS','CF'];
+      const grouped = {};
+      players.forEach(p => {
+        const pos = p.position || 'SUB';
+        if (!grouped[pos]) grouped[pos] = [];
+        grouped[pos].push(p);
       });
+      let html = '<div class="pitch">';
+      for (let pos of posOrder) {
+        if (grouped[pos] && grouped[pos].length) {
+          html += `<div class="pitch-row"><span class="player-pos" style="color:#ffd966; min-width:40px;">${pos}</span>`;
+          grouped[pos].forEach(p => {
+            html += `<div class="player"><span class="player-pos">${p.number}</span> ${escapeHtml(p.name)}</div>`;
+          });
+          html += `</div>`;
+        }
+      }
+      html += '</div>';
+      return html;
     }
 
     function renderMatches(matches) {
       const container = document.getElementById('matchesList');
       if (!matches || Object.keys(matches).length === 0) {
-        container.innerHTML = '<div class="no-matches">🏟️ No matches scheduled yet. Check back later.</div>';
+        container.innerHTML = '<div class="no-matches" style="text-align:center; padding:2rem;">🏟️ No matches scheduled yet.</div>';
         return;
       }
-
       const matchesArray = Object.values(matches);
-      container.innerHTML = matchesArray.map(match => `
-        <div class="match-card">
-          <div class="status-bar">
-            <span class="period">${escapeHtml(match.period || 'First half')}</span>
-            <span class="status">${escapeHtml(match.status || 'Not started')}</span>
-          </div>
-          <div class="score-row">
-            <div class="team">
-              <div class="team-name">${escapeHtml(match.homeTeam)}</div>
-              <div class="team-score">${match.homeScore || 0}</div>
+      container.innerHTML = matchesArray.map((match, idx) => {
+        const motmHtml = match.manOfTheMatch ? `<div class="motm">⭐ MAN OF THE MATCH: ${escapeHtml(match.manOfTheMatch)}</div>` : '';
+        const homeLineup = match.homeLineup || [];
+        const awayLineup = match.awayLineup || [];
+        return `
+          <div class="match-card" data-match-idx="${idx}">
+            <div class="status-bar"><span class="period">${escapeHtml(match.period || 'First half')}</span><span class="status">${escapeHtml(match.status || 'Not started')}</span></div>
+            <div class="score-row">
+              <div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore || 0}</div></div>
+              <div class="vs-divider">VS</div>
+              <div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore || 0}</div></div>
             </div>
-            <div class="vs-divider">VS</div>
-            <div class="team">
-              <div class="team-name">${escapeHtml(match.awayTeam)}</div>
-              <div class="team-score">${match.awayScore || 0}</div>
+            ${motmHtml}
+            <div class="stats-grid">
+              <div class="stat-card"><h4>⚽ GOALS</h4><ul class="stat-list">${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} ${s.time}</li>`).join('') || '<li class="empty-stats">— No goals —</li>'}</ul></div>
+              <div class="stat-card"><h4>🟨 BOOKINGS</h4><ul class="stat-list">${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('') || '<li class="empty-stats">— No bookings —</li>'}</ul></div>
             </div>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <h4>⚽ GOALS</h4>
-              <ul class="stat-list">
-                ${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} <span style="color:#6c7a8e;">${s.time}</span></li>`).join('')}
-                ${(!match.scorers || match.scorers.length === 0) ? '<li class="empty-stats" style="color:#9aaebf;">— No goals —</li>' : ''}
-              </ul>
-            </div>
-            <div class="stat-card">
-              <h4>🟨 BOOKINGS</h4>
-              <ul class="stat-list">
-                ${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} <span style="color:#6c7a8e;">${c.time}</span></li>`).join('')}
-                ${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} <span style="color:#6c7a8e;">${c.time}</span></li>`).join('')}
-                ${(!match.yellowCards || match.yellowCards.length === 0) && (!match.redCards || match.redCards.length === 0) ? '<li class="empty-stats" style="color:#9aaebf;">— No bookings —</li>' : ''}
-              </ul>
-            </div>
-          </div>
-          ${(match.homeLineup?.length || match.awayLineup?.length) ? `
-          <div class="lineup-section">
-            <div class="lineup-grid">
-              <div class="lineup-box">
-                <h4>📋 ${escapeHtml(match.homeTeam)} XI</h4>
-                <ul class="lineup-list">
-                  ${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}
-                </ul>
-              </div>
-              <div class="lineup-box">
-                <h4>📋 ${escapeHtml(match.awayTeam)} XI</h4>
-                <ul class="lineup-list">
-                  ${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}
-                </ul>
+            <div class="lineup-section">
+              <button class="lineup-toggle" onclick="this.nextElementSibling.classList.toggle('show')">📋 SHOW LINE-UPS</button>
+              <div class="lineup-container">
+                <div><strong>${escapeHtml(match.homeTeam)}</strong> ${renderLineup(homeLineup, match.homeTeam)}</div>
+                <div style="margin-top:16px;"><strong>${escapeHtml(match.awayTeam)}</strong> ${renderLineup(awayLineup, match.awayTeam)}</div>
               </div>
             </div>
           </div>
-          ` : ''}
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
-
-    onValue(matchesRef, (snapshot) => {
-      renderMatches(snapshot.val());
-    });
+    window.renderLineup = renderLineup;
+    onValue(matchesRef, (snapshot) => renderMatches(snapshot.val()));
   </script>
 </body>
 </html>
