@@ -5,102 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin | Student Union Cup</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f5f7fc;
       padding: 2rem 1rem;
     }
-    .container {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+    .container { max-width: 800px; margin: 0 auto; }
     .card {
       background: white;
-      border-radius: 24px;
+      border-radius: 28px;
       padding: 1.5rem;
       margin-bottom: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
       border: 1px solid #eef2f8;
     }
     h2 {
       font-size: 1.3rem;
       color: #c8102e;
       margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #c8102e;
-      display: inline-block;
+      border-left: 4px solid #c8102e;
+      padding-left: 12px;
     }
-    label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #5a6874;
-      display: block;
-      margin-bottom: 4px;
-    }
+    h3 { font-size: 0.9rem; font-weight: 700; margin: 1rem 0 0.5rem; color: #1e293b; }
+    label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #5a6874; display: block; margin-bottom: 4px; }
     input, select {
       width: 100%;
-      padding: 10px 12px;
+      padding: 8px 12px;
       border: 1px solid #dce3ec;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      margin-bottom: 12px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
     }
     button {
       background: #c8102e;
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 8px 18px;
       border-radius: 40px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 6px;
     }
-    button:hover {
-      background: #a00c26;
-    }
+    button:hover { background: #a00c26; }
+    .btn-secondary { background: #334155; }
+    .btn-secondary:hover { background: #1e293b; }
+    .flex { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+    .flex > div { flex: 1; }
     .match-badge {
       background: #fef2f2;
       padding: 12px;
-      border-radius: 16px;
+      border-radius: 20px;
       text-align: center;
-      margin-bottom: 20px;
       font-weight: 700;
+      margin-bottom: 16px;
       color: #c8102e;
     }
-    hr {
-      margin: 20px 0;
-      border: none;
-      border-top: 1px solid #ecf3fa;
+    hr { margin: 16px 0; border-top: 1px solid #ecf3fa; }
+    .player-item {
+      background: #f8fafc;
+      padding: 6px 10px;
+      border-radius: 30px;
+      display: inline-block;
+      margin: 4px;
+      font-size: 0.75rem;
     }
-    .flex {
-      display: flex;
-      gap: 12px;
-    }
-    .flex > div {
-      flex: 1;
-    }
-    .delete-btn {
-      background: #6c757d;
-      margin-top: 20px;
-    }
-    .delete-btn:hover {
-      background: #5a6268;
-    }
+    .delete-btn { background: #6c757d; margin-top: 20px; }
+    .delete-btn:hover { background: #5a6268; }
   </style>
 </head>
 <body>
 <div class="container">
   <div class="card">
     <h2>➕ CREATE MATCH</h2>
-    <input type="text" id="newHomeTeam" placeholder="Home team">
-    <input type="text" id="newAwayTeam" placeholder="Away team">
-    <button onclick="createMatch()">Create Match</button>
+    <div class="flex">
+      <input type="text" id="newHomeTeam" placeholder="Home team">
+      <input type="text" id="newAwayTeam" placeholder="Away team">
+      <button onclick="createMatch()">Create</button>
+    </div>
   </div>
 
   <div class="card">
@@ -132,26 +114,21 @@
   let matches = {};
   let currentMatchId = null;
 
-  // Load matches and update dropdown
+  const positions = ['GK','LB','CB','RB','LWB','RWB','DMF','CMF','AMF','LMF','RMF','LWF','RWF','SS','CF'];
+
   onValue(matchesRef, (snapshot) => {
     matches = snapshot.val() || {};
     const select = document.getElementById('matchSelect');
     const matchIds = Object.keys(matches);
-    
-    if (matchIds.length === 0) {
-      select.innerHTML = '<option>No matches yet</option>';
-      document.getElementById('matchEditor').innerHTML = '<p style="color:#888; margin-top:20px;">Create a match to get started</p>';
-      return;
-    }
-    
-    select.innerHTML = matchIds.map(id => `<option value="${id}">${matches[id].homeTeam} vs ${matches[id].awayTeam}</option>`).join('');
-    
-    // If no match selected or selected match no longer exists, select first
-    if (!currentMatchId || !matches[currentMatchId]) {
+    select.innerHTML = matchIds.map(id => `<option value="${id}">${matches[id].homeTeam} vs ${matches[id].awayTeam}</option>`).join('') || '<option>No matches</option>';
+    if (matchIds.length && (!currentMatchId || !matches[currentMatchId])) {
       currentMatchId = matchIds[0];
+      select.value = currentMatchId;
+      loadEditor(currentMatchId);
+    } else if (currentMatchId && matches[currentMatchId]) {
+      select.value = currentMatchId;
+      loadEditor(currentMatchId);
     }
-    select.value = currentMatchId;
-    loadEditor(currentMatchId);
   });
 
   function loadEditor(matchId) {
@@ -159,84 +136,43 @@
     const m = matches[matchId];
     if (!m) return;
 
-    const editorHtml = `
+    const homeLineup = m.homeLineup || [];
+    const awayLineup = m.awayLineup || [];
+    const allPlayers = [...homeLineup, ...awayLineup];
+
+    document.getElementById('matchEditor').innerHTML = `
       <div class="match-badge">⚽ ${escapeHtml(m.homeTeam)} vs ${escapeHtml(m.awayTeam)}</div>
       
       <div class="flex">
-        <div>
-          <label>PERIOD</label>
-          <select id="editPeriod">
-            <option ${m.period === 'First half' ? 'selected' : ''}>First half</option>
-            <option ${m.period === 'Half time' ? 'selected' : ''}>Half time</option>
-            <option ${m.period === 'Second half' ? 'selected' : ''}>Second half</option>
-            <option ${m.period === 'Full time' ? 'selected' : ''}>Full time</option>
-          </select>
-        </div>
-        <div>
-          <label>STATUS</label>
-          <select id="editStatus">
-            <option ${m.status === 'Not started' ? 'selected' : ''}>Not started</option>
-            <option ${m.status === 'Started' ? 'selected' : ''}>Started</option>
-            <option ${m.status === 'Ended' ? 'selected' : ''}>Ended</option>
-          </select>
-        </div>
+        <div><label>Period</label><select id="editPeriod">${['First half','Half time','Second half','Full time'].map(p => `<option ${m.period===p?'selected':''}>${p}</option>`).join('')}</select></div>
+        <div><label>Status</label><select id="editStatus">${['Not started','Started','Ended'].map(s => `<option ${m.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
       </div>
-
       <div class="flex">
-        <div>
-          <label>🏠 ${escapeHtml(m.homeTeam)} SCORE</label>
-          <input type="number" id="editHomeScore" value="${m.homeScore || 0}">
-        </div>
-        <div>
-          <label>✈️ ${escapeHtml(m.awayTeam)} SCORE</label>
-          <input type="number" id="editAwayScore" value="${m.awayScore || 0}">
-        </div>
-      </div>
-      <button onclick="updateMatch()">Update Score & Status</button>
-
-      <hr>
-
-      <h3 style="margin-bottom:8px;">⚽ ADD GOAL</h3>
-      <div class="flex">
-        <input type="text" id="scorerName" placeholder="Player name">
-        <input type="text" id="scorerTime" placeholder="Minute">
-        <button onclick="addGoal()" style="margin-top:0;">Add</button>
-      </div>
-
-      <h3 style="margin:16px 0 8px;">🟨 ADD YELLOW CARD</h3>
-      <div class="flex">
-        <input type="text" id="yellowPlayer" placeholder="Player name">
-        <input type="text" id="yellowTime" placeholder="Minute">
-        <button onclick="addYellow()" style="margin-top:0;">Add</button>
-      </div>
-
-      <h3 style="margin:16px 0 8px;">🟥 ADD RED CARD</h3>
-      <div class="flex">
-        <input type="text" id="redPlayer" placeholder="Player name">
-        <input type="text" id="redTime" placeholder="Minute">
-        <button onclick="addRed()" style="margin-top:0;">Add</button>
+        <div><label>🏠 ${escapeHtml(m.homeTeam)} Score</label><input type="number" id="editHomeScore" value="${m.homeScore||0}"></div>
+        <div><label>✈️ ${escapeHtml(m.awayTeam)} Score</label><input type="number" id="editAwayScore" value="${m.awayScore||0}"></div>
+        <button onclick="updateMatch()">Update</button>
       </div>
 
       <hr>
+      <h3>⭐ MAN OF THE MATCH</h3>
+      <select id="motmSelect"><option value="">— Select player —</option>${allPlayers.map(p => `<option value="${escapeHtml(p.name)}" ${m.manOfTheMatch===p.name?'selected':''}>${escapeHtml(p.name)} (${p.position})</option>`).join('')}</select>
+      <button onclick="setMotm()">Set Man of the Match</button>
 
-      <div style="margin-top:12px;">
-        <strong>⚽ GOALS:</strong>
-        <div style="margin-top:6px;">${(m.scorers || []).map(s => `<span style="display:inline-block; background:#f0f0f0; padding:4px 8px; border-radius:20px; margin:3px;">${escapeHtml(s.name)} ${s.time}</span>`).join('') || '—'}</div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <strong>🟨 YELLOW CARDS:</strong>
-        <div style="margin-top:6px;">${(m.yellowCards || []).map(c => `<span style="display:inline-block; background:#fff0db; padding:4px 8px; border-radius:20px; margin:3px;">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
-      </div>
-
-      <div style="margin-top:12px;">
-        <strong>🟥 RED CARDS:</strong>
-        <div style="margin-top:6px;">${(m.redCards || []).map(c => `<span style="display:inline-block; background:#ffe0e0; padding:4px 8px; border-radius:20px; margin:3px;">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
-      </div>
-
-      <button class="delete-btn" onclick="deleteMatch()">🗑️ Delete This Match</button>
+      <hr>
+      <div class="flex"><div><h3>⚽ ADD GOAL</h3><input type="text" id="scorerName" placeholder="Player name"><input type="text" id="scorerTime" placeholder="Minute"><button onclick="addGoal()">Add</button></div></div>
+      <div class="flex"><div><h3>🟨 YELLOW CARD</h3><input type="text" id="yellowPlayer" placeholder="Player name"><input type="text" id="yellowTime" placeholder="Minute"><button onclick="addYellow()">Add</button></div></div>
+      <div class="flex"><div><h3>🟥 RED CARD</h3><input type="text" id="redPlayer" placeholder="Player name"><input type="text" id="redTime" placeholder="Minute"><button onclick="addRed()">Add</button></div></div>
+      <hr>
+      <h3>📋 LINE-UPS (with positions & numbers)</h3>
+      <div class="flex"><div><h4>${escapeHtml(m.homeTeam)}</h4><div id="homeLineupList">${homeLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('home','${escapeHtml(p.name)}')" style="background:none; color:#c8102e; padding:0 4px;">✖</button></div>`).join('')}</div><div class="flex"><input type="number" id="homePlayerNum" placeholder="#" style="width:70px"><input type="text" id="homePlayerName" placeholder="Name"><select id="homePlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('home')">Add</button></div></div>
+      <div><h4>${escapeHtml(m.awayTeam)}</h4><div id="awayLineupList">${awayLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('away','${escapeHtml(p.name)}')" style="background:none; color:#c8102e; padding:0 4px;">✖</button></div>`).join('')}</div><div class="flex"><input type="number" id="awayPlayerNum" placeholder="#" style="width:70px"><input type="text" id="awayPlayerName" placeholder="Name"><select id="awayPlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('away')">Add</button></div></div></div>
+      
+      <hr>
+      <div><strong>⚽ GOALS:</strong> ${(m.scorers || []).map(s => `<span class="player-item">${escapeHtml(s.name)} ${s.time}</span>`).join('') || '—'}</div>
+      <div><strong>🟨 YELLOW:</strong> ${(m.yellowCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
+      <div><strong>🟥 RED:</strong> ${(m.redCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
+      <button class="delete-btn" onclick="deleteMatch()">🗑️ Delete Match</button>
     `;
-    document.getElementById('matchEditor').innerHTML = editorHtml;
   }
 
   window.updateMatch = async () => {
@@ -245,15 +181,21 @@
     const homeScore = parseInt(document.getElementById('editHomeScore').value);
     const awayScore = parseInt(document.getElementById('editAwayScore').value);
     await update(ref(db, `matches/${currentMatchId}`), { period, status, homeScore, awayScore });
-    alert('Updated');
+    alert('Match updated');
+  };
+
+  window.setMotm = async () => {
+    const motm = document.getElementById('motmSelect').value;
+    await update(ref(db, `matches/${currentMatchId}`), { manOfTheMatch: motm || null });
+    alert('Man of the Match set');
   };
 
   window.addGoal = async () => {
     const name = document.getElementById('scorerName').value.trim();
-    const minute = document.getElementById('scorerTime').value.trim();
-    if (!name || !minute) return alert('Enter player name and minute');
+    const time = document.getElementById('scorerTime').value.trim();
+    if (!name || !time) return alert('Enter player name and minute');
     const scorers = [...(matches[currentMatchId].scorers || [])];
-    scorers.push({ name, time: minute });
+    scorers.push({ name, time });
     await update(ref(db, `matches/${currentMatchId}`), { scorers });
     document.getElementById('scorerName').value = '';
     document.getElementById('scorerTime').value = '';
@@ -262,11 +204,11 @@
 
   window.addYellow = async () => {
     const player = document.getElementById('yellowPlayer').value.trim();
-    const minute = document.getElementById('yellowTime').value.trim();
-    if (!player || !minute) return alert('Enter player name and minute');
-    const yellowCards = [...(matches[currentMatchId].yellowCards || [])];
-    yellowCards.push({ player, time: minute });
-    await update(ref(db, `matches/${currentMatchId}`), { yellowCards });
+    const time = document.getElementById('yellowTime').value.trim();
+    if (!player || !time) return alert('Enter player name and minute');
+    const cards = [...(matches[currentMatchId].yellowCards || [])];
+    cards.push({ player, time });
+    await update(ref(db, `matches/${currentMatchId}`), { yellowCards: cards });
     document.getElementById('yellowPlayer').value = '';
     document.getElementById('yellowTime').value = '';
     alert('Yellow card added');
@@ -274,18 +216,40 @@
 
   window.addRed = async () => {
     const player = document.getElementById('redPlayer').value.trim();
-    const minute = document.getElementById('redTime').value.trim();
-    if (!player || !minute) return alert('Enter player name and minute');
-    const redCards = [...(matches[currentMatchId].redCards || [])];
-    redCards.push({ player, time: minute });
-    await update(ref(db, `matches/${currentMatchId}`), { redCards });
+    const time = document.getElementById('redTime').value.trim();
+    if (!player || !time) return alert('Enter player name and minute');
+    const cards = [...(matches[currentMatchId].redCards || [])];
+    cards.push({ player, time });
+    await update(ref(db, `matches/${currentMatchId}`), { redCards: cards });
     document.getElementById('redPlayer').value = '';
     document.getElementById('redTime').value = '';
     alert('Red card added');
   };
 
+  window.addPlayer = async (team) => {
+    const num = document.getElementById(`${team}PlayerNum`).value.trim();
+    const name = document.getElementById(`${team}PlayerName`).value.trim();
+    const pos = document.getElementById(`${team}PlayerPos`).value;
+    if (!num || !name) return alert('Enter number and name');
+    const lineupKey = team === 'home' ? 'homeLineup' : 'awayLineup';
+    const current = [...(matches[currentMatchId][lineupKey] || [])];
+    current.push({ number: num, name, position: pos });
+    await update(ref(db, `matches/${currentMatchId}`), { [lineupKey]: current });
+    document.getElementById(`${team}PlayerNum`).value = '';
+    document.getElementById(`${team}PlayerName`).value = '';
+    loadEditor(currentMatchId);
+  };
+
+  window.removePlayer = async (team, playerName) => {
+    const lineupKey = team === 'home' ? 'homeLineup' : 'awayLineup';
+    const current = [...(matches[currentMatchId][lineupKey] || [])];
+    const updated = current.filter(p => p.name !== playerName);
+    await update(ref(db, `matches/${currentMatchId}`), { [lineupKey]: updated });
+    loadEditor(currentMatchId);
+  };
+
   window.deleteMatch = async () => {
-    if (!confirm(`Delete ${matches[currentMatchId].homeTeam} vs ${matches[currentMatchId].awayTeam}?`)) return;
+    if (!confirm('Delete this match?')) return;
     await remove(ref(db, `matches/${currentMatchId}`));
     alert('Match deleted');
   };
@@ -299,6 +263,7 @@
       homeTeam: home, awayTeam: away,
       homeScore: 0, awayScore: 0,
       scorers: [], yellowCards: [], redCards: [],
+      homeLineup: [], awayLineup: [],
       period: 'First half', status: 'Not started'
     });
     document.getElementById('newHomeTeam').value = '';
@@ -308,15 +273,9 @@
 
   function escapeHtml(str) {
     if (!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if (m === '&') return '&amp;';
-      if (m === '<') return '&lt;';
-      if (m === '>') return '&gt;';
-      return m;
-    });
+    return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m);
   }
 
-  // Update editor when dropdown changes
   document.getElementById('matchSelect').addEventListener('change', (e) => {
     if (e.target.value) loadEditor(e.target.value);
   });
