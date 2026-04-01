@@ -6,7 +6,7 @@
   <title>MEDSPHERE Live Score | Student Union Cup 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -16,121 +16,97 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f4f6fa;
-      color: #0a0c12;
+      background: #f5f7fc;
+      color: #1a2c3e;
       line-height: 1.4;
     }
 
-    /* Header with gradient */
+    /* Header */
     .hero {
-      background: linear-gradient(135deg, #b91c1c 0%, #7f1a1a 100%);
-      padding: 2rem 1.5rem;
+      background: linear-gradient(135deg, #c8102e 0%, #a00c26 100%);
+      padding: 1.8rem 1rem;
       text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.08) 1%, transparent 1%);
-      background-size: 40px 40px;
-      pointer-events: none;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
     }
 
     .hero h1 {
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: 800;
-      letter-spacing: -0.5px;
       color: white;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      letter-spacing: -0.3px;
     }
 
     .hero h1 span {
       font-weight: 500;
-      opacity: 0.95;
+      opacity: 0.9;
     }
 
-    .category-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.18);
-      backdrop-filter: blur(4px);
-      padding: 6px 18px;
-      border-radius: 40px;
-      margin-top: 12px;
-      font-size: 0.75rem;
+    .tournament-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 16px;
+      border-radius: 30px;
+      font-size: 0.7rem;
       font-weight: 600;
       color: white;
-      border: 1px solid rgba(255,255,255,0.2);
+      margin-top: 8px;
     }
 
     /* Matches container */
     .matches-container {
-      max-width: 850px;
-      margin: 2rem auto;
+      max-width: 800px;
+      margin: 1.8rem auto;
       padding: 0 1rem;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1.2rem;
     }
 
     /* Match card */
     .match-card {
       background: white;
-      border-radius: 24px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
-      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s;
       border: 1px solid #eef2f8;
     }
 
     .match-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 28px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
     }
 
-    /* Status row — left: period, right: status */
+    /* Status row */
     .status-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.7rem 1.25rem;
-      background: #fbfdfe;
+      padding: 0.8rem 1.2rem;
+      background: #fefefe;
       border-bottom: 1px solid #edf2f7;
     }
 
-    .period-badge {
+    .period {
       background: #c8102e;
       color: white;
-      padding: 5px 16px;
+      padding: 5px 20px;
       border-radius: 40px;
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       font-weight: 700;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
-    .status-badge {
-      background: #f0f4fa;
-      color: #2d3a4b;
-      padding: 5px 16px;
+    .status {
+      background: #eef2f8;
+      color: #2c3e50;
+      padding: 5px 20px;
       border-radius: 40px;
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       font-weight: 600;
     }
 
-    /* Score area */
-    .score-area {
+    /* Score section */
+    .score-section {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -146,19 +122,18 @@
     .team-name {
       font-weight: 700;
       font-size: 1rem;
-      color: #0f172a;
+      color: #1e2f3e;
       margin-bottom: 6px;
     }
 
     .team-score {
       font-size: 2rem;
       font-weight: 800;
-      color: #b91c1c;
-      line-height: 1;
+      color: #c8102e;
     }
 
-    .vs-circle {
-      background: #f0f4fa;
+    .vs-divider {
+      background: #eef2f8;
       width: 36px;
       height: 36px;
       display: flex;
@@ -167,65 +142,66 @@
       border-radius: 50%;
       font-weight: 700;
       font-size: 0.8rem;
-      color: #4a5b6e;
+      color: #5a6e7c;
     }
 
-    /* Details grid */
-    .details-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      padding: 0 1.25rem 1.25rem;
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: #eef2f8;
+      margin: 0 1rem 1rem;
+      border-radius: 16px;
+      overflow: hidden;
     }
 
-    .detail-card {
-      flex: 1;
-      min-width: 140px;
-      background: #fefcfa;
-      border-radius: 18px;
-      padding: 0.75rem 0.9rem;
-      border: 1px solid #f0e7e7;
+    .stat-card {
+      background: white;
+      padding: 0.8rem 0.5rem;
+      text-align: center;
     }
 
-    .detail-card h4 {
-      font-size: 0.7rem;
+    .stat-card h4 {
+      font-size: 0.65rem;
       font-weight: 700;
+      text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: #b91c1c;
+      color: #5a6e7c;
       margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    .detail-list {
+    .stat-list {
       list-style: none;
       padding: 0;
+      font-size: 0.7rem;
     }
 
-    .detail-list li {
-      font-size: 0.75rem;
-      padding: 5px 0;
+    .stat-list li {
+      padding: 3px 0;
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: #1f2a3e;
-      border-bottom: 1px dashed #f0e0e0;
-    }
-
-    .detail-list li:last-child {
-      border-bottom: none;
+      justify-content: center;
+      gap: 6px;
+      color: #2c3e50;
     }
 
     .goal-marker { color: #16a34a; font-weight: 600; }
-    .yellow-marker { color: #eab308; }
-    .red-marker { color: #dc2626; }
+    .yellow-marker { color: #eab308; font-weight: 600; }
+    .red-marker { color: #dc2626; font-weight: 600; }
     .event-marker { color: #3b82f6; }
+
+    .empty-stats {
+      color: #9aaebf;
+      font-style: italic;
+      font-size: 0.7rem;
+      padding: 4px 0;
+    }
 
     /* Line-ups section */
     .lineup-section {
-      padding: 0 1.25rem 1.25rem;
-      border-top: 1px solid #f0f0f0;
+      padding: 0 1rem 1rem;
+      border-top: 1px solid #eef2f8;
       margin-top: 0.5rem;
     }
 
@@ -238,16 +214,16 @@
 
     .lineup-box {
       background: #fafcff;
-      border-radius: 16px;
-      padding: 0.8rem;
-      border: 1px solid #ecf3fa;
+      border-radius: 14px;
+      padding: 0.7rem;
+      border: 1px solid #eef2f8;
     }
 
     .lineup-box h4 {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #c8102e;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .lineup-list {
@@ -258,54 +234,47 @@
     }
 
     .lineup-list li {
-      padding: 4px 0;
-      border-bottom: 1px dashed #eef2f6;
+      padding: 3px 0;
     }
 
     /* No matches */
     .no-matches {
       text-align: center;
-      padding: 2.5rem;
+      padding: 2rem;
       background: white;
-      border-radius: 28px;
-      color: #6c7a91;
-      font-weight: 500;
+      border-radius: 24px;
+      color: #6c7a8e;
     }
 
     /* Footer */
     footer {
       text-align: center;
-      padding: 1.6rem;
+      padding: 1.5rem;
       font-size: 0.7rem;
-      color: #6f7c93;
+      color: #6f7c8f;
       border-top: 1px solid #eef2f8;
-      margin-top: 2.5rem;
+      margin-top: 2rem;
       background: white;
     }
 
     footer strong {
-      color: #b91c1c;
+      color: #c8102e;
     }
 
-    @media (max-width: 650px) {
+    @media (max-width: 600px) {
       .hero h1 { font-size: 1.4rem; }
       .team-score { font-size: 1.5rem; }
       .team-name { font-size: 0.85rem; }
-      .details-grid { flex-direction: column; gap: 0.75rem; }
+      .stats-grid { margin: 0 0.8rem 0.8rem; }
       .lineup-grid { grid-template-columns: 1fr; }
-      .status-row { flex-direction: column; gap: 6px; align-items: stretch; text-align: center; }
-      .period-badge, .status-badge { text-align: center; }
+      .status-row { flex-direction: column; gap: 6px; text-align: center; }
     }
   </style>
 </head>
 <body>
   <div class="hero">
-    <div class="hero-content">
-      <h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1>
-      <div class="category-badge">
-        🏆 STUDENT UNION CUP 2026
-      </div>
-    </div>
+    <h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1>
+    <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
   </div>
 
   <main>
@@ -349,7 +318,7 @@
     function renderMatches(matches) {
       const container = document.getElementById('matchesList');
       if (!matches || Object.keys(matches).length === 0) {
-        container.innerHTML = '<div class="no-matches">🏟️ No matches scheduled yet. Check back later.</div>';
+        container.innerHTML = '<div class="no-matches">🏟️ No matches scheduled yet.</div>';
         return;
       }
 
@@ -357,59 +326,58 @@
       container.innerHTML = matchesArray.map(match => `
         <div class="match-card">
           <div class="status-row">
-            <span class="period-badge">${escapeHtml(match.period || 'First half')}</span>
-            <span class="status-badge">${escapeHtml(match.status || 'Not started')}</span>
+            <div class="period">${escapeHtml(match.period || 'First half')}</div>
+            <div class="status">${escapeHtml(match.status || 'Not started')}</div>
           </div>
-          <div class="score-area">
+          <div class="score-section">
             <div class="team">
               <div class="team-name">${escapeHtml(match.homeTeam)}</div>
               <div class="team-score">${match.homeScore || 0}</div>
             </div>
-            <div class="vs-circle">VS</div>
+            <div class="vs-divider">VS</div>
             <div class="team">
               <div class="team-name">${escapeHtml(match.awayTeam)}</div>
               <div class="team-score">${match.awayScore || 0}</div>
             </div>
           </div>
-          <div class="details-grid">
-            <div class="detail-card">
+
+          <!-- STATS GRID -->
+          <div class="stats-grid">
+            <div class="stat-card">
               <h4>⚽ GOALS</h4>
-              <ul class="detail-list">
-                ${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} <span style="color:#5f6c84;">${s.time}</span></li>`).join('')}
+              <ul class="stat-list">
+                ${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} <span style="color:#6c7a8e;">${s.time}</span></li>`).join('') || '<li class="empty-stats">— No goals —</li>'}
               </ul>
             </div>
-            <div class="detail-card">
-              <h4>🟨 YELLOW</h4>
-              <ul class="detail-list">
-                ${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} <span style="color:#5f6c84;">${c.time}</span></li>`).join('')}
+            <div class="stat-card">
+              <h4>🟨 BOOKINGS</h4>
+              <ul class="stat-list">
+                ${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} <span style="color:#6c7a8e;">${c.time}</span></li>`).join('') || '<li class="empty-stats">— None —</li>'}
+                ${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} <span style="color:#6c7a8e;">${c.time}</span></li>`).join('')}
               </ul>
             </div>
-            <div class="detail-card">
-              <h4>🟥 RED</h4>
-              <ul class="detail-list">
-                ${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} <span style="color:#5f6c84;">${c.time}</span></li>`).join('')}
-              </ul>
-            </div>
-            <div class="detail-card">
+            <div class="stat-card">
               <h4>📋 EVENTS</h4>
-              <ul class="detail-list">
-                ${(match.events || []).map(e => `<li><span class="event-marker">📌</span> ${escapeHtml(e)}</li>`).join('')}
+              <ul class="stat-list">
+                ${(match.events || []).map(e => `<li><span class="event-marker">📌</span> ${escapeHtml(e)}</li>`).join('') || '<li class="empty-stats">— No events —</li>'}
               </ul>
             </div>
           </div>
+
+          <!-- LINE-UPS (if any) -->
           ${(match.homeLineup?.length || match.awayLineup?.length) ? `
           <div class="lineup-section">
             <div class="lineup-grid">
               <div class="lineup-box">
-                <h4>📋 ${escapeHtml(match.homeTeam)} Starting XI</h4>
+                <h4>📋 ${escapeHtml(match.homeTeam)} XI</h4>
                 <ul class="lineup-list">
-                  ${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('') || '<li style="color:#aaa;">No line-up added</li>'}
+                  ${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('') || '<li>—</li>'}
                 </ul>
               </div>
               <div class="lineup-box">
-                <h4>📋 ${escapeHtml(match.awayTeam)} Starting XI</h4>
+                <h4>📋 ${escapeHtml(match.awayTeam)} XI</h4>
                 <ul class="lineup-list">
-                  ${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('') || '<li style="color:#aaa;">No line-up added</li>'}
+                  ${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('') || '<li>—</li>'}
                 </ul>
               </div>
             </div>
