@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Student Union Cup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: #f0f2f5;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      padding: 2rem 1rem;
+    }
+    .admin-container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 1.8rem;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e9ecef;
+    }
+    h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #c8102e;
+      margin-bottom: 1.2rem;
+      border-left: 4px solid #c8102e;
+      padding-left: 12px;
+    }
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 1.2rem 0 0.8rem;
+      color: #1e293b;
+    }
+    .form-row {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #5a6874;
+    }
+    input, select {
+      padding: 10px 12px;
+      border: 1px solid #d4dce4;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: white;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #c8102e;
+    }
+    button {
+      background: #c8102e;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 6px;
+    }
+    button:hover {
+      background: #a00c26;
+    }
+    .btn-secondary {
+      background: #334155;
+    }
+    .btn-secondary:hover {
+      background: #1e293b;
+    }
+    .match-preview {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 1.2rem;
+      margin-top: 1rem;
+      border: 1px solid #e2e8f0;
+    }
+    .match-preview h4 {
+      margin-bottom: 1rem;
+      color: #c8102e;
+    }
+    hr {
+      margin: 1rem 0;
+      border: none;
+      border-top: 1px solid #e9ecef;
+    }
+    select {
+      cursor: pointer;
+    }
+    .loading {
+      text-align: center;
+      padding: 1rem;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+<div class="admin-container">
+  <div class="card">
+    <h2>➕ CREATE MATCH</h2>
+    <div class="form-row">
+      <label>Home Team</label>
+      <input type="text" id="newHomeTeam" placeholder="e.g., White Walkers">
+    </div>
+    <div class="form-row">
+      <label>Away Team</label>
+      <input type="text" id="newAwayTeam" placeholder="e.g., Whala">
+    </div>
+    <button onclick="createMatch()">Create Match</button>
+  </div>
+
+  <div class="card">
+    <h2>✏️ EDIT MATCH</h2>
+    <div class="form-row">
+      <label>Select Match</label>
+      <select id="matchSelect">
+        <option value="">Loading matches...</option>
+      </select>
+    </div>
+    <div id="editArea"></div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getDatabase, ref, set, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB8Lgw7WzFuCBw5OaYTQebQ8I4JgjuohFU",
+    authDomain: "medsphere-c794d.firebaseapp.com",
+    projectId: "medsphere-c794d",
+    storageBucket: "medsphere-c794d.firebasestorage.app",
+    messagingSenderId: "962864542783",
+    appId: "1:962864542783:web:b59e6abda9c6f1a9fc348a",
+    measurementId: "G-HPQ46648M4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const matchesRef = ref(db, 'matches');
+
+  let matches = {};
+  let currentMatchId = null;
+
+  // Load matches from Firebase
+  onValue(matchesRef, (snapshot) => {
+    matches = snapshot.val() || {};
+    const select = document.getElementById('matchSelect');
+    const options = Object.keys(matches).map(key => `<option value="${key}">${matches[key].homeTeam} vs ${matches[key].awayTeam}</option>`).join('');
+    select.innerHTML = options || '<option value="">No matches yet. Create one.</option>';
+    if (options && !currentMatchId) {
+      select.value = Object.keys(matches)[0];
+      loadMatchToEdit(Object.keys(matches)[0]);
+    } else if (currentMatchId && matches[currentMatchId]) {
+      select.value = currentMatchId;
+      loadMatchToEdit(currentMatchId);
+    } else if (Object.keys(matches).length === 0) {
+      document.getElementById('editArea').innerHTML = '<p style="color:#999; margin-top:1rem;">No matches yet. Create one.</p>';
+    }
+  });
+
+  function loadMatchToEdit(matchId) {
+    currentMatchId = matchId;
+    const match = matches[matchId];
+    if (!match) return;
+    document.getElementById('editArea').innerHTML = `
+      <div class="match-preview">
+        <h4>⚽ ${escapeHtml(match.homeTeam)} vs ${escapeHtml(match.awayTeam)}</h4>
+        
+        <div class="form-row">
+          <label>Match Status</label>
+          <select id="editStatus">
+            <option ${match.matchStatus === 'Not started' ? 'selected' : ''}>Not started</option>
+            <option ${match.matchStatus === 'First half' ? 'selected' : ''}>First half</option>
+            <option ${match.matchStatus === 'Half time' ? 'selected' : ''}>Half time</option>
+            <option ${match.matchStatus === 'Second half' ? 'selected' : ''}>Second half</option>
+            <option ${match.matchStatus === 'Full time' ? 'selected' : ''}>Full time</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Match Time</label>
+          <select id="editTime">
+            <option ${match.matchTime === 'Not started' ? 'selected' : ''}>Not started</option>
+            <option ${match.matchTime === 'First half' ? 'selected' : ''}>First half</option>
+            <option ${match.matchTime === 'Half time' ? 'selected' : ''}>Half time</option>
+            <option ${match.matchTime === 'Second half' ? 'selected' : ''}>Second half</option>
+            <option ${match.matchTime === 'Full time' ? 'selected' : ''}>Full time</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>🏠 ${match.homeTeam} Score</label>
+          <input type="number" id="editHomeScore" value="${match.homeScore || 0}">
+        </div>
+        <div class="form-row">
+          <label>✈️ ${match.awayTeam} Score</label>
+          <input type="number" id="editAwayScore" value="${match.awayScore || 0}">
+        </div>
+        <button onclick="updateScores()">Update Score</button>
+
+        <hr>
+
+        <h3>⚽ ADD GOAL SCORER</h3>
+        <div class="form-row"><input type="text" id="scorerName" placeholder="Player name"></div>
+        <div class="form-row"><input type="text" id="scorerTime" placeholder="Minute (e.g., 35')"></div>
+        <button onclick="addScorer()">Add Goal</button>
+
+        <h3>🟨 ADD YELLOW CARD</h3>
+        <div class="form-row"><input type="text" id="yellowPlayer" placeholder="Player name"></div>
+        <div class="form-row"><input type="text" id="yellowTime" placeholder="Minute"></div>
+        <button onclick="addYellowCard()">Add Yellow Card</button>
+
+        <h3>🟥 ADD RED CARD</h3>
+        <div class="form-row"><input type="text" id="redPlayer" placeholder="Player name"></div>
+        <div class="form-row"><input type="text" id="redTime" placeholder="Minute"></div>
+        <button onclick="addRedCard()">Add Red Card</button>
+
+        <h3>📋 ADD EVENT</h3>
+        <div class="form-row"><input type="text" id="eventText" placeholder="e.g., Injury time +3"></div>
+        <button onclick="addEvent()">Add Event</button>
+
+        <button class="btn-secondary" onclick="resetMatch()" style="margin-top: 16px;">🗑️ Reset Match</button>
+      </div>
+    `;
+  }
+
+  window.updateScores = async () => {
+    const match = matches[currentMatchId];
+    const newStatus = document.getElementById('editStatus').value;
+    const newTime = document.getElementById('editTime').value;
+    const homeScore = parseInt(document.getElementById('editHomeScore').value);
+    const awayScore = parseInt(document.getElementById('editAwayScore').value);
+    await update(ref(db, `matches/${currentMatchId}`), {
+      matchStatus: newStatus,
+      matchTime: newTime,
+      homeScore: homeScore,
+      awayScore: awayScore
+    });
+    alert('Score updated');
+  };
+
+  window.addScorer = async () => {
+    const name = document.getElementById('scorerName').value;
+    const minute = document.getElementById('scorerTime').value;
+    if (!name || !minute) return alert('Enter player name and minute');
+    const scorers = matches[currentMatchId].scorers || [];
+    scorers.push({ name, time: minute });
+    await update(ref(db, `matches/${currentMatchId}`), { scorers: scorers });
+    document.getElementById('scorerName').value = '';
+    document.getElementById('scorerTime').value = '';
+    alert('Goal added');
+  };
+
+  window.addYellowCard = async () => {
+    const player = document.getElementById('yellowPlayer').value;
+    const minute = document.getElementById('yellowTime').value;
+    if (!player || !minute) return alert('Enter player name and minute');
+    const yellowCards = matches[currentMatchId].yellowCards || [];
+    yellowCards.push({ player, time: minute });
+    await update(ref(db, `matches/${currentMatchId}`), { yellowCards: yellowCards });
+    document.getElementById('yellowPlayer').value = '';
+    document.getElementById('yellowTime').value = '';
+    alert('Yellow card added');
+  };
+
+  window.addRedCard = async () => {
+    const player = document.getElementById('redPlayer').value;
+    const minute = document.getElementById('redTime').value;
+    if (!player || !minute) return alert('Enter player name and minute');
+    const redCards = matches[currentMatchId].redCards || [];
+    redCards.push({ player, time: minute });
+    await update(ref(db, `matches/${currentMatchId}`), { redCards: redCards });
+    document.getElementById('redPlayer').value = '';
+    document.getElementById('redTime').value = '';
+    alert('Red card added');
+  };
+
+  window.addEvent = async () => {
+    const text = document.getElementById('eventText').value;
+    if (!text) return alert('Enter event details');
+    const events = matches[currentMatchId].events || [];
+    events.push(text);
+    await update(ref(db, `matches/${currentMatchId}`), { events: events });
+    document.getElementById('eventText').value = '';
+    alert('Event added');
+  };
+
+  window.resetMatch = async () => {
+    if (!confirm('Reset all match data?')) return;
+    await update(ref(db, `matches/${currentMatchId}`), {
+      homeScore: 0,
+      awayScore: 0,
+      scorers: [],
+      yellowCards: [],
+      redCards: [],
+      events: [],
+      matchStatus: 'Not started',
+      matchTime: 'Not started'
+    });
+    alert('Match reset');
+  };
+
+  window.createMatch = async () => {
+    const home = document.getElementById('newHomeTeam').value.trim();
+    const away = document.getElementById('newAwayTeam').value.trim();
+    if (!home || !away) return alert('Enter both team names');
+    const newMatchRef = push(ref(db, 'matches'));
+    await set(newMatchRef, {
+      homeTeam: home,
+      awayTeam: away,
+      homeScore: 0,
+      awayScore: 0,
+      scorers: [],
+      yellowCards: [],
+      redCards: [],
+      events: [],
+      matchStatus: 'Not started',
+      matchTime: 'Not started'
+    });
+    document.getElementById('newHomeTeam').value = '';
+    document.getElementById('newAwayTeam').value = '';
+    alert('Match created');
+  };
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  window.loadMatchToEdit = loadMatchToEdit;
+</script>
+</body>
+</html>
