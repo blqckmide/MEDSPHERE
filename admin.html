@@ -5,21 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin | Student Union Cup</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       background: linear-gradient(135deg, #f5f7fc 0%, #edf2f9 100%);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       padding: 2rem 1rem;
       min-height: 100vh;
     }
-    .admin-container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
+    .admin-container { max-width: 800px; margin: 0 auto; }
     .card {
       background: rgba(255, 255, 255, 0.98);
       border-radius: 28px;
@@ -28,33 +21,10 @@
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
       border: 1px solid rgba(200, 16, 46, 0.15);
     }
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #c8102e;
-      margin-bottom: 1.2rem;
-      border-left: 5px solid #c8102e;
-      padding-left: 14px;
-    }
-    h3 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin: 1rem 0 0.6rem;
-      color: #1e293b;
-    }
-    .form-row {
-      margin-bottom: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #5f6c84;
-    }
+    h2 { font-size: 1.5rem; font-weight: 700; color: #c8102e; margin-bottom: 1.2rem; border-left: 5px solid #c8102e; padding-left: 14px; }
+    h3 { font-size: 0.9rem; font-weight: 700; margin: 1rem 0 0.6rem; color: #1e293b; }
+    .form-row { margin-bottom: 1rem; display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #5f6c84; }
     input, select {
       padding: 10px 14px;
       border: 1px solid #e2e8f0;
@@ -63,11 +33,7 @@
       font-family: inherit;
       background: white;
     }
-    input:focus, select:focus {
-      outline: none;
-      border-color: #c8102e;
-      box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1);
-    }
+    input:focus, select:focus { outline: none; border-color: #c8102e; box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.1); }
     button {
       background: #c8102e;
       color: white;
@@ -80,72 +46,20 @@
       transition: all 0.2s;
       margin-top: 4px;
     }
-    button:hover {
-      background: #a00c26;
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background: #334155;
-    }
-    .btn-secondary:hover {
-      background: #1e293b;
-    }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #c8102e;
-      color: #c8102e;
-    }
-    .btn-outline:hover {
-      background: #c8102e;
-      color: white;
-    }
-    .match-preview {
-      background: #fefefe;
-      border-radius: 24px;
-      padding: 1.2rem;
-      margin-top: 1rem;
-      border: 1px solid #eef2f8;
-    }
-    .flex-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-      align-items: flex-end;
-    }
-    .flex-row input, .flex-row select {
-      flex: 1;
-    }
-    hr {
-      margin: 1rem 0;
-      border-top: 1px solid #ecf3fa;
-    }
-    .team-name-display {
-      font-weight: 700;
-      font-size: 1rem;
-      margin: 0 0 12px 0;
-      color: #c8102e;
-      text-align: center;
-    }
-    .lineup-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-top: 0.5rem;
-    }
-    .lineup-box {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 0.8rem;
-    }
-    .lineup-box h4 {
-      margin-bottom: 8px;
-      color: #c8102e;
-      font-size: 0.8rem;
-    }
-    @media (max-width: 700px) {
-      .lineup-grid { grid-template-columns: 1fr; }
-    }
+    button:hover { background: #a00c26; transform: translateY(-1px); }
+    .btn-secondary { background: #334155; }
+    .btn-secondary:hover { background: #1e293b; }
+    .btn-outline { background: transparent; border: 1px solid #c8102e; color: #c8102e; }
+    .btn-outline:hover { background: #c8102e; color: white; }
+    .match-preview { background: #fefefe; border-radius: 24px; padding: 1.2rem; margin-top: 1rem; border: 1px solid #eef2f8; }
+    .flex-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; align-items: flex-end; }
+    .flex-row input, .flex-row select { flex: 1; }
+    hr { margin: 1rem 0; border-top: 1px solid #ecf3fa; }
+    .team-name-display { font-weight: 700; font-size: 1rem; margin: 0 0 12px 0; color: #c8102e; text-align: center; }
+    .lineup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem; }
+    .lineup-box { background: #f8fafc; border-radius: 16px; padding: 0.8rem; }
+    .lineup-box h4 { margin-bottom: 8px; color: #c8102e; font-size: 0.8rem; }
+    @media (max-width: 700px) { .lineup-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -223,96 +137,39 @@
         </div>
 
         <div class="flex-row">
-          <div class="form-row" style="flex:1">
-            <label>Period</label>
-            <select id="editPeriod">
-              <option ${match.period === 'First half' ? 'selected' : ''}>First half</option>
-              <option ${match.period === 'Half time' ? 'selected' : ''}>Half time</option>
-              <option ${match.period === 'Second half' ? 'selected' : ''}>Second half</option>
-              <option ${match.period === 'Full time' ? 'selected' : ''}>Full time</option>
-            </select>
-          </div>
-          <div class="form-row" style="flex:1">
-            <label>Status</label>
-            <select id="editStatus">
-              <option ${match.status === 'Not started' ? 'selected' : ''}>Not started</option>
-              <option ${match.status === 'Started' ? 'selected' : ''}>Started</option>
-              <option ${match.status === 'Ended' ? 'selected' : ''}>Ended</option>
-            </select>
-          </div>
+          <div class="form-row" style="flex:1"><label>Period</label><select id="editPeriod"><option ${match.period === 'First half' ? 'selected' : ''}>First half</option><option ${match.period === 'Half time' ? 'selected' : ''}>Half time</option><option ${match.period === 'Second half' ? 'selected' : ''}>Second half</option><option ${match.period === 'Full time' ? 'selected' : ''}>Full time</option></select></div>
+          <div class="form-row" style="flex:1"><label>Status</label><select id="editStatus"><option ${match.status === 'Not started' ? 'selected' : ''}>Not started</option><option ${match.status === 'Started' ? 'selected' : ''}>Started</option><option ${match.status === 'Ended' ? 'selected' : ''}>Ended</option></select></div>
         </div>
 
         <div class="flex-row">
-          <div class="form-row" style="flex:1">
-            <label>🏠 ${escapeHtml(match.homeTeam)} Score</label>
-            <input type="number" id="editHomeScore" value="${match.homeScore || 0}">
-          </div>
-          <div class="form-row" style="flex:1">
-            <label>✈️ ${escapeHtml(match.awayTeam)} Score</label>
-            <input type="number" id="editAwayScore" value="${match.awayScore || 0}">
-          </div>
+          <div class="form-row" style="flex:1"><label>🏠 ${escapeHtml(match.homeTeam)} Score</label><input type="number" id="editHomeScore" value="${match.homeScore || 0}"></div>
+          <div class="form-row" style="flex:1"><label>✈️ ${escapeHtml(match.awayTeam)} Score</label><input type="number" id="editAwayScore" value="${match.awayScore || 0}"></div>
           <button onclick="updateMatchInfo()">Update Score & Status</button>
         </div>
 
         <hr>
 
         <h3>⚽ ADD GOAL SCORER</h3>
-        <div class="flex-row">
-          <input type="text" id="scorerName" placeholder="Player name">
-          <input type="text" id="scorerTime" placeholder="Minute">
-          <button onclick="addScorer()">Add Goal</button>
-        </div>
+        <div class="flex-row"><input type="text" id="scorerName" placeholder="Player name"><input type="text" id="scorerTime" placeholder="Minute"><button onclick="addScorer()">Add Goal</button></div>
 
         <h3>🟨 ADD YELLOW CARD</h3>
-        <div class="flex-row">
-          <input type="text" id="yellowPlayer" placeholder="Player name">
-          <input type="text" id="yellowTime" placeholder="Minute">
-          <button onclick="addYellowCard()">Add Yellow Card</button>
-        </div>
+        <div class="flex-row"><input type="text" id="yellowPlayer" placeholder="Player name"><input type="text" id="yellowTime" placeholder="Minute"><button onclick="addYellowCard()">Add Yellow Card</button></div>
 
         <h3>🟥 ADD RED CARD</h3>
-        <div class="flex-row">
-          <input type="text" id="redPlayer" placeholder="Player name">
-          <input type="text" id="redTime" placeholder="Minute">
-          <button onclick="addRedCard()">Add Red Card</button>
-        </div>
-
-        <h3>📋 ADD EVENT</h3>
-        <div class="flex-row">
-          <input type="text" id="eventText" placeholder="Match event">
-          <button onclick="addEvent()">Add Event</button>
-        </div>
+        <div class="flex-row"><input type="text" id="redPlayer" placeholder="Player name"><input type="text" id="redTime" placeholder="Minute"><button onclick="addRedCard()">Add Red Card</button></div>
 
         <hr>
 
         <h3>📋 LINE-UPS (Starting XI)</h3>
         <div class="lineup-grid">
-          <div class="lineup-box">
-            <h4>${escapeHtml(match.homeTeam)}</h4>
-            <div id="homeLineupList">
-              ${(match.homeLineup || []).map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('home', '${escapeHtml(p)}')">✖</button></div>`).join('')}
-            </div>
-            <div class="flex-row" style="margin-top:8px">
-              <input type="text" id="newHomePlayer" placeholder="Player name">
-              <button onclick="addToLineup('home')">Add</button>
-            </div>
-          </div>
-          <div class="lineup-box">
-            <h4>${escapeHtml(match.awayTeam)}</h4>
-            <div id="awayLineupList">
-              ${(match.awayLineup || []).map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('away', '${escapeHtml(p)}')">✖</button></div>`).join('')}
-            </div>
-            <div class="flex-row" style="margin-top:8px">
-              <input type="text" id="newAwayPlayer" placeholder="Player name">
-              <button onclick="addToLineup('away')">Add</button>
-            </div>
-          </div>
+          <div class="lineup-box"><h4>${escapeHtml(match.homeTeam)}</h4><div id="homeLineupList">${(match.homeLineup || []).map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('home', '${escapeHtml(p)}')">✖</button></div>`).join('')}</div><div class="flex-row" style="margin-top:8px"><input type="text" id="newHomePlayer" placeholder="Player name"><button onclick="addToLineup('home')">Add</button></div></div>
+          <div class="lineup-box"><h4>${escapeHtml(match.awayTeam)}</h4><div id="awayLineupList">${(match.awayLineup || []).map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('away', '${escapeHtml(p)}')">✖</button></div>`).join('')}</div><div class="flex-row" style="margin-top:8px"><input type="text" id="newAwayPlayer" placeholder="Player name"><button onclick="addToLineup('away')">Add</button></div></div>
         </div>
 
         <hr>
 
         <div class="flex-row" style="justify-content:flex-end">
-          <button class="btn-secondary" onclick="deleteMatch()">🗑️ Delete Match</button>
+          <button class="btn-secondary" onclick="deleteMatch()">🗑️ Delete This Match</button>
         </div>
       </div>
     `;
@@ -323,13 +180,8 @@
     const status = document.getElementById('editStatus').value;
     const homeScore = parseInt(document.getElementById('editHomeScore').value);
     const awayScore = parseInt(document.getElementById('editAwayScore').value);
-    await update(ref(db, `matches/${currentMatchId}`), {
-      period: period,
-      status: status,
-      homeScore: homeScore,
-      awayScore: awayScore
-    });
-    alert('Score & status updated');
+    await update(ref(db, `matches/${currentMatchId}`), { period, status, homeScore, awayScore });
+    alert('Match updated');
   };
 
   window.addScorer = async () => {
@@ -368,16 +220,6 @@
     alert('Red card added');
   };
 
-  window.addEvent = async () => {
-    const text = document.getElementById('eventText').value.trim();
-    if (!text) return alert('Enter event details');
-    const events = [...(matches[currentMatchId].events || [])];
-    events.push(text);
-    await update(ref(db, `matches/${currentMatchId}`), { events });
-    document.getElementById('eventText').value = '';
-    alert('Event added');
-  };
-
   window.addToLineup = async (team) => {
     const inputId = team === 'home' ? 'newHomePlayer' : 'newAwayPlayer';
     const player = document.getElementById(inputId).value.trim();
@@ -399,7 +241,7 @@
   };
 
   window.deleteMatch = async () => {
-    if (!confirm('Permanently delete this match?')) return;
+    if (!confirm('Delete this match permanently?')) return;
     await remove(ref(db, `matches/${currentMatchId}`));
     currentMatchId = null;
     alert('Match deleted');
@@ -411,18 +253,11 @@
     if (!home || !away) return alert('Enter both team names');
     const newMatchRef = push(ref(db, 'matches'));
     await set(newMatchRef, {
-      homeTeam: home,
-      awayTeam: away,
-      homeScore: 0,
-      awayScore: 0,
-      scorers: [],
-      yellowCards: [],
-      redCards: [],
-      events: [],
-      homeLineup: [],
-      awayLineup: [],
-      period: 'First half',
-      status: 'Not started'
+      homeTeam: home, awayTeam: away,
+      homeScore: 0, awayScore: 0,
+      scorers: [], yellowCards: [], redCards: [],
+      homeLineup: [], awayLineup: [],
+      period: 'First half', status: 'Not started'
     });
     document.getElementById('newHomeTeam').value = '';
     document.getElementById('newAwayTeam').value = '';
