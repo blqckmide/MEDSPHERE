@@ -64,14 +64,23 @@
     hr { margin: 16px 0; border-top: 1px solid #ecf3fa; }
     .player-item {
       background: #f8fafc;
-      padding: 6px 10px;
+      padding: 6px 12px;
       border-radius: 30px;
       display: inline-block;
       margin: 4px;
       font-size: 0.75rem;
+      border: 1px solid #e2e8f0;
     }
     .delete-btn { background: #6c757d; margin-top: 20px; }
     .delete-btn:hover { background: #5a6268; }
+    .player-list-area {
+      background: #fafcff;
+      border-radius: 20px;
+      padding: 12px;
+      margin-top: 8px;
+      border: 1px solid #eef2f8;
+      min-height: 80px;
+    }
   </style>
 </head>
 <body>
@@ -136,8 +145,8 @@
     const m = matches[matchId];
     if (!m) return;
 
-    const homeLineup = m.homeLineup || [];
-    const awayLineup = m.awayLineup || [];
+    const homeLineup = (m.homeLineup || []).filter(p => p && p.name && p.name.trim() !== '');
+    const awayLineup = (m.awayLineup || []).filter(p => p && p.name && p.name.trim() !== '');
     const allPlayers = [...homeLineup, ...awayLineup];
 
     document.getElementById('matchEditor').innerHTML = `
@@ -155,18 +164,43 @@
 
       <hr>
       <h3>⭐ MAN OF THE MATCH</h3>
-      <select id="motmSelect"><option value="">— Select player —</option>${allPlayers.map(p => `<option value="${escapeHtml(p.name)}" ${m.manOfTheMatch===p.name?'selected':''}>${escapeHtml(p.name)} (${p.position})</option>`).join('')}</select>
+      <select id="motmSelect"><option value="">— Select player —</option>${allPlayers.map(p => `<option value="${escapeHtml(p.name)}" ${m.manOfTheMatch===p.name?'selected':''}>${p.number}. ${escapeHtml(p.name)} (${p.position})</option>`).join('')}</select>
       <button onclick="setMotm()">Set Man of the Match</button>
 
       <hr>
       <div class="flex"><div><h3>⚽ ADD GOAL</h3><input type="text" id="scorerName" placeholder="Player name"><input type="text" id="scorerTime" placeholder="Minute"><button onclick="addGoal()">Add</button></div></div>
       <div class="flex"><div><h3>🟨 YELLOW CARD</h3><input type="text" id="yellowPlayer" placeholder="Player name"><input type="text" id="yellowTime" placeholder="Minute"><button onclick="addYellow()">Add</button></div></div>
       <div class="flex"><div><h3>🟥 RED CARD</h3><input type="text" id="redPlayer" placeholder="Player name"><input type="text" id="redTime" placeholder="Minute"><button onclick="addRed()">Add</button></div></div>
+      
       <hr>
       <h3>📋 LINE-UPS (with positions & numbers)</h3>
-      <div class="flex"><div><h4>${escapeHtml(m.homeTeam)}</h4><div id="homeLineupList">${homeLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('home','${escapeHtml(p.name)}')" style="background:none; color:#c8102e; padding:0 4px;">✖</button></div>`).join('')}</div><div class="flex"><input type="number" id="homePlayerNum" placeholder="#" style="width:70px"><input type="text" id="homePlayerName" placeholder="Name"><select id="homePlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('home')">Add</button></div></div>
-      <div><h4>${escapeHtml(m.awayTeam)}</h4><div id="awayLineupList">${awayLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('away','${escapeHtml(p.name)}')" style="background:none; color:#c8102e; padding:0 4px;">✖</button></div>`).join('')}</div><div class="flex"><input type="number" id="awayPlayerNum" placeholder="#" style="width:70px"><input type="text" id="awayPlayerName" placeholder="Name"><select id="awayPlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('away')">Add</button></div></div></div>
-      
+      <div class="flex">
+        <div>
+          <h4>${escapeHtml(m.homeTeam)}</h4>
+          <div class="player-list-area" id="homeLineupList">
+            ${homeLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('home','${escapeHtml(p.name)}')" style="background:none; color:#c8102e; padding:0 4px; margin-left:6px;">✖</button></div>`).join('') || '<span style="color:#9aaebf;">No players added</span>'}
+          </div>
+          <div class="flex" style="margin-top:12px;">
+            <input type="number" id="homePlayerNum" placeholder="#" style="width:70px">
+            <input type="text" id="homePlayerName" placeholder="Name">
+            <select id="homePlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select>
+            <button onclick="addPlayer('home')">Add</button>
+          </div>
+        </div>
+        <div>
+          <h4>${escapeHtml(m.awayTeam)}</h4>
+          <div class="player-list-area" id="awayLineupList">
+            ${awayLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('away','${escapeHtml(p.name)}')" style="background:none; color:#c8102e; padding:0 4px; margin-left:6px;">✖</button></div>`).join('') || '<span style="color:#9aaebf;">No players added</span>'}
+          </div>
+          <div class="flex" style="margin-top:12px;">
+            <input type="number" id="awayPlayerNum" placeholder="#" style="width:70px">
+            <input type="text" id="awayPlayerName" placeholder="Name">
+            <select id="awayPlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select>
+            <button onclick="addPlayer('away')">Add</button>
+          </div>
+        </div>
+      </div>
+
       <hr>
       <div><strong>⚽ GOALS:</strong> ${(m.scorers || []).map(s => `<span class="player-item">${escapeHtml(s.name)} ${s.time}</span>`).join('') || '—'}</div>
       <div><strong>🟨 YELLOW:</strong> ${(m.yellowCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
@@ -232,7 +266,7 @@
     const pos = document.getElementById(`${team}PlayerPos`).value;
     if (!num || !name) return alert('Enter number and name');
     const lineupKey = team === 'home' ? 'homeLineup' : 'awayLineup';
-    const current = [...(matches[currentMatchId][lineupKey] || [])];
+    const current = [...(matches[currentMatchId][lineupKey] || [])].filter(p => p && p.name);
     current.push({ number: num, name, position: pos });
     await update(ref(db, `matches/${currentMatchId}`), { [lineupKey]: current });
     document.getElementById(`${team}PlayerNum`).value = '';
