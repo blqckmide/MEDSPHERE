@@ -111,6 +111,7 @@
       gap: 12px;
       flex-wrap: wrap;
       margin-bottom: 12px;
+      align-items: flex-end;
     }
     .flex-row input, .flex-row select {
       flex: 1;
@@ -133,6 +134,14 @@
     .lineup-box h4 {
       margin-bottom: 8px;
       color: #c8102e;
+      font-size: 0.8rem;
+    }
+    .team-name-display {
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0 0 12px 0;
+      color: #c8102e;
+      text-align: center;
     }
     @media (max-width: 700px) {
       .lineup-grid { grid-template-columns: 1fr; }
@@ -146,8 +155,8 @@
     <div class="flex-row">
       <input type="text" id="newHomeTeam" placeholder="Home team name">
       <input type="text" id="newAwayTeam" placeholder="Away team name">
+      <button onclick="createMatch()">Create Match</button>
     </div>
-    <button onclick="createMatch()">Create Match</button>
   </div>
 
   <div class="card">
@@ -186,11 +195,15 @@
   onValue(matchesRef, (snapshot) => {
     matches = snapshot.val() || {};
     const select = document.getElementById('matchSelect');
-    const options = Object.keys(matches).map(key => `<option value="${key}">${matches[key].homeTeam} vs ${matches[key].awayTeam}</option>`).join('');
+    const matchIds = Object.keys(matches);
+    const options = matchIds.map(key => `<option value="${key}">${matches[key].homeTeam} vs ${matches[key].awayTeam}</option>`).join('');
     select.innerHTML = options || '<option value="">No matches yet</option>';
-    if (options && !currentMatchId) {
-      select.value = Object.keys(matches)[0];
-      loadMatchToEdit(Object.keys(matches)[0]);
+    
+    // Auto-select first match if none selected
+    if (matchIds.length > 0 && (!currentMatchId || !matches[currentMatchId])) {
+      currentMatchId = matchIds[0];
+      select.value = currentMatchId;
+      loadMatchToEdit(currentMatchId);
     } else if (currentMatchId && matches[currentMatchId]) {
       select.value = currentMatchId;
       loadMatchToEdit(currentMatchId);
@@ -209,31 +222,41 @@
 
     document.getElementById('editArea').innerHTML = `
       <div class="match-preview">
-        <div class="flex-row">
-          <input type="text" id="editHomeTeam" value="${escapeHtml(match.homeTeam)}" placeholder="Home team">
-          <input type="text" id="editAwayTeam" value="${escapeHtml(match.awayTeam)}" placeholder="Away team">
-          <button onclick="updateTeamNames()" class="btn-secondary">Update Team Names</button>
+        <div class="team-name-display">
+          ⚽ ${escapeHtml(match.homeTeam)} vs ${escapeHtml(match.awayTeam)}
         </div>
 
         <div class="flex-row">
-          <select id="editPeriod">
-            <option ${match.period === 'First half' ? 'selected' : ''}>First half</option>
-            <option ${match.period === 'Half time' ? 'selected' : ''}>Half time</option>
-            <option ${match.period === 'Second half' ? 'selected' : ''}>Second half</option>
-            <option ${match.period === 'Full time' ? 'selected' : ''}>Full time</option>
-          </select>
-          <select id="editStatus">
-            <option ${match.status === 'Not started' ? 'selected' : ''}>Not started</option>
-            <option ${match.status === 'Started' ? 'selected' : ''}>Started</option>
-            <option ${match.status === 'Ended' ? 'selected' : ''}>Ended</option>
-          </select>
+          <div class="form-row" style="flex:1">
+            <label>Period</label>
+            <select id="editPeriod">
+              <option ${match.period === 'First half' ? 'selected' : ''}>First half</option>
+              <option ${match.period === 'Half time' ? 'selected' : ''}>Half time</option>
+              <option ${match.period === 'Second half' ? 'selected' : ''}>Second half</option>
+              <option ${match.period === 'Full time' ? 'selected' : ''}>Full time</option>
+            </select>
+          </div>
+          <div class="form-row" style="flex:1">
+            <label>Status</label>
+            <select id="editStatus">
+              <option ${match.status === 'Not started' ? 'selected' : ''}>Not started</option>
+              <option ${match.status === 'Started' ? 'selected' : ''}>Started</option>
+              <option ${match.status === 'Ended' ? 'selected' : ''}>Ended</option>
+            </select>
+          </div>
         </div>
 
         <div class="flex-row">
-          <div class="form-row" style="flex:1"><label>🏠 ${match.homeTeam} Score</label><input type="number" id="editHomeScore" value="${match.homeScore || 0}"></div>
-          <div class="form-row" style="flex:1"><label>✈️ ${match.awayTeam} Score</label><input type="number" id="editAwayScore" value="${match.awayScore || 0}"></div>
+          <div class="form-row" style="flex:1">
+            <label>🏠 ${escapeHtml(match.homeTeam)} Score</label>
+            <input type="number" id="editHomeScore" value="${match.homeScore || 0}">
+          </div>
+          <div class="form-row" style="flex:1">
+            <label>✈️ ${escapeHtml(match.awayTeam)} Score</label>
+            <input type="number" id="editAwayScore" value="${match.awayScore || 0}">
+          </div>
+          <button onclick="updateMatchInfo()">Update Score & Status</button>
         </div>
-        <button onclick="updateMatchInfo()">Update Score & Status</button>
 
         <hr>
 
@@ -241,26 +264,28 @@
         <div class="flex-row">
           <input type="text" id="scorerName" placeholder="Player name">
           <input type="text" id="scorerTime" placeholder="Minute">
+          <button onclick="addScorer()">Add Goal</button>
         </div>
-        <button onclick="addScorer()">Add Goal</button>
 
         <h3>🟨 ADD YELLOW CARD</h3>
         <div class="flex-row">
           <input type="text" id="yellowPlayer" placeholder="Player name">
           <input type="text" id="yellowTime" placeholder="Minute">
+          <button onclick="addYellowCard()">Add Yellow Card</button>
         </div>
-        <button onclick="addYellowCard()">Add Yellow Card</button>
 
         <h3>🟥 ADD RED CARD</h3>
         <div class="flex-row">
           <input type="text" id="redPlayer" placeholder="Player name">
           <input type="text" id="redTime" placeholder="Minute">
+          <button onclick="addRedCard()">Add Red Card</button>
         </div>
-        <button onclick="addRedCard()">Add Red Card</button>
 
         <h3>📋 ADD EVENT</h3>
-        <input type="text" id="eventText" placeholder="Match event">
-        <button onclick="addEvent()" style="margin-top: 6px;">Add Event</button>
+        <div class="flex-row">
+          <input type="text" id="eventText" placeholder="Match event">
+          <button onclick="addEvent()">Add Event</button>
+        </div>
 
         <hr>
 
@@ -309,14 +334,6 @@
       awayScore: awayScore
     });
     alert('Match info updated');
-  };
-
-  window.updateTeamNames = async () => {
-    const homeTeam = document.getElementById('editHomeTeam').value.trim();
-    const awayTeam = document.getElementById('editAwayTeam').value.trim();
-    if (!homeTeam || !awayTeam) return alert('Enter both team names');
-    await update(ref(db, `matches/${currentMatchId}`), { homeTeam, awayTeam });
-    alert('Team names updated');
   };
 
   window.addScorer = async () => {
@@ -388,6 +405,7 @@
   window.deleteMatch = async () => {
     if (!confirm('Permanently delete this match?')) return;
     await remove(ref(db, `matches/${currentMatchId}`));
+    currentMatchId = null;
     alert('Match deleted');
   };
 
