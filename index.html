@@ -132,7 +132,7 @@
     .red-marker { color: #dc2626; font-weight: 600; }
     .empty-stats { color: #9aaebf; font-style: italic; }
 
-    /* Line-up section */
+    /* Visual Pitch Line-up */
     .lineup-section { padding: 0 1rem 1rem; }
     .lineup-toggle {
       background: #f0f3fa;
@@ -151,46 +151,57 @@
     .lineup-container { display: none; margin-top: 10px; }
     .lineup-container.show { display: block; }
     .pitch {
-      background: #1a5d3c;
-      border-radius: 24px;
+      background: linear-gradient(135deg, #1e5a3a 0%, #0f3e26 100%);
+      border-radius: 40px;
       padding: 1rem;
       position: relative;
-      background-image: radial-gradient(circle at 50% 50%, #2a6e48 2%, transparent 2%);
-      background-size: 20px 20px;
+      border: 2px solid #ffdf7e;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .pitch-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #ffdf7e;
+      margin-bottom: 12px;
+      text-transform: uppercase;
     }
     .pitch-row {
       display: flex;
-      justify-content: space-around;
-      margin-bottom: 20px;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 18px;
       flex-wrap: wrap;
-      gap: 8px;
     }
-    .player {
-      background: rgba(0,0,0,0.6);
+    .pitch-player {
+      background: rgba(0,0,0,0.75);
       backdrop-filter: blur(4px);
       color: white;
-      padding: 4px 10px;
-      border-radius: 30px;
+      padding: 6px 12px;
+      border-radius: 40px;
       font-size: 0.7rem;
       font-weight: 500;
       min-width: 70px;
       text-align: center;
+      border: 1px solid #ffdf7e;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
-    .player-pos { font-weight: 700; color: #ffd966; margin-right: 4px; }
-    footer {
+    .pitch-player-num {
+      font-weight: 800;
+      color: #ffdf7e;
+      margin-right: 5px;
+    }
+    .pitch-zone {
       text-align: center;
-      padding: 1.2rem;
-      font-size: 0.7rem;
-      color: #6f7c8f;
-      border-top: 1px solid #eef2f8;
-      margin-top: 2rem;
-      background: white;
+      font-size: 0.6rem;
+      color: #b8d9b0;
+      margin-bottom: 4px;
+      font-weight: 600;
     }
-    footer strong { color: #c8102e; }
     @media (max-width: 650px) {
       .hero h1 { font-size: 1.3rem; }
       .team-score { font-size: 1.4rem; }
-      .player { font-size: 0.6rem; min-width: 55px; }
+      .pitch-player { font-size: 0.6rem; min-width: 55px; padding: 4px 8px; }
     }
   </style>
 </head>
@@ -204,7 +215,7 @@
       <div class="no-matches" style="text-align:center; padding:2rem;">📢 Loading matches...</div>
     </div>
   </main>
-  <footer>
+  <footer style="text-align:center; padding:1.2rem; font-size:0.7rem; color:#6f7c8f; border-top:1px solid #eef2f8; background:white;">
     <p>Powered by <strong>MEDSPHERE</strong> | Real‑time updates</p>
   </footer>
 
@@ -230,27 +241,37 @@
       return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m);
     }
 
-    function renderLineup(players, teamName) {
-      if (!players || players.length === 0) return '';
-      const posOrder = ['GK','LB','CB','RB','LWB','RWB','DMF','CMF','AMF','LMF','RMF','LWF','RWF','SS','CF'];
-      const grouped = {};
+    // Group players by position category
+    function groupByZone(players) {
+      const zones = {
+        GK: { label: 'GK', players: [] },
+        DEF: { label: 'DEFENDERS', players: [] },
+        MID: { label: 'MIDFIELDERS', players: [] },
+        FW: { label: 'FORWARDS', players: [] }
+      };
       players.forEach(p => {
         const pos = p.position || 'SUB';
-        if (!grouped[pos]) grouped[pos] = [];
-        grouped[pos].push(p);
+        if (['GK'].includes(pos)) zones.GK.players.push(p);
+        else if (['LB','CB','RB','LWB','RWB'].includes(pos)) zones.DEF.players.push(p);
+        else if (['DMF','CMF','AMF','LMF','RMF'].includes(pos)) zones.MID.players.push(p);
+        else if (['LWF','RWF','SS','CF'].includes(pos)) zones.FW.players.push(p);
+        else zones.MID.players.push(p); // fallback
       });
-      let html = '<div class="pitch">';
-      for (let pos of posOrder) {
-        if (grouped[pos] && grouped[pos].length) {
-          html += `<div class="pitch-row"><span class="player-pos" style="color:#ffd966; min-width:40px;">${pos}</span>`;
-          grouped[pos].forEach(p => {
-            html += `<div class="player"><span class="player-pos">${p.number}</span> ${escapeHtml(p.name)}</div>`;
-          });
-          html += `</div>`;
-        }
-      }
-      html += '</div>';
-      return html;
+      return zones;
+    }
+
+    function renderPitch(players, teamName) {
+      if (!players || players.length === 0) return '<div class="pitch" style="padding:1rem; text-align:center;">No line-up added</div>';
+      const zones = groupByZone(players);
+      return `
+        <div class="pitch">
+          <div class="pitch-title">${escapeHtml(teamName)} — TACTICAL LINE-UP</div>
+          ${zones.GK.players.length ? `<div class="pitch-zone">GOALKEEPER</div><div class="pitch-row">${zones.GK.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          ${zones.DEF.players.length ? `<div class="pitch-zone">DEFENCE</div><div class="pitch-row">${zones.DEF.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          ${zones.MID.players.length ? `<div class="pitch-zone">MIDFIELD</div><div class="pitch-row">${zones.MID.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          ${zones.FW.players.length ? `<div class="pitch-zone">ATTACK</div><div class="pitch-row">${zones.FW.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+        </div>
+      `;
     }
 
     function renderMatches(matches) {
@@ -278,17 +299,17 @@
               <div class="stat-card"><h4>🟨 BOOKINGS</h4><ul class="stat-list">${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('') || '<li class="empty-stats">— No bookings —</li>'}</ul></div>
             </div>
             <div class="lineup-section">
-              <button class="lineup-toggle" onclick="this.nextElementSibling.classList.toggle('show')">📋 SHOW LINE-UPS</button>
+              <button class="lineup-toggle" onclick="this.nextElementSibling.classList.toggle('show')">📋 VIEW LINE-UPS (PITCH)</button>
               <div class="lineup-container">
-                <div><strong>${escapeHtml(match.homeTeam)}</strong> ${renderLineup(homeLineup, match.homeTeam)}</div>
-                <div style="margin-top:16px;"><strong>${escapeHtml(match.awayTeam)}</strong> ${renderLineup(awayLineup, match.awayTeam)}</div>
+                <div style="margin-bottom: 20px;">${renderPitch(homeLineup, match.homeTeam)}</div>
+                <div>${renderPitch(awayLineup, match.awayTeam)}</div>
               </div>
             </div>
           </div>
         `;
       }).join('');
     }
-    window.renderLineup = renderLineup;
+
     onValue(matchesRef, (snapshot) => renderMatches(snapshot.val()));
   </script>
 </body>
