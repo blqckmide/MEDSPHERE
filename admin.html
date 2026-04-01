@@ -17,7 +17,7 @@
       min-height: 100vh;
     }
     .admin-container {
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto;
     }
     .card {
@@ -120,6 +120,13 @@
       margin: 1rem 0;
       border-top: 1px solid #ecf3fa;
     }
+    .team-name-display {
+      font-weight: 700;
+      font-size: 1rem;
+      margin: 0 0 12px 0;
+      color: #c8102e;
+      text-align: center;
+    }
     .lineup-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -135,13 +142,6 @@
       margin-bottom: 8px;
       color: #c8102e;
       font-size: 0.8rem;
-    }
-    .team-name-display {
-      font-weight: 700;
-      font-size: 1rem;
-      margin: 0 0 12px 0;
-      color: #c8102e;
-      text-align: center;
     }
     @media (max-width: 700px) {
       .lineup-grid { grid-template-columns: 1fr; }
@@ -199,7 +199,6 @@
     const options = matchIds.map(key => `<option value="${key}">${matches[key].homeTeam} vs ${matches[key].awayTeam}</option>`).join('');
     select.innerHTML = options || '<option value="">No matches yet</option>';
     
-    // Auto-select first match if none selected
     if (matchIds.length > 0 && (!currentMatchId || !matches[currentMatchId])) {
       currentMatchId = matchIds[0];
       select.value = currentMatchId;
@@ -216,9 +215,6 @@
     currentMatchId = matchId;
     const match = matches[matchId];
     if (!match) return;
-
-    const homeLineup = match.homeLineup || [];
-    const awayLineup = match.awayLineup || [];
 
     document.getElementById('editArea').innerHTML = `
       <div class="match-preview">
@@ -294,7 +290,7 @@
           <div class="lineup-box">
             <h4>${escapeHtml(match.homeTeam)}</h4>
             <div id="homeLineupList">
-              ${homeLineup.map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('home', '${escapeHtml(p)}')">✖</button></div>`).join('')}
+              ${(match.homeLineup || []).map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('home', '${escapeHtml(p)}')">✖</button></div>`).join('')}
             </div>
             <div class="flex-row" style="margin-top:8px">
               <input type="text" id="newHomePlayer" placeholder="Player name">
@@ -304,7 +300,7 @@
           <div class="lineup-box">
             <h4>${escapeHtml(match.awayTeam)}</h4>
             <div id="awayLineupList">
-              ${awayLineup.map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('away', '${escapeHtml(p)}')">✖</button></div>`).join('')}
+              ${(match.awayLineup || []).map(p => `<div style="display:flex; justify-content:space-between; padding:4px 0;">${escapeHtml(p)} <button class="btn-outline" style="padding:2px 8px; font-size:11px;" onclick="removeFromLineup('away', '${escapeHtml(p)}')">✖</button></div>`).join('')}
             </div>
             <div class="flex-row" style="margin-top:8px">
               <input type="text" id="newAwayPlayer" placeholder="Player name">
@@ -333,7 +329,7 @@
       homeScore: homeScore,
       awayScore: awayScore
     });
-    alert('Match info updated');
+    alert('Score & status updated');
   };
 
   window.addScorer = async () => {
