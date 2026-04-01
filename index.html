@@ -6,157 +6,307 @@
   <title>MEDSPHERE Live Score | Student Union Cup 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f5f7fc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f4f6fa;
       color: #1a2c3e;
       line-height: 1.4;
     }
+
+    /* Header with dynamic gradient */
     .hero {
-      background: linear-gradient(135deg, #c8102e 0%, #a00c26 100%);
-      padding: 1.8rem 1rem;
+      background: linear-gradient(135deg, #c8102e 0%, #9b1a2e 50%, #6e0e22 100%);
+      padding: 2rem 1rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .hero h1 { font-size: 1.8rem; font-weight: 800; color: white; }
-    .hero h1 span { font-weight: 500; opacity: 0.9; }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 1%, transparent 1%);
+      background-size: 40px 40px;
+      animation: drift 30s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(40px, 40px); }
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.3px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero h1 span {
+      font-weight: 500;
+      opacity: 0.95;
+    }
+
     .tournament-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.2);
-      padding: 4px 16px;
-      border-radius: 30px;
-      font-size: 0.7rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      padding: 6px 20px;
+      border-radius: 60px;
+      margin-top: 12px;
+      font-size: 0.75rem;
       font-weight: 600;
       color: white;
-      margin-top: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
     }
+
+    /* Matches container */
     .matches-container {
-      max-width: 800px;
-      margin: 1.8rem auto;
+      max-width: 850px;
+      margin: 2rem auto;
       padding: 0 1rem;
       display: flex;
       flex-direction: column;
       gap: 1.2rem;
     }
+
+    /* Match card — modern, glassy, with hover glow */
     .match-card {
-      background: white;
-      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(2px);
+      border-radius: 28px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      border: 1px solid #eef2f8;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+      border: 1px solid rgba(200, 16, 46, 0.12);
     }
+
+    .match-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 32px rgba(200, 16, 46, 0.12);
+      border-color: rgba(200, 16, 46, 0.3);
+    }
+
+    /* Status row with dynamic styling */
     .status-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.8rem 1.2rem;
-      background: #fefefe;
-      border-bottom: 1px solid #edf2f7;
+      padding: 0.8rem 1.4rem;
+      background: #ffffff;
+      border-bottom: 1px solid #f0f2f6;
     }
+
     .period {
       background: #c8102e;
       color: white;
-      padding: 5px 20px;
-      border-radius: 40px;
-      font-size: 0.85rem;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-size: 0.75rem;
       font-weight: 700;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 6px rgba(200, 16, 46, 0.2);
     }
+
     .status {
-      background: #eef2f8;
-      color: #2c3e50;
-      padding: 5px 20px;
-      border-radius: 40px;
-      font-size: 0.85rem;
+      background: #f0f3f8;
+      color: #1f3a4b;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-size: 0.75rem;
       font-weight: 600;
     }
+
+    /* Score section */
     .score-section {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.2rem 1.5rem;
+      padding: 1.4rem 1.8rem;
       gap: 1rem;
     }
-    .team { flex: 1; text-align: center; }
-    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
-    .team-score { font-size: 2rem; font-weight: 800; color: #c8102e; }
+
+    .team {
+      flex: 1;
+      text-align: center;
+    }
+
+    .team-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #0f2b3b;
+    }
+
+    .team-score {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #c8102e;
+      line-height: 1;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
     .vs-divider {
       background: #eef2f8;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: #5a6e7c;
     }
+
+    /* Stats grid — clean cards */
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, 1fr);
       gap: 1px;
       background: #eef2f8;
-      margin: 0 1rem 1rem;
-      border-radius: 16px;
+      margin: 0 1.2rem 1rem;
+      border-radius: 20px;
       overflow: hidden;
     }
+
     .stat-card {
       background: white;
-      padding: 0.8rem 0.5rem;
+      padding: 1rem 0.8rem;
       text-align: center;
     }
+
     .stat-card h4 {
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       font-weight: 700;
       text-transform: uppercase;
       color: #5a6e7c;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
+      letter-spacing: 0.6px;
     }
-    .stat-list { list-style: none; font-size: 0.7rem; }
-    .stat-list li { padding: 3px 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+    .stat-list {
+      list-style: none;
+      font-size: 0.75rem;
+    }
+
+    .stat-list li {
+      padding: 4px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: #2c3e50;
+    }
+
     .goal-marker { color: #16a34a; font-weight: 600; }
     .yellow-marker { color: #eab308; font-weight: 600; }
     .red-marker { color: #dc2626; font-weight: 600; }
-    .lineup-section { padding: 0 1rem 1rem; border-top: 1px solid #eef2f8; }
+
+    /* Line-up section */
+    .lineup-section {
+      padding: 0 1rem 1.2rem;
+      border-top: 1px solid #f0f2f6;
+      margin-top: 0.2rem;
+    }
+
     .lineup-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      margin-top: 0.5rem;
+      margin-top: 0.8rem;
     }
+
     .lineup-box {
       background: #fafcff;
-      border-radius: 14px;
-      padding: 0.7rem;
-      border: 1px solid #eef2f8;
+      border-radius: 18px;
+      padding: 0.8rem;
+      border: 1px solid #edf2f8;
     }
-    .lineup-box h4 { font-size: 0.7rem; font-weight: 700; color: #c8102e; margin-bottom: 6px; }
-    .lineup-list { list-style: none; font-size: 0.7rem; }
-    .lineup-list li { padding: 3px 0; }
-    .no-matches { text-align: center; padding: 2rem; background: white; border-radius: 24px; color: #6c7a8e; }
-    footer { text-align: center; padding: 1.5rem; font-size: 0.7rem; color: #6f7c8f; border-top: 1px solid #eef2f8; margin-top: 2rem; background: white; }
-    footer strong { color: #c8102e; }
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 1.4rem; }
-      .team-score { font-size: 1.5rem; }
+
+    .lineup-box h4 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #c8102e;
+      margin-bottom: 8px;
+    }
+
+    .lineup-list {
+      list-style: none;
+      font-size: 0.7rem;
+    }
+
+    .lineup-list li {
+      padding: 3px 0;
+    }
+
+    .no-matches {
+      text-align: center;
+      padding: 2.5rem;
+      background: white;
+      border-radius: 32px;
+      color: #6c7a8e;
+      font-weight: 500;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.7rem;
+      color: #6f7c8f;
+      border-top: 1px solid #eef2f8;
+      margin-top: 2rem;
+      background: white;
+    }
+
+    footer strong {
+      color: #c8102e;
+    }
+
+    /* Responsive */
+    @media (max-width: 650px) {
+      .hero h1 { font-size: 1.5rem; }
+      .team-score { font-size: 1.8rem; }
+      .team-name { font-size: 0.9rem; }
       .stats-grid { margin: 0 0.8rem 0.8rem; }
       .lineup-grid { grid-template-columns: 1fr; }
-      .status-row { flex-direction: column; gap: 6px; text-align: center; }
+      .status-row { flex-direction: column; gap: 8px; text-align: center; }
+      .score-section { padding: 1rem; }
     }
   </style>
 </head>
 <body>
   <div class="hero">
     <h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1>
-    <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
+    <div class="tournament-badge">
+      🏆 STUDENT UNION CUP 2026
+    </div>
   </div>
+
   <main>
     <div class="matches-container" id="matchesList">
       <div class="no-matches">📢 Loading matches...</div>
     </div>
   </main>
+
   <footer>
     <p>Powered by <strong>MEDSPHERE</strong> | Real‑time updates</p>
   </footer>
@@ -204,15 +354,49 @@
             <div class="status">${escapeHtml(match.status || 'Not started')}</div>
           </div>
           <div class="score-section">
-            <div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore || 0}</div></div>
+            <div class="team">
+              <div class="team-name">${escapeHtml(match.homeTeam)}</div>
+              <div class="team-score">${match.homeScore || 0}</div>
+            </div>
             <div class="vs-divider">VS</div>
-            <div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore || 0}</div></div>
+            <div class="team">
+              <div class="team-name">${escapeHtml(match.awayTeam)}</div>
+              <div class="team-score">${match.awayScore || 0}</div>
+            </div>
           </div>
           <div class="stats-grid">
-            <div class="stat-card"><h4>⚽ GOALS</h4><ul class="stat-list">${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} ${s.time}</li>`).join('')}</ul></div>
-            <div class="stat-card"><h4>🟨 BOOKINGS</h4><ul class="stat-list">${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}</ul></div>
+            <div class="stat-card">
+              <h4>⚽ GOALS</h4>
+              <ul class="stat-list">
+                ${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} <span style="color:#5f6c84;">${s.time}</span></li>`).join('')}
+              </ul>
+            </div>
+            <div class="stat-card">
+              <h4>🟨 BOOKINGS</h4>
+              <ul class="stat-list">
+                ${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} <span style="color:#5f6c84;">${c.time}</span></li>`).join('')}
+                ${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} <span style="color:#5f6c84;">${c.time}</span></li>`).join('')}
+              </ul>
+            </div>
           </div>
-          ${(match.homeLineup?.length || match.awayLineup?.length) ? `<div class="lineup-section"><div class="lineup-grid"><div class="lineup-box"><h4>📋 ${escapeHtml(match.homeTeam)} XI</h4><ul class="lineup-list">${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}</ul></div><div class="lineup-box"><h4>📋 ${escapeHtml(match.awayTeam)} XI</h4><ul class="lineup-list">${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}</ul></div></div></div>` : ''}
+          ${(match.homeLineup?.length || match.awayLineup?.length) ? `
+          <div class="lineup-section">
+            <div class="lineup-grid">
+              <div class="lineup-box">
+                <h4>📋 ${escapeHtml(match.homeTeam)} XI</h4>
+                <ul class="lineup-list">
+                  ${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}
+                </ul>
+              </div>
+              <div class="lineup-box">
+                <h4>📋 ${escapeHtml(match.awayTeam)} XI</h4>
+                <ul class="lineup-list">
+                  ${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+          </div>
+          ` : ''}
         </div>
       `).join('');
     }
