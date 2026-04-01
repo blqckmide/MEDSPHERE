@@ -8,11 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #f5f7fc;
@@ -24,11 +20,7 @@
       padding: 1.8rem 1rem;
       text-align: center;
     }
-    .hero h1 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: white;
-    }
+    .hero h1 { font-size: 1.8rem; font-weight: 800; color: white; }
     .hero h1 span { font-weight: 500; opacity: 0.9; }
     .tournament-badge {
       display: inline-block;
@@ -103,7 +95,7 @@
     }
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: #eef2f8;
       margin: 0 1rem 1rem;
@@ -127,8 +119,6 @@
     .goal-marker { color: #16a34a; font-weight: 600; }
     .yellow-marker { color: #eab308; font-weight: 600; }
     .red-marker { color: #dc2626; font-weight: 600; }
-    .event-marker { color: #3b82f6; }
-    .empty-stats { color: #9aaebf; font-style: italic; font-size: 0.7rem; padding: 4px 0; }
     .lineup-section { padding: 0 1rem 1rem; border-top: 1px solid #eef2f8; }
     .lineup-grid {
       display: grid;
@@ -219,9 +209,8 @@
             <div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore || 0}</div></div>
           </div>
           <div class="stats-grid">
-            <div class="stat-card"><h4>⚽ GOALS</h4><ul class="stat-list">${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} ${s.time}</li>`).join('') || '<li class="empty-stats">— No goals —</li>'}</ul></div>
-            <div class="stat-card"><h4>🟨 BOOKINGS</h4><ul class="stat-list">${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('') || '<li class="empty-stats">— None —</li>'}</ul></div>
-            <div class="stat-card"><h4>📋 EVENTS</h4><ul class="stat-list">${(match.events || []).map(e => `<li><span class="event-marker">📌</span> ${escapeHtml(e)}</li>`).join('') || '<li class="empty-stats">— No events —</li>'}</ul></div>
+            <div class="stat-card"><h4>⚽ GOALS</h4><ul class="stat-list">${(match.scorers || []).map(s => `<li><span class="goal-marker">⚽</span> ${escapeHtml(s.name)} ${s.time}</li>`).join('')}</ul></div>
+            <div class="stat-card"><h4>🟨 BOOKINGS</h4><ul class="stat-list">${(match.yellowCards || []).map(c => `<li><span class="yellow-marker">🟨</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}${(match.redCards || []).map(c => `<li><span class="red-marker">🟥</span> ${escapeHtml(c.player)} ${c.time}</li>`).join('')}</ul></div>
           </div>
           ${(match.homeLineup?.length || match.awayLineup?.length) ? `<div class="lineup-section"><div class="lineup-grid"><div class="lineup-box"><h4>📋 ${escapeHtml(match.homeTeam)} XI</h4><ul class="lineup-list">${(match.homeLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}</ul></div><div class="lineup-box"><h4>📋 ${escapeHtml(match.awayTeam)} XI</h4><ul class="lineup-list">${(match.awayLineup || []).map(p => `<li>⚡ ${escapeHtml(p)}</li>`).join('')}</ul></div></div></div>` : ''}
         </div>
