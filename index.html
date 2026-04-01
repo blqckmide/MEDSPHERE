@@ -6,102 +6,116 @@
   <title>MEDSPHERE Live Score | Student Union Cup 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f4f6fa;
-      color: #1e2a3a;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f8f9fc 0%, #eef2f8 100%);
+      color: #1f2937;
       line-height: 1.4;
     }
     .hero {
-      background: linear-gradient(135deg, #c8102e 0%, #a00c26 100%);
-      padding: 1.8rem 1rem;
+      background: linear-gradient(135deg, #b91c1c 0%, #7f1a1a 50%, #4c0f0f 100%);
+      padding: 2rem 1rem;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    .hero h1 { font-size: 1.8rem; font-weight: 800; color: white; }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(45deg, rgba(255,215,0,0.08) 0px, rgba(255,215,0,0.08) 2px, transparent 2px, transparent 8px);
+      pointer-events: none;
+    }
+    .hero h1 { font-size: 2rem; font-weight: 800; color: white; text-shadow: 0 2px 10px rgba(0,0,0,0.2); position: relative; z-index: 2; }
     .hero h1 span { font-weight: 500; opacity: 0.9; }
     .tournament-badge {
       display: inline-block;
-      background: rgba(255,255,255,0.2);
-      padding: 5px 16px;
-      border-radius: 40px;
-      margin-top: 10px;
-      font-size: 0.7rem;
+      background: rgba(255,215,0,0.2);
+      backdrop-filter: blur(4px);
+      padding: 6px 20px;
+      border-radius: 60px;
+      margin-top: 12px;
+      font-size: 0.75rem;
       font-weight: 600;
-      color: white;
+      color: #ffdf7e;
+      border: 1px solid rgba(255,215,0,0.4);
+      position: relative;
+      z-index: 2;
     }
-    .matches-container {
-      max-width: 1000px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
+    .matches-container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; display: flex; flex-direction: column; gap: 1.8rem; }
     .match-card {
       background: white;
-      border-radius: 24px;
+      border-radius: 32px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-      border: 1px solid #eef2f8;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(185, 28, 28, 0.15);
     }
+    .match-card:hover { transform: translateY(-4px); box-shadow: 0 20px 32px rgba(0, 0, 0, 0.12); }
     .status-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 1.2rem;
-      background: #fefefe;
-      border-bottom: 1px solid #edf2f7;
+      padding: 0.8rem 1.5rem;
+      background: #fffbf5;
+      border-bottom: 2px solid #f0e6d8;
     }
     .period {
-      background: #c8102e;
+      background: linear-gradient(135deg, #b91c1c, #7f1a1a);
       color: white;
-      padding: 4px 16px;
-      border-radius: 30px;
-      font-size: 0.7rem;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-size: 0.75rem;
       font-weight: 700;
+      letter-spacing: 0.3px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     .status {
       background: #eef2f8;
       color: #2c3e50;
-      padding: 4px 16px;
-      border-radius: 30px;
-      font-size: 0.7rem;
+      padding: 6px 20px;
+      border-radius: 40px;
+      font-size: 0.75rem;
       font-weight: 600;
     }
     .score-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 1.5rem;
-      gap: 1rem;
+      padding: 1.2rem 2rem;
+      gap: 1.5rem;
+      background: white;
     }
     .team { flex: 1; text-align: center; }
-    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
-    .team-score { font-size: 1.8rem; font-weight: 800; color: #c8102e; }
+    .team-name { font-weight: 800; font-size: 1.2rem; margin-bottom: 8px; color: #1f2937; }
+    .team-score { font-size: 2.2rem; font-weight: 800; color: #b91c1c; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
     .vs-divider {
-      background: #eef2f8;
-      width: 36px;
-      height: 36px;
+      background: #f0e6d8;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      font-weight: 700;
-      font-size: 0.8rem;
-      color: #5a6e7c;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #b91c1c;
     }
     .motm {
       text-align: center;
-      background: #fff9e6;
-      margin: 0 1rem;
-      padding: 6px;
-      border-radius: 40px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #c8102e;
+      background: linear-gradient(135deg, #fef9e6, #fff4e0);
+      margin: 0 1.5rem 1rem;
+      padding: 8px;
+      border-radius: 60px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #b45309;
       border: 1px solid #ffdf7e;
     }
     .stats-grid {
@@ -109,99 +123,123 @@
       grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: #eef2f8;
-      margin: 0 1rem 1rem;
-      border-radius: 20px;
+      margin: 0 1.5rem 1.5rem;
+      border-radius: 24px;
       overflow: hidden;
     }
     .stat-card {
       background: white;
-      padding: 0.8rem 0.5rem;
+      padding: 1rem 0.8rem;
       text-align: center;
     }
     .stat-card h4 {
-      font-size: 0.65rem;
-      font-weight: 700;
+      font-size: 0.7rem;
+      font-weight: 800;
       text-transform: uppercase;
-      color: #5a6e7c;
-      margin-bottom: 8px;
+      color: #b91c1c;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
     }
-    .stat-list { list-style: none; font-size: 0.7rem; }
-    .stat-list li { padding: 4px 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .goal-marker { color: #16a34a; font-weight: 600; }
-    .yellow-marker { color: #eab308; font-weight: 600; }
-    .red-marker { color: #dc2626; font-weight: 600; }
+    .stat-list { list-style: none; font-size: 0.75rem; }
+    .stat-list li { padding: 5px 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .goal-marker { color: #16a34a; font-weight: 700; }
+    .yellow-marker { color: #eab308; font-weight: 700; }
+    .red-marker { color: #dc2626; font-weight: 700; }
     .empty-stats { color: #9aaebf; font-style: italic; }
 
-    /* Visual Pitch Line-up */
-    .lineup-section { padding: 0 1rem 1rem; }
+    /* Pitch Line-up */
+    .lineup-section { padding: 0 1.5rem 1.5rem; }
     .lineup-toggle {
-      background: #f0f3fa;
+      background: linear-gradient(135deg, #b91c1c, #7f1a1a);
       border: none;
       width: 100%;
-      padding: 10px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #c8102e;
-      border-radius: 40px;
+      padding: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: white;
+      border-radius: 60px;
       cursor: pointer;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       transition: 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    .lineup-toggle:hover { background: #e6eaf2; }
-    .lineup-container { display: none; margin-top: 10px; }
+    .lineup-toggle:hover { transform: scale(1.01); background: linear-gradient(135deg, #a00c26, #6e0e22); }
+    .lineup-container { display: none; margin-top: 12px; }
     .lineup-container.show { display: block; }
     .pitch {
-      background: linear-gradient(135deg, #1e5a3a 0%, #0f3e26 100%);
-      border-radius: 40px;
-      padding: 1rem;
+      background: linear-gradient(145deg, #1b5e3a 0%, #0f4a2c 100%);
+      border-radius: 32px;
+      padding: 1.2rem;
       position: relative;
-      border: 2px solid #ffdf7e;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      border: 3px solid #ffdf7e;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      margin-bottom: 1.5rem;
     }
     .pitch-title {
       text-align: center;
-      font-weight: 700;
-      font-size: 0.8rem;
+      font-weight: 800;
+      font-size: 0.85rem;
       color: #ffdf7e;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       text-transform: uppercase;
+      letter-spacing: 1px;
     }
     .pitch-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
-      margin-bottom: 18px;
+      gap: 14px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
     .pitch-player {
       background: rgba(0,0,0,0.75);
       backdrop-filter: blur(4px);
       color: white;
-      padding: 6px 12px;
-      border-radius: 40px;
-      font-size: 0.7rem;
+      padding: 8px 14px;
+      border-radius: 60px;
+      font-size: 0.75rem;
       font-weight: 500;
-      min-width: 70px;
+      min-width: 85px;
       text-align: center;
       border: 1px solid #ffdf7e;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .pitch-player::before {
+      content: "👕";
+      font-size: 0.75rem;
     }
     .pitch-player-num {
       font-weight: 800;
       color: #ffdf7e;
-      margin-right: 5px;
+      margin-right: 4px;
     }
     .pitch-zone {
       text-align: center;
-      font-size: 0.6rem;
-      color: #b8d9b0;
-      margin-bottom: 4px;
+      font-size: 0.65rem;
+      color: #c8e6b5;
+      margin-bottom: 8px;
       font-weight: 600;
+      letter-spacing: 1px;
     }
-    @media (max-width: 650px) {
-      .hero h1 { font-size: 1.3rem; }
-      .team-score { font-size: 1.4rem; }
-      .pitch-player { font-size: 0.6rem; min-width: 55px; padding: 4px 8px; }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.7rem;
+      color: #6c7a8e;
+      border-top: 1px solid #eef2f8;
+      margin-top: 2rem;
+      background: white;
+    }
+    footer strong { color: #b91c1c; }
+    @media (max-width: 700px) {
+      .hero h1 { font-size: 1.4rem; }
+      .team-score { font-size: 1.6rem; }
+      .team-name { font-size: 0.9rem; }
+      .pitch-player { font-size: 0.65rem; min-width: 65px; padding: 5px 10px; }
+      .pitch-row { gap: 8px; }
     }
   </style>
 </head>
@@ -215,7 +253,7 @@
       <div class="no-matches" style="text-align:center; padding:2rem;">📢 Loading matches...</div>
     </div>
   </main>
-  <footer style="text-align:center; padding:1.2rem; font-size:0.7rem; color:#6f7c8f; border-top:1px solid #eef2f8; background:white;">
+  <footer>
     <p>Powered by <strong>MEDSPHERE</strong> | Real‑time updates</p>
   </footer>
 
@@ -241,10 +279,9 @@
       return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : m === '>' ? '&gt;' : m);
     }
 
-    // Group players by position category
     function groupByZone(players) {
       const zones = {
-        GK: { label: 'GK', players: [] },
+        GK: { label: 'GOALKEEPER', players: [] },
         DEF: { label: 'DEFENDERS', players: [] },
         MID: { label: 'MIDFIELDERS', players: [] },
         FW: { label: 'FORWARDS', players: [] }
@@ -255,7 +292,7 @@
         else if (['LB','CB','RB','LWB','RWB'].includes(pos)) zones.DEF.players.push(p);
         else if (['DMF','CMF','AMF','LMF','RMF'].includes(pos)) zones.MID.players.push(p);
         else if (['LWF','RWF','SS','CF'].includes(pos)) zones.FW.players.push(p);
-        else zones.MID.players.push(p); // fallback
+        else zones.MID.players.push(p);
       });
       return zones;
     }
@@ -265,11 +302,11 @@
       const zones = groupByZone(players);
       return `
         <div class="pitch">
-          <div class="pitch-title">${escapeHtml(teamName)} — TACTICAL LINE-UP</div>
-          ${zones.GK.players.length ? `<div class="pitch-zone">GOALKEEPER</div><div class="pitch-row">${zones.GK.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
-          ${zones.DEF.players.length ? `<div class="pitch-zone">DEFENCE</div><div class="pitch-row">${zones.DEF.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
-          ${zones.MID.players.length ? `<div class="pitch-zone">MIDFIELD</div><div class="pitch-row">${zones.MID.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
-          ${zones.FW.players.length ? `<div class="pitch-zone">ATTACK</div><div class="pitch-row">${zones.FW.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          <div class="pitch-title">${escapeHtml(teamName)} — TACTICAL FORMATION</div>
+          ${zones.GK.players.length ? `<div class="pitch-zone">🧤 GOALKEEPER</div><div class="pitch-row">${zones.GK.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          ${zones.DEF.players.length ? `<div class="pitch-zone">🛡️ DEFENCE</div><div class="pitch-row">${zones.DEF.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          ${zones.MID.players.length ? `<div class="pitch-zone">⚡ MIDFIELD</div><div class="pitch-row">${zones.MID.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
+          ${zones.FW.players.length ? `<div class="pitch-zone">🔥 ATTACK</div><div class="pitch-row">${zones.FW.players.map(p => `<div class="pitch-player"><span class="pitch-player-num">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div>` : ''}
         </div>
       `;
     }
@@ -286,7 +323,7 @@
         const homeLineup = match.homeLineup || [];
         const awayLineup = match.awayLineup || [];
         return `
-          <div class="match-card" data-match-idx="${idx}">
+          <div class="match-card">
             <div class="status-bar"><span class="period">${escapeHtml(match.period || 'First half')}</span><span class="status">${escapeHtml(match.status || 'Not started')}</span></div>
             <div class="score-row">
               <div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore || 0}</div></div>
@@ -309,6 +346,7 @@
         `;
       }).join('');
     }
+
     onValue(matchesRef, (snapshot) => renderMatches(snapshot.val()));
   </script>
 </body>
