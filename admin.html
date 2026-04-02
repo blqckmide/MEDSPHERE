@@ -103,6 +103,28 @@
       <div><strong>🟨 YELLOW:</strong> ${(m.yellowCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
       <div><strong>🟥 RED:</strong> ${(m.redCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
       <button onclick="deleteMatch()" style="margin-top:20px; background:#6c757d;">🗑️ Delete Match</button>
+      <div class="section-title">📊 MATCH STATS (FlashScore Style)</div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Possession (%)</label><input type="number" id="homePoss" value="${stats.possession?.home || 50}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Possession (%)</label><input type="number" id="awayPoss" value="${stats.possession?.away || 50}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Total shots</label><input type="number" id="homeTotalShots" value="${stats.totalShots?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Total shots</label><input type="number" id="awayTotalShots" value="${stats.totalShots?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Shots on target</label><input type="number" id="homeSOT" value="${stats.shotsOnTarget?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Shots on target</label><input type="number" id="awaySOT" value="${stats.shotsOnTarget?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Big chances</label><input type="number" id="homeBigChances" value="${stats.bigChances?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Big chances</label><input type="number" id="awayBigChances" value="${stats.bigChances?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Corner kicks</label><input type="number" id="homeCorners" value="${stats.corners?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Corner kicks</label><input type="number" id="awayCorners" value="${stats.corners?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Passes (%)</label><input type="number" id="homePassPct" value="${stats.passesPercent?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Passes (%)</label><input type="number" id="awayPassPct" value="${stats.passesPercent?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Shots inside box</label><input type="number" id="homeShotsInside" value="${stats.shotsInsideBox?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Shots inside box</label><input type="number" id="awayShotsInside" value="${stats.shotsInsideBox?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Shots outside box</label><input type="number" id="homeShotsOutside" value="${stats.shotsOutsideBox?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Shots outside box</label><input type="number" id="awayShotsOutside" value="${stats.shotsOutsideBox?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Blocked shots</label><input type="number" id="homeBlocked" value="${stats.blockedShots?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Blocked shots</label><input type="number" id="awayBlocked" value="${stats.blockedShots?.away || 0}"></div></div>
+<div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Hit woodwork</label><input type="number" id="homeWoodwork" value="${stats.hitWoodwork?.home || 0}"></div>
+<div><label>✈️ ${escapeHtml(m.awayTeam)} Hit woodwork</label><input type="number" id="awayWoodwork" value="${stats.hitWoodwork?.away || 0}"></div></div>
+<button onclick="updateStats()">Update Stats</button>
     `;
   }
   
@@ -139,6 +161,22 @@
   window.createMatch = async () => { const home = document.getElementById('newHomeTeam').value.trim(), away = document.getElementById('newAwayTeam').value.trim(); if(!home||!away) return alert('Enter both teams'); const newMatchRef = push(ref(db, 'matches')); await set(newMatchRef, { homeTeam: home, awayTeam: away, homeScore:0, awayScore:0, scorers:[], yellowCards:[], redCards:[], homeLineup:[], awayLineup:[], status:'UPCOMING', time:'--', stadium:'', homeFormation:'4-4-2', awayFormation:'4-4-2', stats: { possession: { home:50, away:50 }, shotsOnTarget:{ home:0, away:0 }, shotsOffTarget:{ home:0, away:0 }, passes:{ home:0, away:0 } } }); document.getElementById('newHomeTeam').value=''; document.getElementById('newAwayTeam').value=''; alert('Match created'); };
   function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;': m==='>'?'&gt;': m); }
   document.getElementById('matchSelect').addEventListener('change', (e)=> { if(e.target.value) loadEditor(e.target.value); });
+  window.updateStats = async () => {
+  const stats = {
+    possession: { home: parseInt(document.getElementById('homePoss').value), away: parseInt(document.getElementById('awayPoss').value) },
+    totalShots: { home: parseInt(document.getElementById('homeTotalShots').value), away: parseInt(document.getElementById('awayTotalShots').value) },
+    shotsOnTarget: { home: parseInt(document.getElementById('homeSOT').value), away: parseInt(document.getElementById('awaySOT').value) },
+    bigChances: { home: parseInt(document.getElementById('homeBigChances').value), away: parseInt(document.getElementById('awayBigChances').value) },
+    corners: { home: parseInt(document.getElementById('homeCorners').value), away: parseInt(document.getElementById('awayCorners').value) },
+    passesPercent: { home: parseInt(document.getElementById('homePassPct').value), away: parseInt(document.getElementById('awayPassPct').value) },
+    shotsInsideBox: { home: parseInt(document.getElementById('homeShotsInside').value), away: parseInt(document.getElementById('awayShotsInside').value) },
+    shotsOutsideBox: { home: parseInt(document.getElementById('homeShotsOutside').value), away: parseInt(document.getElementById('awayShotsOutside').value) },
+    blockedShots: { home: parseInt(document.getElementById('homeBlocked').value), away: parseInt(document.getElementById('awayBlocked').value) },
+    hitWoodwork: { home: parseInt(document.getElementById('homeWoodwork').value), away: parseInt(document.getElementById('awayWoodwork').value) }
+  };
+  await update(ref(db, `matches/${currentMatchId}`), { stats });
+  alert('Stats updated');
+};
 </script>
 </body>
 </html>
