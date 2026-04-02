@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -15,35 +15,43 @@
       background: #f0f2f5;
       color: #1a2c3e;
     }
-    /* Header - LiveScore style with Poppins font */
+    /* Header - smaller, cooler font */
     .header {
       background: #1a2c3e;
-      padding: 0.8rem 1rem;
+      padding: 0.6rem 1rem;
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       flex-wrap: wrap;
       gap: 8px;
     }
     .logo h1 {
-      font-family: 'Poppins', sans-serif;
-      font-size: 1.4rem;
-      font-weight: 700;
+      font-family: 'Audiowide', cursive;
+      font-size: 1.1rem;
+      font-weight: 400;
       color: white;
-      letter-spacing: -0.3px;
+      letter-spacing: 1px;
     }
-    .logo h1 span { font-weight: 500; opacity: 0.8; }
+    .logo h1 span { font-weight: 300; opacity: 0.8; font-family: 'Audiowide', cursive; }
     .tournament-badge {
       background: #2d4a6e;
       padding: 4px 12px;
       border-radius: 20px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 600;
       color: #ffdf7e;
     }
-    /* Matches container */
+    /* Notify button */
+    .notify-btn {
+      background: #2d4a6e;
+      border: none;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      cursor: pointer;
+    }
     .matches-container { max-width: 900px; margin: 1rem auto; padding: 0 1rem; display: flex; flex-direction: column; gap: 1rem; }
-    /* Match card */
     .match-card {
       background: white;
       border-radius: 16px;
@@ -55,139 +63,75 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1rem 1.2rem;
+      padding: 0.8rem 1.2rem;
       background: white;
     }
     .team { text-align: center; flex: 1; }
-    .team-name { font-weight: 700; font-size: 1rem; color: #1a2c3e; }
-    .team-score { font-size: 1.8rem; font-weight: 800; color: #2d4a6e; }
-    .vs { font-size: 0.8rem; color: #94a3b8; font-weight: 600; padding: 0 12px; }
-    /* Status row */
+    .team-name { font-weight: 700; font-size: 0.95rem; color: #1a2c3e; }
+    .team-score { font-size: 1.6rem; font-weight: 800; color: #2d4a6e; }
+    .vs { font-size: 0.75rem; color: #94a3b8; font-weight: 600; padding: 0 12px; }
     .status-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.4rem 1.2rem;
+      padding: 0.3rem 1.2rem;
       background: #f8fafc;
       border-top: 1px solid #eef2f8;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
     }
-    .match-time {
-      background: #2d4a6e;
-      color: white;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-    .match-status {
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
+    .match-time { background: #2d4a6e; color: white; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
+    .match-status { padding: 2px 10px; border-radius: 20px; font-weight: 600; }
     .status-live { background: #dc2626; color: white; animation: pulse 1s infinite; }
     .status-ended { background: #4b5563; color: white; }
     .status-upcoming { background: #e2e8f0; color: #475569; }
     @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
-    /* Stadium */
-    .stadium {
-      padding: 0.3rem 1.2rem 0.6rem;
-      font-size: 0.65rem;
-      color: #64748b;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    /* Tabs */
-    .tabs {
-      display: flex;
-      border-top: 1px solid #eef2f8;
-      background: white;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 0.7rem;
-      background: none;
-      border: none;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #64748b;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .tab-btn.active {
-      color: #2d4a6e;
-      border-bottom: 2px solid #2d4a6e;
-      background: #fafcff;
-    }
+    .stadium { padding: 0.3rem 1.2rem 0.5rem; font-size: 0.6rem; color: #64748b; display: flex; align-items: center; gap: 6px; }
+    /* Tabs - toggle style */
+    .tabs { display: flex; border-top: 1px solid #eef2f8; background: white; }
+    .tab-btn { flex: 1; padding: 0.6rem; background: none; border: none; font-size: 0.7rem; font-weight: 600; color: #64748b; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active { color: #2d4a6e; border-bottom: 2px solid #2d4a6e; background: #fafcff; }
     .tab-content { display: none; padding: 1rem; background: white; border-top: 1px solid #eef2f8; }
     .tab-content.active { display: block; }
-    /* Events timeline */
     .events-list { list-style: none; }
-    .events-list li {
-      padding: 6px 0;
-      font-size: 0.75rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 1px solid #f0f2f5;
-    }
+    .events-list li { padding: 5px 0; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f2f5; }
     .event-time { font-weight: 700; color: #2d4a6e; min-width: 40px; }
-    .event-icon { min-width: 24px; }
-    /* Pitch with zones */
+    /* Pitch formation - numbers only, positioned */
     .pitch-container {
       background: linear-gradient(145deg, #1b5e3a, #0f4a2c);
-      border-radius: 24px;
-      padding: 0.8rem;
-      margin-top: 8px;
+      border-radius: 20px;
+      padding: 1rem;
       position: relative;
-    }
-    .pitch-zone {
-      border-bottom: 2px dashed rgba(255,255,255,0.3);
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-    }
-    .pitch-zone:last-child { border-bottom: none; }
-    .zone-label {
-      font-size: 0.6rem;
-      color: #c8e6b5;
-      text-transform: uppercase;
-      font-weight: 600;
-      margin-bottom: 6px;
-      padding-left: 4px;
+      min-height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
     .pitch-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 16px;
+      margin: 8px 0;
       flex-wrap: wrap;
     }
-    /* Jersey style - number and name inside */
-    .jersey {
+    .pitch-number {
       background: #c8102e;
       color: white;
-      padding: 6px 12px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      display: inline-flex;
+      width: 36px;
+      height: 36px;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      min-width: 85px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      border-radius: 50%;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       font-family: monospace;
     }
-    .jersey-number {
-      background: white;
-      color: #c8102e;
-      padding: 2px 6px;
-      border-radius: 20px;
-      font-weight: 800;
-      font-size: 0.65rem;
-    }
+    .team-formation { margin-bottom: 20px; }
+    .team-formation:last-child { margin-bottom: 0; }
     .formation-badge {
       text-align: center;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 600;
       color: #ffdf7e;
       margin-bottom: 8px;
@@ -196,16 +140,13 @@
       padding: 2px 12px;
       border-radius: 20px;
     }
-    .team-formation {
-      margin-bottom: 16px;
-    }
-    .team-formation:last-child { margin-bottom: 0; }
-    .h2h-section { font-size: 0.75rem; color: #475569; text-align: center; padding: 1rem; }
-    footer { text-align: center; padding: 1rem; font-size: 0.65rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
+    .h2h-section { font-size: 0.7rem; color: #475569; text-align: center; padding: 1rem; }
+    footer { text-align: center; padding: 0.8rem; font-size: 0.6rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
     @media (max-width: 600px) {
-      .team-score { font-size: 1.4rem; }
-      .team-name { font-size: 0.85rem; }
-      .jersey { padding: 4px 8px; font-size: 0.6rem; min-width: 65px; }
+      .team-score { font-size: 1.3rem; }
+      .team-name { font-size: 0.8rem; }
+      .pitch-number { width: 28px; height: 28px; font-size: 0.7rem; }
+      .pitch-row { gap: 8px; }
     }
   </style>
 </head>
@@ -213,6 +154,7 @@
   <div class="header">
     <div class="logo"><h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1></div>
     <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
+    <button class="notify-btn" id="enableNotifications">🔔 Enable Notifications</button>
   </div>
   <main><div class="matches-container" id="matchesList"></div></main>
   <footer><p>Powered by <strong>MEDSPHERE</strong> | Live updates</p></footer>
@@ -232,7 +174,31 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const matchesRef = ref(db, 'matches');
+    
+    let notificationsEnabled = false;
+    let lastData = {};
+    
+    document.getElementById('enableNotifications').addEventListener('click', () => {
+      if ('Notification' in window) {
+        Notification.requestPermission().then(perm => {
+          if (perm === 'granted') {
+            notificationsEnabled = true;
+            alert('Notifications enabled! You will get live match updates.');
+          }
+        });
+      } else {
+        alert('Your browser does not support notifications');
+      }
+    });
+    
+    function sendNotification(title, body) {
+      if (notificationsEnabled && document.hidden) {
+        new Notification(title, { body, icon: 'https://medsphere-livescore.vercel.app/favicon.ico' });
+      }
+    }
+    
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;': m==='>'?'&gt;': m); }
+    
     function renderEvents(match) {
       const events = [];
       (match.scorers || []).forEach(s => events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)}`, type: 'goal'}));
@@ -241,30 +207,23 @@
       events.sort((a,b)=> (parseInt(a.time)||0) - (parseInt(b.time)||0));
       return events.map(e => `<li><span class="event-time">${e.time}'</span><span class="event-icon">${e.text}</span></li>`).join('') || '<li>No events</li>';
     }
-    function groupByZone(players) {
-      const zones = {
-        GK: players.filter(p=>p.position==='GK'),
-        DEF: players.filter(p=>['LB','CB','RB','LWB','RWB'].includes(p.position)),
-        MID: players.filter(p=>['DMF','CMF','AMF','LMF','RMF'].includes(p.position)),
-        ATT: players.filter(p=>['LWF','RWF','SS','CF'].includes(p.position))
-      };
-      return zones;
-    }
-    function renderTeamLineup(players, teamName, formation) {
-      if(!players || players.length===0) return '<div class="pitch-container" style="padding:1rem; text-align:center;">No line-up</div>';
-      const zones = groupByZone(players);
+    
+    function renderPitchLineup(players) {
+      if(!players || players.length===0) return '<div class="pitch-container" style="justify-content:center; align-items:center;">No line-up</div>';
+      const gk = players.filter(p=>p.position==='GK');
+      const def = players.filter(p=>['LB','CB','RB','LWB','RWB'].includes(p.position));
+      const mid = players.filter(p=>['DMF','CMF','AMF','LMF','RMF'].includes(p.position));
+      const att = players.filter(p=>['LWF','RWF','SS','CF'].includes(p.position));
       return `
-        <div class="team-formation">
-          <div style="text-align:center;"><span class="formation-badge">${escapeHtml(teamName)} — ${escapeHtml(formation)}</span></div>
-          <div class="pitch-container">
-            ${zones.GK.length ? `<div class="pitch-zone"><div class="zone-label">🧤 GOALKEEPER</div><div class="pitch-row">${zones.GK.map(p=>`<div class="jersey"><span class="jersey-number">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div></div>` : ''}
-            ${zones.DEF.length ? `<div class="pitch-zone"><div class="zone-label">🛡️ DEFENCE</div><div class="pitch-row">${zones.DEF.map(p=>`<div class="jersey"><span class="jersey-number">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div></div>` : ''}
-            ${zones.MID.length ? `<div class="pitch-zone"><div class="zone-label">⚡ MIDFIELD</div><div class="pitch-row">${zones.MID.map(p=>`<div class="jersey"><span class="jersey-number">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div></div>` : ''}
-            ${zones.ATT.length ? `<div class="pitch-zone"><div class="zone-label">🔥 ATTACK</div><div class="pitch-row">${zones.ATT.map(p=>`<div class="jersey"><span class="jersey-number">${p.number}</span> ${escapeHtml(p.name)}</div>`).join('')}</div></div>` : ''}
-          </div>
+        <div class="pitch-container">
+          <div class="pitch-row">${gk.map(p=>`<div class="pitch-number">${p.number}</div>`).join('')}</div>
+          <div class="pitch-row">${def.map(p=>`<div class="pitch-number">${p.number}</div>`).join('')}</div>
+          <div class="pitch-row">${mid.map(p=>`<div class="pitch-number">${p.number}</div>`).join('')}</div>
+          <div class="pitch-row">${att.map(p=>`<div class="pitch-number">${p.number}</div>`).join('')}</div>
         </div>
       `;
     }
+    
     function renderMatches(matches) {
       const container = document.getElementById('matchesList');
       if(!matches || Object.keys(matches).length===0) { container.innerHTML = '<div style="text-align:center;padding:2rem;">🏟️ No matches scheduled.</div>'; return; }
@@ -279,28 +238,56 @@
             <div class="status-row"><span class="match-time">⏱️ ${escapeHtml(timeDisplay)}</span><span class="match-status ${statusClass}">${statusText}</span></div>
             <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'TBD')}</div>
             <div class="tabs"><button class="tab-btn active" data-tab="info-${idx}">Info</button><button class="tab-btn" data-tab="summary-${idx}">Summary</button><button class="tab-btn" data-tab="lineup-${idx}">Line-ups</button><button class="tab-btn" data-tab="h2h-${idx}">H2H</button></div>
-            <div id="info-${idx}" class="tab-content active"><div style="font-size:0.75rem; color:#475569;">ℹ️ Match info not available yet.</div></div>
+            <div id="info-${idx}" class="tab-content active"><div style="font-size:0.7rem; color:#475569;">ℹ️ Match info not available yet.</div></div>
             <div id="summary-${idx}" class="tab-content"><ul class="events-list">${renderEvents(match)}</ul></div>
             <div id="lineup-${idx}" class="tab-content">
-              ${renderTeamLineup(match.homeLineup || [], match.homeTeam, match.homeFormation || '4-4-2')}
-              ${renderTeamLineup(match.awayLineup || [], match.awayTeam, match.awayFormation || '4-4-2')}
+              <div class="team-formation"><div style="text-align:center;"><span class="formation-badge">${escapeHtml(match.homeTeam)} — ${escapeHtml(match.homeFormation||'4-4-2')}</span></div>${renderPitchLineup(match.homeLineup || [])}</div>
+              <div class="team-formation"><div style="text-align:center;"><span class="formation-badge">${escapeHtml(match.awayTeam)} — ${escapeHtml(match.awayFormation||'4-4-2')}</span></div>${renderPitchLineup(match.awayLineup || [])}</div>
             </div>
             <div id="h2h-${idx}" class="tab-content"><div class="h2h-section">📊 Head-to-head records will appear here.</div></div>
           </div>
         `;
       }).join('');
+      
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const parent = btn.closest('.match-card');
           const tabId = btn.dataset.tab;
+          const content = document.getElementById(tabId);
+          const isActive = content.classList.contains('active');
           parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
           parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          document.getElementById(tabId).classList.add('active');
-          btn.classList.add('active');
+          if (!isActive) {
+            content.classList.add('active');
+            btn.classList.add('active');
+          }
         });
       });
     }
-    onValue(matchesRef, (snapshot) => renderMatches(snapshot.val()));
+    
+    onValue(matchesRef, (snapshot) => {
+      const newData = snapshot.val();
+      if (notificationsEnabled && lastData && newData) {
+        Object.keys(newData).forEach(mid => {
+          const oldMatch = lastData[mid];
+          const newMatch = newData[mid];
+          if (oldMatch && newMatch) {
+            if ((newMatch.scorers?.length || 0) > (oldMatch.scorers?.length || 0)) {
+              const newScorer = newMatch.scorers[newMatch.scorers.length-1];
+              sendNotification('⚽ GOAL!', `${newScorer.name} scored for ${newMatch.homeTeam} vs ${newMatch.awayTeam}`);
+            }
+            if (oldMatch.status !== newMatch.status && newMatch.status === 'LIVE') {
+              sendNotification('🔴 MATCH LIVE', `${newMatch.homeTeam} vs ${newMatch.awayTeam} is now LIVE!`);
+            }
+            if (oldMatch.time !== newMatch.time && newMatch.time) {
+              sendNotification('⏱️ TIME UPDATE', `${newMatch.homeTeam} vs ${newMatch.awayTeam} — ${newMatch.time}`);
+            }
+          }
+        });
+      }
+      lastData = newData || {};
+      renderMatches(newData);
+    });
   </script>
 </body>
 </html>
