@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>MEDSPHERE Live Score | Student Union Cup 2026</title>
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -15,7 +16,6 @@
       background: #f0f2f5;
       color: #1a2c3e;
     }
-    /* Header - smaller, cooler font */
     .header {
       background: #1a2c3e;
       padding: 0.6rem 1rem;
@@ -40,16 +40,6 @@
       font-size: 0.65rem;
       font-weight: 600;
       color: #ffdf7e;
-    }
-    /* Notify button */
-    .notify-btn {
-      background: #2d4a6e;
-      border: none;
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      cursor: pointer;
     }
     .matches-container { max-width: 900px; margin: 1rem auto; padding: 0 1rem; display: flex; flex-direction: column; gap: 1rem; }
     .match-card {
@@ -86,7 +76,6 @@
     .status-upcoming { background: #e2e8f0; color: #475569; }
     @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
     .stadium { padding: 0.3rem 1.2rem 0.5rem; font-size: 0.6rem; color: #64748b; display: flex; align-items: center; gap: 6px; }
-    /* Tabs - toggle style */
     .tabs { display: flex; border-top: 1px solid #eef2f8; background: white; }
     .tab-btn { flex: 1; padding: 0.6rem; background: none; border: none; font-size: 0.7rem; font-weight: 600; color: #64748b; cursor: pointer; transition: 0.2s; }
     .tab-btn.active { color: #2d4a6e; border-bottom: 2px solid #2d4a6e; background: #fafcff; }
@@ -95,13 +84,25 @@
     .events-list { list-style: none; }
     .events-list li { padding: 5px 0; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f2f5; }
     .event-time { font-weight: 700; color: #2d4a6e; min-width: 40px; }
-    /* Pitch formation - numbers only, positioned */
+    /* Stats grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .stat-col { text-align: center; }
+    .stat-item { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.7rem; border-bottom: 1px solid #eef2f8; }
+    .stat-label { font-weight: 600; color: #475569; }
+    /* Pitch with green lines */
     .pitch-container {
       background: linear-gradient(145deg, #1b5e3a, #0f4a2c);
       border-radius: 20px;
       padding: 1rem;
       position: relative;
-      min-height: 280px;
+      background-image: 
+        repeating-linear-gradient(transparent, transparent 24px, rgba(255,255,255,0.15) 24px, rgba(255,255,255,0.15) 25px),
+        repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(255,255,255,0.1) 24px, rgba(255,255,255,0.1) 25px);
+      min-height: 260px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -110,7 +111,7 @@
       display: flex;
       justify-content: center;
       gap: 16px;
-      margin: 8px 0;
+      margin: 12px 0;
       flex-wrap: wrap;
     }
     .pitch-number {
@@ -125,10 +126,8 @@
       font-weight: 800;
       font-size: 0.85rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      font-family: monospace;
     }
     .team-formation { margin-bottom: 20px; }
-    .team-formation:last-child { margin-bottom: 0; }
     .formation-badge {
       text-align: center;
       font-size: 0.6rem;
@@ -140,7 +139,6 @@
       padding: 2px 12px;
       border-radius: 20px;
     }
-    .h2h-section { font-size: 0.7rem; color: #475569; text-align: center; padding: 1rem; }
     footer { text-align: center; padding: 0.8rem; font-size: 0.6rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
     @media (max-width: 600px) {
       .team-score { font-size: 1.3rem; }
@@ -154,7 +152,6 @@
   <div class="header">
     <div class="logo"><h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1></div>
     <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
-    <button class="notify-btn" id="enableNotifications">🔔 Enable Notifications</button>
   </div>
   <main><div class="matches-container" id="matchesList"></div></main>
   <footer><p>Powered by <strong>MEDSPHERE</strong> | Live updates</p></footer>
@@ -175,37 +172,35 @@
     const db = getDatabase(app);
     const matchesRef = ref(db, 'matches');
     
-    let notificationsEnabled = false;
-    let lastData = {};
-    
-    document.getElementById('enableNotifications').addEventListener('click', () => {
-      if ('Notification' in window) {
-        Notification.requestPermission().then(perm => {
-          if (perm === 'granted') {
-            notificationsEnabled = true;
-            alert('Notifications enabled! You will get live match updates.');
-          }
-        });
-      } else {
-        alert('Your browser does not support notifications');
-      }
-    });
-    
-    function sendNotification(title, body) {
-      if (notificationsEnabled && document.hidden) {
-        new Notification(title, { body, icon: 'https://medsphere-livescore.vercel.app/favicon.ico' });
-      }
-    }
-    
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;': m==='>'?'&gt;': m); }
     
     function renderEvents(match) {
       const events = [];
-      (match.scorers || []).forEach(s => events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)}`, type: 'goal'}));
-      (match.yellowCards || []).forEach(c => events.push({time: c.time, text: `🟨 ${escapeHtml(c.player)}`, type: 'yellow'}));
-      (match.redCards || []).forEach(c => events.push({time: c.time, text: `🟥 ${escapeHtml(c.player)}`, type: 'red'}));
+      (match.scorers || []).forEach(s => events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)}`}));
+      (match.yellowCards || []).forEach(c => events.push({time: c.time, text: `🟨 ${escapeHtml(c.player)}`}));
+      (match.redCards || []).forEach(c => events.push({time: c.time, text: `🟥 ${escapeHtml(c.player)}`}));
       events.sort((a,b)=> (parseInt(a.time)||0) - (parseInt(b.time)||0));
-      return events.map(e => `<li><span class="event-time">${e.time}'</span><span class="event-icon">${e.text}</span></li>`).join('') || '<li>No events</li>';
+      return events.map(e => `<li><span class="event-time">${e.time}'</span>${e.text}</li>`).join('') || '<li>No events</li>';
+    }
+    
+    function renderStats(match) {
+      const stats = match.stats || { possession: { home: 50, away: 50 }, shotsOnTarget: { home: 0, away: 0 }, shotsOffTarget: { home: 0, away: 0 }, passes: { home: 0, away: 0 } };
+      return `
+        <div class="stats-grid">
+          <div class="stat-col">
+            <div class="stat-item"><span class="stat-label">Possession</span><span>${stats.possession?.home || 0}%</span></div>
+            <div class="stat-item"><span class="stat-label">Shots on target</span><span>${stats.shotsOnTarget?.home || 0}</span></div>
+            <div class="stat-item"><span class="stat-label">Shots off target</span><span>${stats.shotsOffTarget?.home || 0}</span></div>
+            <div class="stat-item"><span class="stat-label">Passes</span><span>${stats.passes?.home || 0}</span></div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-item"><span class="stat-label">Possession</span><span>${stats.possession?.away || 0}%</span></div>
+            <div class="stat-item"><span class="stat-label">Shots on target</span><span>${stats.shotsOnTarget?.away || 0}</span></div>
+            <div class="stat-item"><span class="stat-label">Shots off target</span><span>${stats.shotsOffTarget?.away || 0}</span></div>
+            <div class="stat-item"><span class="stat-label">Passes</span><span>${stats.passes?.away || 0}</span></div>
+          </div>
+        </div>
+      `;
     }
     
     function renderPitchLineup(players) {
@@ -237,14 +232,13 @@
             <div class="match-header"><div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore||0}</div></div><div class="vs">VS</div><div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore||0}</div></div></div>
             <div class="status-row"><span class="match-time">⏱️ ${escapeHtml(timeDisplay)}</span><span class="match-status ${statusClass}">${statusText}</span></div>
             <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'TBD')}</div>
-            <div class="tabs"><button class="tab-btn active" data-tab="info-${idx}">Info</button><button class="tab-btn" data-tab="summary-${idx}">Summary</button><button class="tab-btn" data-tab="lineup-${idx}">Line-ups</button><button class="tab-btn" data-tab="h2h-${idx}">H2H</button></div>
-            <div id="info-${idx}" class="tab-content active"><div style="font-size:0.7rem; color:#475569;">ℹ️ Match info not available yet.</div></div>
-            <div id="summary-${idx}" class="tab-content"><ul class="events-list">${renderEvents(match)}</ul></div>
+            <div class="tabs"><button class="tab-btn active" data-tab="summary-${idx}">Summary</button><button class="tab-btn" data-tab="lineup-${idx}">Line-ups</button><button class="tab-btn" data-tab="stats-${idx}">Stats</button></div>
+            <div id="summary-${idx}" class="tab-content active"><ul class="events-list">${renderEvents(match)}</ul></div>
             <div id="lineup-${idx}" class="tab-content">
               <div class="team-formation"><div style="text-align:center;"><span class="formation-badge">${escapeHtml(match.homeTeam)} — ${escapeHtml(match.homeFormation||'4-4-2')}</span></div>${renderPitchLineup(match.homeLineup || [])}</div>
               <div class="team-formation"><div style="text-align:center;"><span class="formation-badge">${escapeHtml(match.awayTeam)} — ${escapeHtml(match.awayFormation||'4-4-2')}</span></div>${renderPitchLineup(match.awayLineup || [])}</div>
             </div>
-            <div id="h2h-${idx}" class="tab-content"><div class="h2h-section">📊 Head-to-head records will appear here.</div></div>
+            <div id="stats-${idx}" class="tab-content">${renderStats(match)}</div>
           </div>
         `;
       }).join('');
@@ -265,29 +259,7 @@
       });
     }
     
-    onValue(matchesRef, (snapshot) => {
-      const newData = snapshot.val();
-      if (notificationsEnabled && lastData && newData) {
-        Object.keys(newData).forEach(mid => {
-          const oldMatch = lastData[mid];
-          const newMatch = newData[mid];
-          if (oldMatch && newMatch) {
-            if ((newMatch.scorers?.length || 0) > (oldMatch.scorers?.length || 0)) {
-              const newScorer = newMatch.scorers[newMatch.scorers.length-1];
-              sendNotification('⚽ GOAL!', `${newScorer.name} scored for ${newMatch.homeTeam} vs ${newMatch.awayTeam}`);
-            }
-            if (oldMatch.status !== newMatch.status && newMatch.status === 'LIVE') {
-              sendNotification('🔴 MATCH LIVE', `${newMatch.homeTeam} vs ${newMatch.awayTeam} is now LIVE!`);
-            }
-            if (oldMatch.time !== newMatch.time && newMatch.time) {
-              sendNotification('⏱️ TIME UPDATE', `${newMatch.homeTeam} vs ${newMatch.awayTeam} — ${newMatch.time}`);
-            }
-          }
-        });
-      }
-      lastData = newData || {};
-      renderMatches(newData);
-    });
+    onValue(matchesRef, (snapshot) => renderMatches(snapshot.val()));
   </script>
 </body>
 </html>
