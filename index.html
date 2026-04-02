@@ -81,79 +81,28 @@
     .tab-btn.active { color: #2d4a6e; border-bottom: 2px solid #2d4a6e; background: #fafcff; }
     .tab-content { display: none; padding: 1rem; background: white; border-top: 1px solid #eef2f8; }
     .tab-content.active { display: block; }
-    /* Events */
     .events-list { list-style: none; }
     .events-list li { padding: 5px 0; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f2f5; }
     .event-time { font-weight: 700; color: #2d4a6e; min-width: 40px; }
-    /* Stats with horizontal bars */
-    .stats-container { margin-top: 0.5rem; }
-    .stat-row { margin-bottom: 1rem; }
-    .stat-header { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 600; color: #475569; margin-bottom: 4px; }
-    .stat-bar-container {
-      background: #e2e8f0;
-      border-radius: 20px;
-      overflow: hidden;
-      height: 8px;
-    }
-    .stat-bar-home { background: #2d4a6e; height: 8px; border-radius: 20px; width: 0%; }
-    /* Line-up - spaced like LiveScore */
-    .lineup-container {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-    .team-lineup {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 0.8rem;
-    }
-    .team-lineup h4 {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #1a2c3e;
-      margin-bottom: 12px;
-      border-left: 3px solid #2d4a6e;
-      padding-left: 8px;
-    }
-    .players-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-    .player-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      width: calc(33% - 12px);
-      min-width: 120px;
-    }
-    .player-number {
-      background: #c8102e;
-      color: white;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      font-weight: 800;
-      font-size: 0.75rem;
-    }
-    .player-name {
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: #1e293b;
-    }
-    .formation-badge {
-      display: inline-block;
-      background: #eef2f8;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 0.6rem;
-      font-weight: 600;
-      color: #2d4a6e;
-      margin-bottom: 10px;
-    }
+    /* Stats - FlashScore style */
+    .stats-top { display: flex; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .stat-badge { background: #eef2f8; padding: 4px 8px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; color: #1a2c3e; }
+    .stat-section { margin-bottom: 1rem; }
+    .stat-section h4 { font-size: 0.7rem; font-weight: 700; color: #2d4a6e; margin-bottom: 0.5rem; border-left: 2px solid #2d4a6e; padding-left: 6px; }
+    .stat-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: 0.7rem; border-bottom: 1px solid #f0f2f5; }
+    .stat-label { font-weight: 500; color: #475569; }
+    .stat-value { font-weight: 600; color: #1a2c3e; }
+    .stat-value-home { color: #2d4a6e; }
+    .stat-value-away { color: #64748b; }
+    /* Line-up */
+    .lineup-container { display: flex; flex-direction: column; gap: 1.5rem; }
+    .team-lineup { background: #f8fafc; border-radius: 16px; padding: 0.8rem; }
+    .team-lineup h4 { font-size: 0.8rem; font-weight: 700; color: #1a2c3e; margin-bottom: 12px; border-left: 3px solid #2d4a6e; padding-left: 8px; }
+    .players-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .player-item { display: flex; align-items: center; gap: 8px; width: calc(33% - 12px); min-width: 120px; }
+    .player-number { background: #c8102e; color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.75rem; }
+    .player-name { font-size: 0.7rem; font-weight: 500; color: #1e293b; }
+    .formation-badge { display: inline-block; background: #eef2f8; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; color: #2d4a6e; margin-bottom: 10px; }
     footer { text-align: center; padding: 0.8rem; font-size: 0.6rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
     @media (max-width: 600px) {
       .team-score { font-size: 1.3rem; }
@@ -198,28 +147,42 @@
     }
     
     function renderStats(match) {
-      const stats = match.stats || { possession: { home: 50, away: 50 }, shotsOnTarget: { home: 0, away: 0 }, shotsOffTarget: { home: 0, away: 0 }, passes: { home: 0, away: 0 } };
-      const homePoss = stats.possession?.home || 50;
-      const awayPoss = stats.possession?.away || 50;
+      const stats = match.stats || {
+        possession: { home: 50, away: 50 },
+        totalShots: { home: 0, away: 0 },
+        shotsOnTarget: { home: 0, away: 0 },
+        bigChances: { home: 0, away: 0 },
+        corners: { home: 0, away: 0 },
+        passesPercent: { home: 0, away: 0 },
+        shotsInsideBox: { home: 0, away: 0 },
+        shotsOutsideBox: { home: 0, away: 0 },
+        blockedShots: { home: 0, away: 0 },
+        hitWoodwork: { home: 0, away: 0 }
+      };
       return `
-        <div class="stats-container">
-          <div class="stat-row">
-            <div class="stat-header"><span>🏠 ${escapeHtml(match.homeTeam)}</span><span>${escapeHtml(match.awayTeam)} ✈️</span></div>
-            <div class="stat-bar-container"><div class="stat-bar-home" style="width: ${homePoss}%;"></div></div>
-            <div class="stat-header" style="margin-top:2px;"><span>${homePoss}%</span><span>${awayPoss}%</span></div>
-          </div>
-          <div class="stat-row">
-            <div class="stat-header"><span>Shots on target</span><span></span></div>
-            <div class="stat-header"><span>${stats.shotsOnTarget?.home || 0}</span><span>${stats.shotsOnTarget?.away || 0}</span></div>
-          </div>
-          <div class="stat-row">
-            <div class="stat-header"><span>Shots off target</span><span></span></div>
-            <div class="stat-header"><span>${stats.shotsOffTarget?.home || 0}</span><span>${stats.shotsOffTarget?.away || 0}</span></div>
-          </div>
-          <div class="stat-row">
-            <div class="stat-header"><span>Passes</span><span></span></div>
-            <div class="stat-header"><span>${stats.passes?.home || 0}</span><span>${stats.passes?.away || 0}</span></div>
-          </div>
+        <div class="stats-top">
+          <span class="stat-badge">⚡ ${stats.possession?.home || 50}% Ball possession</span>
+          <span class="stat-badge">⚡ ${stats.possession?.away || 50}% Ball possession</span>
+        </div>
+        
+        <div class="stat-section">
+          <h4>Top stats</h4>
+          <div class="stat-row"><span class="stat-label">Ball possession</span><span><span class="stat-value-home">${stats.possession?.home || 50}%</span> | <span class="stat-value-away">${stats.possession?.away || 50}%</span></span></div>
+          <div class="stat-row"><span class="stat-label">Total shots</span><span><span class="stat-value-home">${stats.totalShots?.home || 0}</span> | <span class="stat-value-away">${stats.totalShots?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Shots on target</span><span><span class="stat-value-home">${stats.shotsOnTarget?.home || 0}</span> | <span class="stat-value-away">${stats.shotsOnTarget?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Big chances</span><span><span class="stat-value-home">${stats.bigChances?.home || 0}</span> | <span class="stat-value-away">${stats.bigChances?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Corner kicks</span><span><span class="stat-value-home">${stats.corners?.home || 0}</span> | <span class="stat-value-away">${stats.corners?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Passes (%)</span><span><span class="stat-value-home">${stats.passesPercent?.home || 0}%</span> | <span class="stat-value-away">${stats.passesPercent?.away || 0}%</span></span></div>
+        </div>
+        
+        <div class="stat-section">
+          <h4>Shots</h4>
+          <div class="stat-row"><span class="stat-label">Total shots</span><span><span class="stat-value-home">${stats.totalShots?.home || 0}</span> | <span class="stat-value-away">${stats.totalShots?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Shots on target</span><span><span class="stat-value-home">${stats.shotsOnTarget?.home || 0}</span> | <span class="stat-value-away">${stats.shotsOnTarget?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Shots inside box</span><span><span class="stat-value-home">${stats.shotsInsideBox?.home || 0}</span> | <span class="stat-value-away">${stats.shotsInsideBox?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Shots outside box</span><span><span class="stat-value-home">${stats.shotsOutsideBox?.home || 0}</span> | <span class="stat-value-away">${stats.shotsOutsideBox?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Blocked shots</span><span><span class="stat-value-home">${stats.blockedShots?.home || 0}</span> | <span class="stat-value-away">${stats.blockedShots?.away || 0}</span></span></div>
+          <div class="stat-row"><span class="stat-label">Hit woodwork</span><span><span class="stat-value-home">${stats.hitWoodwork?.home || 0}</span> | <span class="stat-value-away">${stats.hitWoodwork?.away || 0}</span></span></div>
         </div>
       `;
     }
