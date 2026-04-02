@@ -68,7 +68,9 @@
       <div class="flex"><div><label>Match Time</label><input type="text" id="editTime" placeholder="e.g., 45', HT, FT" value="${escapeHtml(m.time||'')}"></div>
       <div><label>Status</label><select id="editStatus"><option ${m.status==='LIVE'?'selected':''}>LIVE</option><option ${m.status==='ENDED'?'selected':''}>ENDED</option><option ${m.status==='UPCOMING'?'selected':''}>UPCOMING</option></select></div>
       <div><label>Stadium</label><input type="text" id="editStadium" placeholder="Stadium name" value="${escapeHtml(m.stadium||'')}"></div></div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Score</label><input type="number" id="editHomeScore" value="${m.homeScore||0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Score</label><input type="number" id="editAwayScore" value="${m.awayScore||0}"></div><div><label>Formation</label><select id="editFormation">${formations.map(f=>`<option ${m.formation===f?'selected':''}>${f}</option>`).join('')}</select></div><button onclick="updateMatch()">Update</button></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Score</label><input type="number" id="editHomeScore" value="${m.homeScore||0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Score</label><input type="number" id="editAwayScore" value="${m.awayScore||0}"></div><button onclick="updateMatch()">Update</button></div>
+      <div class="flex"><div><label>${escapeHtml(m.homeTeam)} Formation</label><select id="editHomeFormation">${formations.map(f=>`<option ${m.homeFormation===f?'selected':''}>${f}</option>`).join('')}</select></div>
+      <div><label>${escapeHtml(m.awayTeam)} Formation</label><select id="editAwayFormation">${formations.map(f=>`<option ${m.awayFormation===f?'selected':''}>${f}</option>`).join('')}</select></div></div>
       <hr><h3>⭐ MAN OF THE MATCH</h3><select id="motmSelect"><option value="">— Select player —</option>${allPlayers.map(p => `<option value="${escapeHtml(p.name)}" ${m.manOfTheMatch===p.name?'selected':''}>${p.number}. ${escapeHtml(p.name)} (${p.position})</option>`).join('')}</select><button onclick="setMotm()">Set MOTM</button>
       <hr><div class="flex"><div><h3>⚽ ADD GOAL</h3><input type="text" id="scorerName" placeholder="Player name"><input type="text" id="scorerTime" placeholder="Minute"><button onclick="addGoal()">Add</button></div></div>
       <div class="flex"><div><h3>🟨 YELLOW CARD</h3><input type="text" id="yellowPlayer" placeholder="Player name"><input type="text" id="yellowTime" placeholder="Minute"><button onclick="addYellow()">Add</button></div></div>
@@ -86,10 +88,11 @@
     const time = document.getElementById('editTime').value;
     const status = document.getElementById('editStatus').value;
     const stadium = document.getElementById('editStadium').value;
-    const formation = document.getElementById('editFormation').value;
     const homeScore = parseInt(document.getElementById('editHomeScore').value);
     const awayScore = parseInt(document.getElementById('editAwayScore').value);
-    await update(ref(db, `matches/${currentMatchId}`), { time, status, stadium, formation, homeScore, awayScore });
+    const homeFormation = document.getElementById('editHomeFormation').value;
+    const awayFormation = document.getElementById('editAwayFormation').value;
+    await update(ref(db, `matches/${currentMatchId}`), { time, status, stadium, homeScore, awayScore, homeFormation, awayFormation });
     alert('Updated');
   };
   window.setMotm = async () => { const motm = document.getElementById('motmSelect').value; await update(ref(db, `matches/${currentMatchId}`), { manOfTheMatch: motm || null }); alert('MOTM set'); };
@@ -99,7 +102,7 @@
   window.addPlayer = async (team) => { const num = document.getElementById(`${team}PlayerNum`).value.trim(), name = document.getElementById(`${team}PlayerName`).value.trim(), pos = document.getElementById(`${team}PlayerPos`).value; if(!num||!name) return alert('Enter number and name'); const lineupKey = team==='home'?'homeLineup':'awayLineup'; const current = [...(matches[currentMatchId][lineupKey]||[])]; current.push({number:num, name, position:pos}); await update(ref(db, `matches/${currentMatchId}`), { [lineupKey]: current }); document.getElementById(`${team}PlayerNum`).value=''; document.getElementById(`${team}PlayerName`).value=''; loadEditor(currentMatchId); };
   window.removePlayer = async (team, playerName) => { const lineupKey = team==='home'?'homeLineup':'awayLineup'; const current = [...(matches[currentMatchId][lineupKey]||[])]; const updated = current.filter(p=>p.name!==playerName); await update(ref(db, `matches/${currentMatchId}`), { [lineupKey]: updated }); loadEditor(currentMatchId); };
   window.deleteMatch = async () => { if(!confirm('Delete match?')) return; await remove(ref(db, `matches/${currentMatchId}`)); alert('Deleted'); };
-  window.createMatch = async () => { const home = document.getElementById('newHomeTeam').value.trim(), away = document.getElementById('newAwayTeam').value.trim(); if(!home||!away) return alert('Enter both teams'); const newMatchRef = push(ref(db, 'matches')); await set(newMatchRef, { homeTeam: home, awayTeam: away, homeScore:0, awayScore:0, scorers:[], yellowCards:[], redCards:[], homeLineup:[], awayLineup:[], period:'First half', status:'UPCOMING', time:'--', stadium:'', formation:'4-4-2' }); document.getElementById('newHomeTeam').value=''; document.getElementById('newAwayTeam').value=''; alert('Match created'); };
+  window.createMatch = async () => { const home = document.getElementById('newHomeTeam').value.trim(), away = document.getElementById('newAwayTeam').value.trim(); if(!home||!away) return alert('Enter both teams'); const newMatchRef = push(ref(db, 'matches')); await set(newMatchRef, { homeTeam: home, awayTeam: away, homeScore:0, awayScore:0, scorers:[], yellowCards:[], redCards:[], homeLineup:[], awayLineup:[], status:'UPCOMING', time:'--', stadium:'', homeFormation:'4-4-2', awayFormation:'4-4-2' }); document.getElementById('newHomeTeam').value=''; document.getElementById('newAwayTeam').value=''; alert('Match created'); };
   function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;': m==='>'?'&gt;': m); }
   document.getElementById('matchSelect').addEventListener('change', (e)=> { if(e.target.value) loadEditor(e.target.value); });
 </script>
