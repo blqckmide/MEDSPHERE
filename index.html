@@ -249,6 +249,11 @@
             </div>
             <div class="status-row"><span class="match-time">⏱️ ${escapeHtml(timeDisplay)}</span><span class="match-status ${statusClass}">${statusText}</span></div>
             <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'TBD')}</div>
+            ${match.manOfTheMatch ? `
+<div style="background: #fef9e6; margin: 0 1rem 0.5rem 1rem; padding: 4px 8px; border-radius: 20px; text-align: center; font-size: 0.65rem; font-weight: 600; color: #b45309; border: 1px solid #ffdf7e;">
+  ⭐ MAN OF THE MATCH: ${escapeHtml(match.manOfTheMatch)}
+</div>
+` : ''}
             <div class="tabs"><button class="tab-btn active" data-tab="summary-${idx}">Summary</button><button class="tab-btn" data-tab="lineup-${idx}">Line-ups</button><button class="tab-btn" data-tab="stats-${idx}">Stats</button></div>
             <div id="summary-${idx}" class="tab-content active"><ul class="events-list">${renderEvents(match)}</ul></div>
             <div id="lineup-${idx}" class="tab-content"><div class="lineup-container">${renderLineup(match.homeLineup || [], match.homeSubs || [], match.homeTeam, match.homeFormation)}${renderLineup(match.awayLineup || [], match.awaySubs || [], match.awayTeam, match.awayFormation)}</div></div>
