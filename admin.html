@@ -6,85 +6,28 @@
   <title>Admin | Student Union Cup</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f5f7fc;
-      padding: 2rem 1rem;
-    }
+    body { font-family: 'Inter', sans-serif; background: #f5f7fc; padding: 2rem 1rem; }
     .container { max-width: 900px; margin: 0 auto; }
-    .card {
-      background: white;
-      border-radius: 28px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-      border: 1px solid #eef2f8;
-    }
+    .card { background: white; border-radius: 28px; padding: 1.5rem; margin-bottom: 1.5rem; border: 1px solid #eef2f8; }
     h2 { font-size: 1.2rem; color: #1a2c3e; margin-bottom: 1rem; border-left: 4px solid #2d4a6e; padding-left: 12px; }
     h3 { font-size: 0.85rem; margin: 1rem 0 0.5rem; color: #1f2937; font-weight: 700; }
     label { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #5a6874; display: block; margin-bottom: 4px; }
     input, select { width: 100%; padding: 8px 12px; border: 1px solid #dce3ec; border-radius: 20px; font-size: 0.85rem; margin-bottom: 10px; }
-    button {
-      background: #2d4a6e;
-      color: white;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 4px;
-      transition: 0.2s;
-    }
+    button { background: #2d4a6e; color: white; border: none; padding: 8px 18px; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 4px; transition: 0.2s; }
     button:hover { background: #1e3a5f; transform: translateY(-1px); }
     .flex { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
     .flex > div { flex: 1; }
     .match-badge { background: #f0f4f9; padding: 12px; border-radius: 20px; text-align: center; font-weight: 700; margin-bottom: 16px; color: #1a2c3e; }
     hr { margin: 16px 0; border-top: 1px solid #ecf3fa; }
-    .player-item {
-      background: #f8fafc;
-      padding: 6px 12px;
-      border-radius: 30px;
-      display: inline-block;
-      margin: 4px;
-      font-size: 0.75rem;
-      border: 1px solid #e2e8f0;
-    }
-    .player-list-area {
-      background: #fafcff;
-      border-radius: 20px;
-      padding: 12px;
-      margin-top: 8px;
-      border: 1px solid #eef2f8;
-      min-height: 80px;
-    }
-    .section-title {
-      background: #eef2f8;
-      padding: 8px 12px;
-      border-radius: 12px;
-      margin: 16px 0 12px;
-      font-weight: 700;
-      font-size: 0.8rem;
-      color: #1a2c3e;
-    }
+    .player-item { background: #f8fafc; padding: 6px 12px; border-radius: 30px; display: inline-block; margin: 4px; font-size: 0.75rem; border: 1px solid #e2e8f0; }
+    .player-list-area { background: #fafcff; border-radius: 20px; padding: 12px; margin-top: 8px; border: 1px solid #eef2f8; min-height: 80px; }
+    .section-title { background: #eef2f8; padding: 8px 12px; border-radius: 12px; margin: 16px 0 12px; font-weight: 700; font-size: 0.8rem; color: #1a2c3e; }
   </style>
 </head>
 <body>
 <div class="container">
-  <div class="card">
-    <h2>➕ CREATE MATCH</h2>
-    <div class="flex">
-      <input type="text" id="newHomeTeam" placeholder="Home team">
-      <input type="text" id="newAwayTeam" placeholder="Away team">
-      <button onclick="createMatch()">Create</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>✏️ EDIT MATCH</h2>
-    <label>Select Match</label>
-    <select id="matchSelect"></select>
-    <div id="matchEditor"></div>
-  </div>
+  <div class="card"><h2>➕ CREATE MATCH</h2><div class="flex"><input type="text" id="newHomeTeam" placeholder="Home team"><input type="text" id="newAwayTeam" placeholder="Away team"><button onclick="createMatch()">Create</button></div></div>
+  <div class="card"><h2>✏️ EDIT MATCH</h2><label>Select Match</label><select id="matchSelect"></select><div id="matchEditor"></div></div>
 </div>
 
 <script type="module">
@@ -135,106 +78,39 @@
     const awayLineup = (m.awayLineup || []).filter(p => p && p.name);
     const homeSubs = (m.homeSubs || []).filter(p => p && p.name);
     const awaySubs = (m.awaySubs || []).filter(p => p && p.name);
-    const allPlayers = [...homeLineup, ...awayLineup, ...homeSubs, ...awaySubs];
-    const stats = m.stats || {
-      possession: { home: 50, away: 50 },
-      totalShots: { home: 0, away: 0 },
-      shotsOnTarget: { home: 0, away: 0 },
-      bigChances: { home: 0, away: 0 },
-      corners: { home: 0, away: 0 },
-      passesPercent: { home: 0, away: 0 }
-    };
+    const allPlayers = [...homeLineup.map(p => ({ ...p, team: 'home' })), ...awayLineup.map(p => ({ ...p, team: 'away' })), ...homeSubs.map(p => ({ ...p, team: 'home' })), ...awaySubs.map(p => ({ ...p, team: 'away' }))];
+    const stats = m.stats || { possession: { home: 50, away: 50 }, totalShots: { home: 0, away: 0 }, shotsOnTarget: { home: 0, away: 0 }, bigChances: { home: 0, away: 0 }, corners: { home: 0, away: 0 }, passesPercent: { home: 0, away: 0 } };
 
     document.getElementById('matchEditor').innerHTML = `
       <div class="match-badge">⚽ ${escapeHtml(m.homeTeam)} vs ${escapeHtml(m.awayTeam)}</div>
-      
-      <div class="flex">
-        <div><label>Match Time</label><input type="text" id="editTime" placeholder="e.g., 45', HT, FT" value="${escapeHtml(m.time || '')}"></div>
-        <div><label>Status</label><select id="editStatus">
-          <option ${m.status === 'LIVE' ? 'selected' : ''}>LIVE</option>
-          <option ${m.status === 'ENDED' ? 'selected' : ''}>ENDED</option>
-          <option ${m.status === 'UPCOMING' ? 'selected' : ''}>UPCOMING</option>
-        </select></div>
-        <div><label>Stadium</label><input type="text" id="editStadium" placeholder="Stadium name" value="${escapeHtml(m.stadium || '')}"></div>
-      </div>
-      
-      <div class="flex">
-        <div><label>🏠 ${escapeHtml(m.homeTeam)} Score</label><input type="number" id="editHomeScore" value="${m.homeScore || 0}"></div>
-        <div><label>✈️ ${escapeHtml(m.awayTeam)} Score</label><input type="number" id="editAwayScore" value="${m.awayScore || 0}"></div>
-        <button onclick="updateMatch()">Update</button>
-      </div>
-      
+      <div class="flex"><div><label>Match Time</label><input type="text" id="editTime" placeholder="e.g., 45', HT, FT" value="${escapeHtml(m.time || '')}"></div>
+      <div><label>Status</label><select id="editStatus"><option ${m.status === 'LIVE' ? 'selected' : ''}>LIVE</option><option ${m.status === 'ENDED' ? 'selected' : ''}>ENDED</option><option ${m.status === 'UPCOMING' ? 'selected' : ''}>UPCOMING</option></select></div>
+      <div><label>Stadium</label><input type="text" id="editStadium" placeholder="Stadium name" value="${escapeHtml(m.stadium || '')}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Score</label><input type="number" id="editHomeScore" value="${m.homeScore || 0}"></div>
+      <div><label>✈️ ${escapeHtml(m.awayTeam)} Score</label><input type="number" id="editAwayScore" value="${m.awayScore || 0}"></div><button onclick="updateMatch()">Update</button></div>
       <div class="section-title">📋 FORMATIONS</div>
-      <div class="flex">
-        <div><label>${escapeHtml(m.homeTeam)} Formation</label><select id="editHomeFormation">${formations.map(f => `<option ${m.homeFormation === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div>
-        <div><label>${escapeHtml(m.awayTeam)} Formation</label><select id="editAwayFormation">${formations.map(f => `<option ${m.awayFormation === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div>
-      </div>
-      
+      <div class="flex"><div><label>${escapeHtml(m.homeTeam)} Formation</label><select id="editHomeFormation">${formations.map(f => `<option ${m.homeFormation === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div>
+      <div><label>${escapeHtml(m.awayTeam)} Formation</label><select id="editAwayFormation">${formations.map(f => `<option ${m.awayFormation === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div></div>
       <div class="section-title">⭐ MAN OF THE MATCH</div>
-      <div class="flex">
-        <select id="motmSelect" style="flex:1">
-          <option value="">— Select player —</option>
-          ${allPlayers.map(p => `<option value="${escapeHtml(p.name)}" ${m.manOfTheMatch === p.name ? 'selected' : ''}>${p.number}. ${escapeHtml(p.name)} (${p.position})</option>`).join('')}
-        </select>
-        <button onclick="setMotm()">Set MOTM</button>
-      </div>
-      
+      <div class="flex"><select id="motmSelect" style="flex:1"><option value="">— Select player —</option>${allPlayers.map(p => `<option value="${escapeHtml(p.name)}" ${m.manOfTheMatch === p.name ? 'selected' : ''}>${p.number}. ${escapeHtml(p.name)} (${p.position}) - ${p.team === 'home' ? m.homeTeam : m.awayTeam}</option>`).join('')}</select><button onclick="setMotm()">Set MOTM</button></div>
       <div class="section-title">⚽ MATCH EVENTS</div>
-      <div class="flex"><div><h3>ADD GOAL</h3><input type="text" id="scorerName" placeholder="Player name"><input type="text" id="scorerTime" placeholder="Minute"><button onclick="addGoal()">Add</button></div></div>
-      <div class="flex"><div><h3>YELLOW CARD</h3><input type="text" id="yellowPlayer" placeholder="Player name"><input type="text" id="yellowTime" placeholder="Minute"><button onclick="addYellow()">Add</button></div></div>
-      <div class="flex"><div><h3>RED CARD</h3><input type="text" id="redPlayer" placeholder="Player name"><input type="text" id="redTime" placeholder="Minute"><button onclick="addRed()">Add</button></div></div>
-      
+      <div class="flex"><div><h3>ADD GOAL</h3><input type="text" id="scorerName" placeholder="Player name"><input type="text" id="scorerTime" placeholder="Minute"><select id="scorerTeam"><option value="home">${escapeHtml(m.homeTeam)}</option><option value="away">${escapeHtml(m.awayTeam)}</option></select><button onclick="addGoal()">Add Goal</button></div></div>
+      <div class="flex"><div><h3>YELLOW CARD</h3><input type="text" id="yellowPlayer" placeholder="Player name"><input type="text" id="yellowTime" placeholder="Minute"><select id="yellowTeam"><option value="home">${escapeHtml(m.homeTeam)}</option><option value="away">${escapeHtml(m.awayTeam)}</option></select><button onclick="addYellow()">Add Yellow</button></div></div>
+      <div class="flex"><div><h3>RED CARD</h3><input type="text" id="redPlayer" placeholder="Player name"><input type="text" id="redTime" placeholder="Minute"><select id="redTeam"><option value="home">${escapeHtml(m.homeTeam)}</option><option value="away">${escapeHtml(m.awayTeam)}</option></select><button onclick="addRed()">Add Red</button></div></div>
       <div class="section-title">📊 MATCH STATS</div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Possession (%)</label><input type="number" id="homePoss" value="${stats.possession?.home || 50}"></div>
-      <div><label>✈️ ${escapeHtml(m.awayTeam)} Possession (%)</label><input type="number" id="awayPoss" value="${stats.possession?.away || 50}"></div></div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Total shots</label><input type="number" id="homeTotalShots" value="${stats.totalShots?.home || 0}"></div>
-      <div><label>✈️ ${escapeHtml(m.awayTeam)} Total shots</label><input type="number" id="awayTotalShots" value="${stats.totalShots?.away || 0}"></div></div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Shots on target</label><input type="number" id="homeSOT" value="${stats.shotsOnTarget?.home || 0}"></div>
-      <div><label>✈️ ${escapeHtml(m.awayTeam)} Shots on target</label><input type="number" id="awaySOT" value="${stats.shotsOnTarget?.away || 0}"></div></div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Big chances</label><input type="number" id="homeBigChances" value="${stats.bigChances?.home || 0}"></div>
-      <div><label>✈️ ${escapeHtml(m.awayTeam)} Big chances</label><input type="number" id="awayBigChances" value="${stats.bigChances?.away || 0}"></div></div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Corner kicks</label><input type="number" id="homeCorners" value="${stats.corners?.home || 0}"></div>
-      <div><label>✈️ ${escapeHtml(m.awayTeam)} Corner kicks</label><input type="number" id="awayCorners" value="${stats.corners?.away || 0}"></div></div>
-      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Passes (%)</label><input type="number" id="homePassPct" value="${stats.passesPercent?.home || 0}"></div>
-      <div><label>✈️ ${escapeHtml(m.awayTeam)} Passes (%)</label><input type="number" id="awayPassPct" value="${stats.passesPercent?.away || 0}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Possession (%)</label><input type="number" id="homePoss" value="${stats.possession?.home || 50}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Possession (%)</label><input type="number" id="awayPoss" value="${stats.possession?.away || 50}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Total shots</label><input type="number" id="homeTotalShots" value="${stats.totalShots?.home || 0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Total shots</label><input type="number" id="awayTotalShots" value="${stats.totalShots?.away || 0}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Shots on target</label><input type="number" id="homeSOT" value="${stats.shotsOnTarget?.home || 0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Shots on target</label><input type="number" id="awaySOT" value="${stats.shotsOnTarget?.away || 0}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Big chances</label><input type="number" id="homeBigChances" value="${stats.bigChances?.home || 0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Big chances</label><input type="number" id="awayBigChances" value="${stats.bigChances?.away || 0}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Corner kicks</label><input type="number" id="homeCorners" value="${stats.corners?.home || 0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Corner kicks</label><input type="number" id="awayCorners" value="${stats.corners?.away || 0}"></div></div>
+      <div class="flex"><div><label>🏠 ${escapeHtml(m.homeTeam)} Passes (%)</label><input type="number" id="homePassPct" value="${stats.passesPercent?.home || 0}"></div><div><label>✈️ ${escapeHtml(m.awayTeam)} Passes (%)</label><input type="number" id="awayPassPct" value="${stats.passesPercent?.away || 0}"></div></div>
       <button onclick="updateStats()">Update Stats</button>
-      
       <div class="section-title">📋 LINE-UPS (Starting XI + Substitutes)</div>
-      <div class="flex">
-        <div>
-          <h4>${escapeHtml(m.homeTeam)} Starting XI</h4>
-          <div class="player-list-area" id="homeLineupList">
-            ${homeLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('home', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No players</span>'}
-          </div>
-          <div class="flex"><input type="number" id="homePlayerNum" placeholder="#" style="width:70px"><input type="text" id="homePlayerName" placeholder="Name"><select id="homePlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('home')">Add</button></div>
-          
-          <h4 style="margin-top:12px;">${escapeHtml(m.homeTeam)} Substitutes</h4>
-          <div class="player-list-area" id="homeSubsList">
-            ${homeSubs.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removeSub('home', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No substitutes</span>'}
-          </div>
-          <div class="flex"><input type="number" id="homeSubNum" placeholder="#" style="width:70px"><input type="text" id="homeSubName" placeholder="Name"><select id="homeSubPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addSub('home')">Add</button></div>
-        </div>
-        
-        <div>
-          <h4>${escapeHtml(m.awayTeam)} Starting XI</h4>
-          <div class="player-list-area" id="awayLineupList">
-            ${awayLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('away', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No players</span>'}
-          </div>
-          <div class="flex"><input type="number" id="awayPlayerNum" placeholder="#" style="width:70px"><input type="text" id="awayPlayerName" placeholder="Name"><select id="awayPlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('away')">Add</button></div>
-          
-          <h4 style="margin-top:12px;">${escapeHtml(m.awayTeam)} Substitutes</h4>
-          <div class="player-list-area" id="awaySubsList">
-            ${awaySubs.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removeSub('away', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No substitutes</span>'}
-          </div>
-          <div class="flex"><input type="number" id="awaySubNum" placeholder="#" style="width:70px"><input type="text" id="awaySubName" placeholder="Name"><select id="awaySubPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addSub('away')">Add</button></div>
-        </div>
-      </div>
-      
-      <hr>
-      <div><strong>⚽ GOALS:</strong> ${(m.scorers || []).map(s => `<span class="player-item">${escapeHtml(s.name)} ${s.time}</span>`).join('') || '—'}</div>
-      <div><strong>🟨 YELLOW:</strong> ${(m.yellowCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
-      <div><strong>🟥 RED:</strong> ${(m.redCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time}</span>`).join('') || '—'}</div>
-      
+      <div class="flex"><div><h4>${escapeHtml(m.homeTeam)} Starting XI</h4><div class="player-list-area" id="homeLineupList">${homeLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('home', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No players</span>'}</div><div class="flex"><input type="number" id="homePlayerNum" placeholder="#" style="width:70px"><input type="text" id="homePlayerName" placeholder="Name"><select id="homePlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('home')">Add</button></div><h4 style="margin-top:12px;">${escapeHtml(m.homeTeam)} Substitutes</h4><div class="player-list-area" id="homeSubsList">${homeSubs.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removeSub('home', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No substitutes</span>'}</div><div class="flex"><input type="number" id="homeSubNum" placeholder="#" style="width:70px"><input type="text" id="homeSubName" placeholder="Name"><select id="homeSubPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addSub('home')">Add</button></div></div>
+      <div><h4>${escapeHtml(m.awayTeam)} Starting XI</h4><div class="player-list-area" id="awayLineupList">${awayLineup.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removePlayer('away', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No players</span>'}</div><div class="flex"><input type="number" id="awayPlayerNum" placeholder="#" style="width:70px"><input type="text" id="awayPlayerName" placeholder="Name"><select id="awayPlayerPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addPlayer('away')">Add</button></div><h4 style="margin-top:12px;">${escapeHtml(m.awayTeam)} Substitutes</h4><div class="player-list-area" id="awaySubsList">${awaySubs.map(p => `<div class="player-item">${p.number}. ${escapeHtml(p.name)} (${p.position}) <button onclick="removeSub('away', '${escapeHtml(p.name)}')" style="background:none; color:#b91c1c;">✖</button></div>`).join('') || '<span>No substitutes</span>'}</div><div class="flex"><input type="number" id="awaySubNum" placeholder="#" style="width:70px"><input type="text" id="awaySubName" placeholder="Name"><select id="awaySubPos">${positions.map(pos => `<option>${pos}</option>`).join('')}</select><button onclick="addSub('away')">Add</button></div></div></div>
+      <hr><div><strong>⚽ GOALS:</strong> ${(m.scorers || []).map(s => `<span class="player-item">${escapeHtml(s.name)} ${s.time} (${s.team === 'home' ? m.homeTeam : m.awayTeam})</span>`).join('') || '—'}</div>
+      <div><strong>🟨 YELLOW:</strong> ${(m.yellowCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time} (${c.team === 'home' ? m.homeTeam : m.awayTeam})</span>`).join('') || '—'}</div>
+      <div><strong>🟥 RED:</strong> ${(m.redCards || []).map(c => `<span class="player-item">${escapeHtml(c.player)} ${c.time} (${c.team === 'home' ? m.homeTeam : m.awayTeam})</span>`).join('') || '—'}</div>
       <button onclick="deleteMatch()" style="margin-top:20px; background:#6c757d;">🗑️ Delete Match</button>
     `;
   }
@@ -273,9 +149,10 @@
   window.addGoal = async () => {
     const name = document.getElementById('scorerName').value.trim();
     const minute = document.getElementById('scorerTime').value.trim();
+    const team = document.getElementById('scorerTeam').value;
     if (!name || !minute) return alert('Enter player name and minute');
     const scorers = [...(matches[currentMatchId].scorers || [])];
-    scorers.push({ name, time: minute });
+    scorers.push({ name, time: minute, team });
     await update(ref(db, `matches/${currentMatchId}`), { scorers });
     document.getElementById('scorerName').value = '';
     document.getElementById('scorerTime').value = '';
@@ -285,9 +162,10 @@
   window.addYellow = async () => {
     const player = document.getElementById('yellowPlayer').value.trim();
     const minute = document.getElementById('yellowTime').value.trim();
+    const team = document.getElementById('yellowTeam').value;
     if (!player || !minute) return alert('Enter player name and minute');
     const cards = [...(matches[currentMatchId].yellowCards || [])];
-    cards.push({ player, time: minute });
+    cards.push({ player, time: minute, team });
     await update(ref(db, `matches/${currentMatchId}`), { yellowCards: cards });
     document.getElementById('yellowPlayer').value = '';
     document.getElementById('yellowTime').value = '';
@@ -297,9 +175,10 @@
   window.addRed = async () => {
     const player = document.getElementById('redPlayer').value.trim();
     const minute = document.getElementById('redTime').value.trim();
+    const team = document.getElementById('redTeam').value;
     if (!player || !minute) return alert('Enter player name and minute');
     const cards = [...(matches[currentMatchId].redCards || [])];
-    cards.push({ player, time: minute });
+    cards.push({ player, time: minute, team });
     await update(ref(db, `matches/${currentMatchId}`), { redCards: cards });
     document.getElementById('redPlayer').value = '';
     document.getElementById('redTime').value = '';
@@ -362,30 +241,13 @@
     if (!home || !away) return alert('Enter both team names');
     const newMatchRef = push(ref(db, 'matches'));
     await set(newMatchRef, {
-      homeTeam: home,
-      awayTeam: away,
-      homeScore: 0,
-      awayScore: 0,
-      scorers: [],
-      yellowCards: [],
-      redCards: [],
-      homeLineup: [],
-      awayLineup: [],
-      homeSubs: [],
-      awaySubs: [],
-      status: 'UPCOMING',
-      time: '--',
-      stadium: '',
-      homeFormation: '4-4-2',
-      awayFormation: '4-4-2',
-      stats: {
-        possession: { home: 50, away: 50 },
-        totalShots: { home: 0, away: 0 },
-        shotsOnTarget: { home: 0, away: 0 },
-        bigChances: { home: 0, away: 0 },
-        corners: { home: 0, away: 0 },
-        passesPercent: { home: 0, away: 0 }
-      }
+      homeTeam: home, awayTeam: away,
+      homeScore: 0, awayScore: 0,
+      scorers: [], yellowCards: [], redCards: [],
+      homeLineup: [], awayLineup: [], homeSubs: [], awaySubs: [],
+      status: 'UPCOMING', time: '--', stadium: '',
+      homeFormation: '4-4-2', awayFormation: '4-4-2',
+      stats: { possession: { home: 50, away: 50 }, totalShots: { home: 0, away: 0 }, shotsOnTarget: { home: 0, away: 0 }, bigChances: { home: 0, away: 0 }, corners: { home: 0, away: 0 }, passesPercent: { home: 0, away: 0 } }
     });
     document.getElementById('newHomeTeam').value = '';
     document.getElementById('newAwayTeam').value = '';
