@@ -76,7 +76,6 @@
       padding: 2px 10px;
       border-radius: 20px;
       font-weight: 600;
-      transition: all 0.2s;
     }
     .blink-time {
       animation: blinkRed 0.8s infinite;
@@ -97,7 +96,6 @@
     .events-list { list-style: none; }
     .events-list li { padding: 5px 0; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f2f5; }
     .event-time { font-weight: 700; color: #2d4a6e; min-width: 40px; }
-    /* Goal popup animation */
     .goal-popup {
       position: fixed;
       top: 20%;
@@ -121,7 +119,6 @@
       80% { opacity: 1; top: 20%; }
       100% { opacity: 0; transform: translateX(-50%) scale(0.9); top: 15%; visibility: hidden; }
     }
-    /* Scroll to top button - theme color */
     .scroll-top {
       position: fixed;
       bottom: 20px;
@@ -142,22 +139,14 @@
       opacity: 0;
       visibility: hidden;
     }
-    .scroll-top.show {
-      opacity: 1;
-      visibility: visible;
-    }
-    .scroll-top:hover {
-      background: #c8102e;
-      transform: scale(1.05);
-    }
-    /* Stats with bars */
+    .scroll-top.show { opacity: 1; visibility: visible; }
+    .scroll-top:hover { background: #c8102e; transform: scale(1.05); }
     .stat-item { margin-bottom: 1rem; }
     .stat-header { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; color: #475569; margin-bottom: 4px; }
     .stat-bar-container { display: flex; height: 8px; border-radius: 20px; overflow: hidden; }
     .stat-bar-home { background: #c8102e; height: 8px; }
     .stat-bar-away { background: #1a2c3e; height: 8px; }
     .stat-values { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 600; margin-top: 4px; }
-    /* Line-up */
     .lineup-container { display: flex; flex-direction: column; gap: 1.5rem; }
     .team-lineup { background: #f8fafc; border-radius: 16px; padding: 0.8rem; }
     .team-lineup h4 { font-size: 0.8rem; font-weight: 700; color: #1a2c3e; margin-bottom: 12px; border-left: 3px solid #2d4a6e; padding-left: 8px; }
@@ -186,8 +175,6 @@
   </div>
   <main><div class="matches-container" id="matchesList"></div></main>
   <footer><p>Powered by <strong>MEDSPHERE</strong> | Live updates</p></footer>
-
-  <!-- Scroll to top button -->
   <div class="scroll-top" id="scrollTopBtn">↑</div>
 
   <script type="module">
@@ -212,7 +199,6 @@
     
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;': m==='>'?'&gt;': m); }
     
-    // Show goal popup
     function showGoalPopup(teamName, scorerName) {
       const popup = document.createElement('div');
       popup.className = 'goal-popup';
@@ -221,19 +207,17 @@
       setTimeout(() => popup.remove(), 2500);
     }
     
-    // Check for new goals
     function checkForNewGoals(oldMatch, newMatch) {
       if (!oldMatch || !newMatch) return;
       const oldScorers = oldMatch.scorers || [];
       const newScorers = newMatch.scorers || [];
       if (newScorers.length > oldScorers.length) {
         const newGoal = newScorers[newScorers.length - 1];
-        const scoringTeam = newMatch.homeTeam.includes(newGoal.name) ? newMatch.homeTeam : newMatch.awayTeam;
-        showGoalPopup(scoringTeam, newGoal.name);
+        const teamName = newGoal.team === 'home' ? newMatch.homeTeam : newMatch.awayTeam;
+        showGoalPopup(teamName, newGoal.name);
       }
     }
     
-    // Scroll to top button
     const scrollBtn = document.getElementById('scrollTopBtn');
     window.addEventListener('scroll', () => {
       if (window.scrollY > 300) scrollBtn.classList.add('show');
@@ -243,9 +227,18 @@
     
     function renderEvents(match) {
       const events = [];
-      (match.scorers || []).forEach(s => events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)}`}));
-      (match.yellowCards || []).forEach(c => events.push({time: c.time, text: `🟨 ${escapeHtml(c.player)}`}));
-      (match.redCards || []).forEach(c => events.push({time: c.time, text: `🟥 ${escapeHtml(c.player)}`}));
+      (match.scorers || []).forEach(s => {
+        const teamName = s.team === 'home' ? match.homeTeam : match.awayTeam;
+        events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)} (${escapeHtml(teamName)})`});
+      });
+      (match.yellowCards || []).forEach(c => {
+        const teamName = c.team === 'home' ? match.homeTeam : match.awayTeam;
+        events.push({time: c.time, text: `🟨 ${escapeHtml(c.player)} (${escapeHtml(teamName)})`});
+      });
+      (match.redCards || []).forEach(c => {
+        const teamName = c.team === 'home' ? match.homeTeam : match.awayTeam;
+        events.push({time: c.time, text: `🟥 ${escapeHtml(c.player)} (${escapeHtml(teamName)})`});
+      });
       events.sort((a,b)=> (parseInt(a.time)||0) - (parseInt(b.time)||0));
       return events.map(e => `<li><span class="event-time">${e.time}'</span>${e.text}</li>`).join('') || '<li>No events</li>';
     }
@@ -288,7 +281,7 @@
         const timeBlinkClass = isLive ? 'blink-time' : '';
         
         return `
-          <div class="match-card" data-match-id="${match.id || idx}">
+          <div class="match-card">
             <div class="match-header"><div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore||0}</div></div><div class="vs">VS</div><div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore||0}</div></div></div>
             <div class="status-row"><span class="match-time ${timeBlinkClass}">⏱️ ${escapeHtml(timeDisplay)}</span><span class="match-status ${statusClass}">${statusText}</span></div>
             <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'TBD')}</div>
