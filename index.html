@@ -152,16 +152,16 @@
     .formation-badge { display: inline-block; background: #eef2f8; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; color: #2d4a6e; margin-bottom: 10px; }
     footer { text-align: center; padding: 0.8rem; font-size: 0.6rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
 
-    /* Coming Soon Styles */
+    /* Stylish Teams Grid */
     .coming-soon-container {
       background: white;
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 2rem 1.5rem;
       text-align: center;
       border: 1px solid #e9ecef;
     }
     .coming-soon-container h3 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       color: #c8102e;
       margin-bottom: 0.5rem;
     }
@@ -172,19 +172,32 @@
     }
     .teams-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 0.8rem;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
       margin-top: 1rem;
     }
-    .team-chip {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 40px;
-      padding: 0.5rem 0.8rem;
-      font-size: 0.8rem;
-      font-weight: 500;
+    .team-card {
+      background: linear-gradient(135deg, #1a2c3e 0%, #2d4a6e 100%);
+      border-radius: 16px;
+      padding: 0.8rem 0.5rem;
       text-align: center;
-      color: #1a2c3e;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+    .team-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+    }
+    .team-icon {
+      font-size: 2rem;
+      margin-bottom: 0.3rem;
+    }
+    .team-name-card {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: white;
+      letter-spacing: 0.3px;
     }
 
     @media (max-width: 600px) {
@@ -192,7 +205,8 @@
       .team-name { font-size: 0.8rem; }
       .player-item { width: calc(50% - 12px); }
       .goal-popup { font-size: 0.8rem; padding: 8px 16px; white-space: nowrap; }
-      .teams-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+      .teams-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+      .team-name-card { font-size: 0.75rem; }
     }
   </style>
 </head>
@@ -238,16 +252,25 @@
         <div class="coming-soon-container">
           <h3>🏆 Matches Coming Up</h3>
           <div class="teams-grid">
-            ${teamList.map(team => `<div class="team-chip">⚽ ${escapeHtml(team)}</div>`).join('')}
+            ${teamList.map(team => `
+              <div class="team-card">
+                <div class="team-icon">⚽</div>
+                <div class="team-name-card">${escapeHtml(team)}</div>
+              </div>
+            `).join('')}
           </div>
         </div>
       `;
     }
     
-    function showGoalPopup(teamName, scorerName) {
+    function showGoalPopup(teamName, scorerName, assistName) {
       const popup = document.createElement('div');
       popup.className = 'goal-popup';
-      popup.innerHTML = `⚽ GOAL! ${escapeHtml(scorerName)} scores for ${escapeHtml(teamName)} ⚽`;
+      if (assistName) {
+        popup.innerHTML = `⚽ GOAL! ${escapeHtml(scorerName)} scores for ${escapeHtml(teamName)} (Assist: ${escapeHtml(assistName)}) ⚽`;
+      } else {
+        popup.innerHTML = `⚽ GOAL! ${escapeHtml(scorerName)} scores for ${escapeHtml(teamName)} ⚽`;
+      }
       document.body.appendChild(popup);
       setTimeout(() => popup.remove(), 2500);
     }
@@ -259,7 +282,7 @@
       if (newScorers.length > oldScorers.length) {
         const newGoal = newScorers[newScorers.length - 1];
         const teamName = newGoal.team === 'home' ? newMatch.homeTeam : newMatch.awayTeam;
-        showGoalPopup(teamName, newGoal.name);
+        showGoalPopup(teamName, newGoal.name, newGoal.assist);
       }
     }
     
@@ -274,7 +297,11 @@
       const events = [];
       (match.scorers || []).forEach(s => {
         const teamName = s.team === 'home' ? match.homeTeam : match.awayTeam;
-        events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)} (${escapeHtml(teamName)})`});
+        if (s.assist) {
+          events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)} (Assist: ${escapeHtml(s.assist)}) (${escapeHtml(teamName)})`});
+        } else {
+          events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)} (${escapeHtml(teamName)})`});
+        }
       });
       (match.yellowCards || []).forEach(c => {
         const teamName = c.team === 'home' ? match.homeTeam : match.awayTeam;
