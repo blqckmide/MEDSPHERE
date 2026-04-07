@@ -152,49 +152,42 @@
     .formation-badge { display: inline-block; background: #eef2f8; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; color: #2d4a6e; margin-bottom: 10px; }
     footer { text-align: center; padding: 0.8rem; font-size: 0.6rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
 
-    /* Stylish Teams Grid */
+    /* Teams Grid - Moderate Spacing */
     .coming-soon-container {
       background: white;
       border-radius: 24px;
-      padding: 2rem 1.5rem;
+      padding: 1.8rem 1.2rem;
       text-align: center;
       border: 1px solid #e9ecef;
     }
     .coming-soon-container h3 {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: #c8102e;
-      margin-bottom: 0.5rem;
-    }
-    .coming-soon-container > p {
-      color: #64748b;
-      font-size: 0.8rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
     .teams-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.6rem;
     }
     .team-card {
       background: linear-gradient(135deg, #1a2c3e 0%, #2d4a6e 100%);
-      border-radius: 16px;
-      padding: 0.8rem 0.5rem;
+      border-radius: 12px;
+      padding: 0.5rem 0.3rem;
       text-align: center;
       transition: transform 0.2s, box-shadow 0.2s;
       cursor: default;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
     .team-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
     .team-icon {
-      font-size: 2rem;
-      margin-bottom: 0.3rem;
+      font-size: 1.3rem;
     }
     .team-name-card {
-      font-size: 0.85rem;
+      font-size: 0.7rem;
       font-weight: 600;
       color: white;
       letter-spacing: 0.3px;
@@ -205,8 +198,7 @@
       .team-name { font-size: 0.8rem; }
       .player-item { width: calc(50% - 12px); }
       .goal-popup { font-size: 0.8rem; padding: 8px 16px; white-space: nowrap; }
-      .teams-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
-      .team-name-card { font-size: 0.75rem; }
+      .teams-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
     }
   </style>
 </head>
@@ -216,7 +208,7 @@
     <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
   </div>
   <main><div class="matches-container" id="matchesList"></div></main>
-  <footer><p>Powered by <strong>UNIMED APROKO</strong> | Live updates</p></footer>
+  <footer><p>Powered by <strong>MEDSPHERE</strong> | Live updates</p></footer>
   <div class="scroll-top" id="scrollTopBtn">↑</div>
 
   <script type="module">
@@ -254,7 +246,7 @@
           <div class="teams-grid">
             ${teamList.map(team => `
               <div class="team-card">
-                <div class="team-icon">⚽️</div>
+                <div class="team-icon">⚽</div>
                 <div class="team-name-card">${escapeHtml(team)}</div>
               </div>
             `).join('')}
@@ -323,7 +315,7 @@
     }
     
     function renderStats(match) {
-      const stats = match.stats || { possession: { home: 50, away: 50 }, totalShots: { home: 0, away: 0 }, shotsOnTarget: { home: 0, away: 0 }, bigChances: { home: 0, away: 0 }, corners: { home: 0, away: 0 }, passesPercent: { home: 50, away: 50 } };
+      const stats = match.stats || { possession: { home: 50, away: 50 }, totalShots: { home: 0, away: 0 }, shotsOnTarget: { home: 0, away: 0 }, bigChances: { home: 0, away: 0 }, corners: { home: 0, away: 0 }, passesPercent: { home: 0, away: 0 } };
       return `
         <div class="stat-item"><div class="stat-header"><span>Ball possession</span></div>${renderStatBar(stats.possession?.home || 50, stats.possession?.away || 50, 100)}<div class="stat-values"><span>${stats.possession?.home || 50}%</span><span>${stats.possession?.away || 50}%</span></div></div>
         <div class="stat-item"><div class="stat-header"><span>Total shots</span></div>${renderStatBar(stats.totalShots?.home || 0, stats.totalShots?.away || 0)}<div class="stat-values"><span>${stats.totalShots?.home || 0}</span><span>${stats.totalShots?.away || 0}</span></div></div>
@@ -358,7 +350,7 @@
           <div class="match-card">
             <div class="match-header"><div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore||0}</div></div><div class="vs">VS</div><div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore||0}</div></div></div>
             <div class="status-row"><span class="match-time ${timeBlinkClass}">⏱️ ${escapeHtml(timeDisplay)}</span><span class="match-status ${statusClass}">${statusText}</span></div>
-            <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'AFUED STADIUM')}</div>
+            <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'TBD')}</div>
             ${match.manOfTheMatch ? `<div style="background: #fef9e6; margin: 0 1rem 0.5rem 1rem; padding: 4px 8px; border-radius: 20px; text-align: center; font-size: 0.65rem; font-weight: 600; color: #b45309; border: 1px solid #ffdf7e;">⭐ MAN OF THE MATCH: ${escapeHtml(match.manOfTheMatch)}</div>` : ''}
             <div class="tabs"><button class="tab-btn active" data-tab="summary-${idx}">Summary</button><button class="tab-btn" data-tab="lineup-${idx}">Line-ups</button><button class="tab-btn" data-tab="stats-${idx}">Stats</button></div>
             <div id="summary-${idx}" class="tab-content active"><ul class="events-list">${renderEvents(match)}</ul></div>
