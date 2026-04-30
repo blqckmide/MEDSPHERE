@@ -1,394 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>MEDSPHERE Live Score | Student Union Cup 2026</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Audiowide&display=swap" rel="stylesheet">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f0f2f5;
-      color: #1a2c3e;
-      scroll-behavior: smooth;
-    }
-    .header {
-      background: #1a2c3e;
-      padding: 0.6rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .logo h1 {
-      font-family: 'Audiowide', cursive;
-      font-size: 1.1rem;
-      font-weight: 400;
-      color: white;
-      letter-spacing: 1px;
-    }
-    .logo h1 span { font-weight: 300; opacity: 0.8; }
-    .tournament-badge {
-      background: #2d4a6e;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: #ffdf7e;
-    }
-    .matches-container { max-width: 900px; margin: 1rem auto; padding: 0 1rem; display: flex; flex-direction: column; gap: 1.2rem; }
-    .match-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      border: 1px solid #e9ecef;
-    }
-    .match-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 1.2rem;
-      background: white;
-    }
-    .team { text-align: center; flex: 1; }
-    .team-name { font-weight: 700; font-size: 1rem; color: #1a2c3e; }
-    .team-score { font-size: 1.8rem; font-weight: 800; color: #2d4a6e; }
-    .vs { font-size: 0.8rem; color: #94a3b8; font-weight: 600; padding: 0 12px; }
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.3rem 1.2rem;
-      background: #f8fafc;
-      border-top: 1px solid #eef2f8;
-      font-size: 0.65rem;
-    }
-    .match-time { background: #2d4a6e; color: white; padding: 2px 10px; border-radius: 20px; font-weight: 600; }
-    .blink-time { animation: blinkRed 0.8s infinite; background: #dc2626; }
-    .match-status { padding: 2px 10px; border-radius: 20px; font-weight: 600; }
-    .status-live { background: #dc2626; color: white; animation: pulse 1s infinite; }
-    .status-ended { background: #4b5563; color: white; }
-    .status-upcoming { background: #e2e8f0; color: #475569; }
-    @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
-    @keyframes blinkRed { 0% { opacity: 0.7; background: #dc2626; } 50% { opacity: 1; background: #ff4444; } 100% { opacity: 0.7; background: #dc2626; } }
-    .stadium { padding: 0.3rem 1.2rem 0.5rem; font-size: 0.6rem; color: #64748b; display: flex; align-items: center; gap: 6px; }
-    .tabs { display: flex; border-top: 1px solid #eef2f8; background: white; }
-    .tab-btn { flex: 1; padding: 0.6rem; background: none; border: none; font-size: 0.7rem; font-weight: 600; color: #64748b; cursor: pointer; transition: 0.2s; }
-    .tab-btn.active { color: #2d4a6e; border-bottom: 2px solid #2d4a6e; background: #fafcff; }
-    .tab-content { display: none; padding: 1rem; background: white; border-top: 1px solid #eef2f8; }
-    .tab-content.active { display: block; }
-    .events-list { list-style: none; }
-    .events-list li { padding: 5px 0; font-size: 0.7rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f0f2f5; }
-    .event-time { font-weight: 700; color: #2d4a6e; min-width: 40px; }
-    .goal-popup {
-      position: fixed;
-      top: 20%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #c8102e, #8b1a1a);
-      color: white;
-      padding: 12px 24px;
-      border-radius: 50px;
-      font-weight: 800;
-      font-size: 1rem;
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      animation: goalPop 0.5s ease-out forwards;
-      white-space: nowrap;
-    }
-    @keyframes goalPop {
-      0% { opacity: 0; transform: translateX(-50%) scale(0.8); top: 15%; }
-      20% { opacity: 1; transform: translateX(-50%) scale(1.1); top: 20%; }
-      40% { opacity: 1; transform: translateX(-50%) scale(1); top: 20%; }
-      80% { opacity: 1; top: 20%; }
-      100% { opacity: 0; transform: translateX(-50%) scale(0.9); top: 15%; visibility: hidden; }
-    }
-    .scroll-top {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #1a2c3e;
-      color: white;
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.5rem;
-      transition: 0.2s;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      z-index: 99;
-      opacity: 0;
-      visibility: hidden;
-    }
-    .scroll-top.show { opacity: 1; visibility: visible; }
-    .scroll-top:hover { background: #c8102e; transform: scale(1.05); }
-    .stat-item { margin-bottom: 1rem; }
-    .stat-header { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 600; color: #475569; margin-bottom: 4px; }
-    .stat-bar-container { display: flex; height: 8px; border-radius: 20px; overflow: hidden; }
-    .stat-bar-home { background: #c8102e; height: 8px; }
-    .stat-bar-away { background: #1a2c3e; height: 8px; }
-    .stat-values { display: flex; justify-content: space-between; font-size: 0.65rem; font-weight: 600; margin-top: 4px; }
-    .lineup-container { display: flex; flex-direction: column; gap: 1.5rem; }
-    .team-lineup { background: #f8fafc; border-radius: 16px; padding: 0.8rem; }
-    .team-lineup h4 { font-size: 0.8rem; font-weight: 700; color: #1a2c3e; margin-bottom: 12px; border-left: 3px solid #2d4a6e; padding-left: 8px; }
-    .players-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
-    .player-item { display: flex; align-items: center; gap: 8px; width: calc(33% - 12px); min-width: 120px; }
-    .player-number { background: #c8102e; color: white; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 800; font-size: 0.75rem; }
-    .player-name { font-size: 0.7rem; font-weight: 500; color: #1e293b; }
-    .subs-section { margin-top: 12px; padding-top: 8px; border-top: 1px dashed #e2e8f0; }
-    .subs-title { font-size: 0.65rem; font-weight: 600; color: #64748b; margin-bottom: 8px; }
-    .subs-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-    .sub-item { display: flex; align-items: center; gap: 6px; background: #eef2f8; padding: 3px 8px; border-radius: 20px; font-size: 0.65rem; }
-    .formation-badge { display: inline-block; background: #eef2f8; padding: 2px 10px; border-radius: 20px; font-size: 0.6rem; font-weight: 600; color: #2d4a6e; margin-bottom: 10px; }
-    footer { text-align: center; padding: 0.8rem; font-size: 0.6rem; color: #6c7a8e; background: white; border-top: 1px solid #eef2f8; margin-top: 1rem; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MEDSPHERE Live Score</title>
 
-    /* Teams Grid - Moderate Spacing */
-    .coming-soon-container {
-      background: white;
-      border-radius: 24px;
-      padding: 1.8rem 1.2rem;
-      text-align: center;
-      border: 1px solid #e9ecef;
-    }
-    .coming-soon-container h3 {
-      font-size: 1.2rem;
-      color: #c8102e;
-      margin-bottom: 1rem;
-    }
-    .teams-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 0.6rem;
-    }
-    .team-card {
-      background: linear-gradient(135deg, #1a2c3e 0%, #2d4a6e 100%);
-      border-radius: 12px;
-      padding: 0.5rem 0.3rem;
-      text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: default;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
-    .team-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-    .team-icon {
-      font-size: 1.3rem;
-    }
-    .team-name-card {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: white;
-      letter-spacing: 0.3px;
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    @media (max-width: 600px) {
-      .team-score { font-size: 1.3rem; }
-      .team-name { font-size: 0.8rem; }
-      .player-item { width: calc(50% - 12px); }
-      .goal-popup { font-size: 0.8rem; padding: 8px 16px; white-space: nowrap; }
-      .teams-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-    }
-  </style>
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Inter',sans-serif;
+  background:#f4f6f8;
+  color:#111827;
+}
+
+/* HEADER */
+header{
+  background:#000;
+  padding:14px 18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.logo-box{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logo-box img{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#fff;
+}
+
+.logo-text{
+  color:#fff;
+}
+
+.logo-text h1{
+  font-size:1.05rem;
+  font-weight:800;
+  line-height:1.1;
+}
+
+.logo-text span{
+  font-size:.72rem;
+  opacity:.8;
+}
+
+.badge{
+  background:#16a34a;
+  color:#fff;
+  padding:6px 14px;
+  border-radius:50px;
+  font-size:.75rem;
+  font-weight:700;
+}
+
+/* PAGE */
+.wrapper{
+  max-width:950px;
+  margin:auto;
+  padding:18px;
+}
+
+.section-title{
+  font-size:1rem;
+  font-weight:800;
+  margin-bottom:14px;
+  color:#111827;
+}
+
+/* MATCH CARD */
+.match-card{
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,.05);
+  margin-bottom:18px;
+}
+
+.match-top{
+  padding:18px;
+}
+
+.teams{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.team{
+  flex:1;
+  text-align:center;
+}
+
+.team-name{
+  font-size:.95rem;
+  font-weight:700;
+}
+
+.score{
+  font-size:2rem;
+  font-weight:800;
+  margin-top:5px;
+}
+
+.vs{
+  font-size:.8rem;
+  font-weight:700;
+  color:#6b7280;
+}
+
+/* STATUS */
+.match-info{
+  background:#f9fafb;
+  border-top:1px solid #eee;
+  padding:12px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+.live{
+  background:#dc2626;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:40px;
+  font-size:.75rem;
+  font-weight:700;
+}
+
+.upcoming{
+  background:#e5e7eb;
+  color:#111;
+  padding:6px 12px;
+  border-radius:40px;
+  font-size:.75rem;
+  font-weight:700;
+}
+
+.time{
+  font-size:.8rem;
+  font-weight:700;
+}
+
+/* EVENTS */
+.events{
+  padding:15px 18px;
+}
+
+.events h4{
+  font-size:.82rem;
+  margin-bottom:10px;
+}
+
+.events li{
+  list-style:none;
+  padding:7px 0;
+  border-bottom:1px solid #f0f0f0;
+  font-size:.8rem;
+}
+
+/* FOOTER */
+footer{
+  margin-top:20px;
+  text-align:center;
+  font-size:.75rem;
+  padding:18px;
+  color:#6b7280;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+  .score{
+    font-size:1.5rem;
+  }
+
+  .team-name{
+    font-size:.82rem;
+  }
+
+  .logo-text h1{
+    font-size:.9rem;
+  }
+}
+</style>
 </head>
-<body>
-  <div class="header">
-    <div class="logo"><h1>⚡ MEDSPHERE <span>LIVE SCORE</span></h1></div>
-    <div class="tournament-badge">🏆 STUDENT UNION CUP 2026</div>
-  </div>
-  <main><div class="matches-container" id="matchesList"></div></main>
-  <footer><p>Powered by <strong>UNIMED APROKO</strong> | Live updates</p></footer>
-  <div class="scroll-top" id="scrollTopBtn">↑</div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyB8Lgw7WzFuCBw5OaYTQebQ8I4JgjuohFU",
-      authDomain: "medsphere-c794d.firebaseapp.com",
-      projectId: "medsphere-c794d",
-      storageBucket: "medsphere-c794d.firebasestorage.app",
-      messagingSenderId: "962864542783",
-      appId: "1:962864542783:web:b59e6abda9c6f1a9fc348a",
-      measurementId: "G-HPQ46648M4"
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const matchesRef = ref(db, 'matches');
-    
-    let previousMatches = {};
-    
-    const teamList = [
-      "White Walkers", "420 FC", "Valhalla", "Broovas", "Stacia",
-      "Velocity United", "Soccer Saints", "Outkast", "Dripdome", "Pandora"
-    ];
-    
-    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;': m==='>'?'&gt;': m); }
-    
-    function showComingSoon() {
-      const container = document.getElementById('matchesList');
-      container.innerHTML = `
-        <div class="coming-soon-container">
-          <h3>🏆 Matches Coming Up</h3>
-          <div class="teams-grid">
-            ${teamList.map(team => `
-              <div class="team-card">
-                <div class="team-icon">⚽</div>
-                <div class="team-name-card">${escapeHtml(team)}</div>
-              </div>
-            `).join('')}
-          </div>
+<body>
+
+<header>
+  <div class="logo-box">
+    <!-- YOUR TAGGED LOGO -->
+    <img src="IMG_3802.png" alt="MEDSPHERE Logo">
+
+    <div class="logo-text">
+      <h1>MEDSPHERE LIVE SCORE</h1>
+      <span>Fastest Campus Football Updates</span>
+    </div>
+  </div>
+
+  <div class="badge">STUDENT UNION CUP 2026</div>
+</header>
+
+<div class="wrapper">
+
+  <div class="section-title">Live Matches</div>
+
+  <!-- MATCH CARD -->
+  <div class="match-card">
+
+    <div class="match-top">
+      <div class="teams">
+
+        <div class="team">
+          <div class="team-name">White Walkers</div>
+          <div class="score">2</div>
         </div>
-      `;
-    }
-    
-    function showGoalPopup(teamName, scorerName, assistName) {
-      const popup = document.createElement('div');
-      popup.className = 'goal-popup';
-      if (assistName) {
-        popup.innerHTML = `⚽ GOAL! ${escapeHtml(scorerName)} scores for ${escapeHtml(teamName)} (Assist: ${escapeHtml(assistName)}) ⚽`;
-      } else {
-        popup.innerHTML = `⚽ GOAL! ${escapeHtml(scorerName)} scores for ${escapeHtml(teamName)} ⚽`;
-      }
-      document.body.appendChild(popup);
-      setTimeout(() => popup.remove(), 2500);
-    }
-    
-    function checkForNewGoals(oldMatch, newMatch) {
-      if (!oldMatch || !newMatch) return;
-      const oldScorers = oldMatch.scorers || [];
-      const newScorers = newMatch.scorers || [];
-      if (newScorers.length > oldScorers.length) {
-        const newGoal = newScorers[newScorers.length - 1];
-        const teamName = newGoal.team === 'home' ? newMatch.homeTeam : newMatch.awayTeam;
-        showGoalPopup(teamName, newGoal.name, newGoal.assist);
-      }
-    }
-    
-    const scrollBtn = document.getElementById('scrollTopBtn');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 300) scrollBtn.classList.add('show');
-      else scrollBtn.classList.remove('show');
-    });
-    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    
-    function renderEvents(match) {
-      const events = [];
-      (match.scorers || []).forEach(s => {
-        const teamName = s.team === 'home' ? match.homeTeam : match.awayTeam;
-        if (s.assist) {
-          events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)} (Assist: ${escapeHtml(s.assist)}) (${escapeHtml(teamName)})`});
-        } else {
-          events.push({time: s.time, text: `⚽ ${escapeHtml(s.name)} (${escapeHtml(teamName)})`});
-        }
-      });
-      (match.yellowCards || []).forEach(c => {
-        const teamName = c.team === 'home' ? match.homeTeam : match.awayTeam;
-        events.push({time: c.time, text: `🟨 ${escapeHtml(c.player)} (${escapeHtml(teamName)})`});
-      });
-      (match.redCards || []).forEach(c => {
-        const teamName = c.team === 'home' ? match.homeTeam : match.awayTeam;
-        events.push({time: c.time, text: `🟥 ${escapeHtml(c.player)} (${escapeHtml(teamName)})`});
-      });
-      events.sort((a,b)=> (parseInt(a.time)||0) - (parseInt(b.time)||0));
-      return events.map(e => `<li><span class="event-time">${e.time}'</span>${e.text}</li>`).join('') || '<li>No events</li>';
-    }
-    
-    function renderStatBar(homeVal, awayVal, maxVal) {
-      const max = maxVal || Math.max(homeVal, awayVal, 1);
-      const homePercent = (homeVal / max) * 100;
-      const awayPercent = (awayVal / max) * 100;
-      return `<div class="stat-bar-container"><div class="stat-bar-home" style="width: ${homePercent}%;"></div><div class="stat-bar-away" style="width: ${awayPercent}%;"></div></div>`;
-    }
-    
-    function renderStats(match) {
-      const stats = match.stats || { possession: { home: 50, away: 50 }, totalShots: { home: 0, away: 0 }, shotsOnTarget: { home: 0, away: 0 }, bigChances: { home: 0, away: 0 }, corners: { home: 0, away: 0 }, passesPercent: { home: 0, away: 0 } };
-      return `
-        <div class="stat-item"><div class="stat-header"><span>Ball possession</span></div>${renderStatBar(stats.possession?.home || 50, stats.possession?.away || 50, 100)}<div class="stat-values"><span>${stats.possession?.home || 50}%</span><span>${stats.possession?.away || 50}%</span></div></div>
-        <div class="stat-item"><div class="stat-header"><span>Total shots</span></div>${renderStatBar(stats.totalShots?.home || 0, stats.totalShots?.away || 0)}<div class="stat-values"><span>${stats.totalShots?.home || 0}</span><span>${stats.totalShots?.away || 0}</span></div></div>
-        <div class="stat-item"><div class="stat-header"><span>Shots on target</span></div>${renderStatBar(stats.shotsOnTarget?.home || 0, stats.shotsOnTarget?.away || 0)}<div class="stat-values"><span>${stats.shotsOnTarget?.home || 0}</span><span>${stats.shotsOnTarget?.away || 0}</span></div></div>
-        <div class="stat-item"><div class="stat-header"><span>Big chances</span></div>${renderStatBar(stats.bigChances?.home || 0, stats.bigChances?.away || 0)}<div class="stat-values"><span>${stats.bigChances?.home || 0}</span><span>${stats.bigChances?.away || 0}</span></div></div>
-        <div class="stat-item"><div class="stat-header"><span>Corner kicks</span></div>${renderStatBar(stats.corners?.home || 0, stats.corners?.away || 0)}<div class="stat-values"><span>${stats.corners?.home || 0}</span><span>${stats.corners?.away || 0}</span></div></div>
-        <div class="stat-item"><div class="stat-header"><span>Passes (%)</span></div>${renderStatBar(stats.passesPercent?.home || 0, stats.passesPercent?.away || 0, 100)}<div class="stat-values"><span>${stats.passesPercent?.home || 0}%</span><span>${stats.passesPercent?.away || 0}%</span></div></div>
-      `;
-    }
-    
-    function renderLineup(players, subs, teamName, formation) {
-      const starting = players || [];
-      const substitutes = subs || [];
-      return `<div class="team-lineup"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;"><h4>${escapeHtml(teamName)}</h4><span class="formation-badge">${escapeHtml(formation || '4-4-2')}</span></div><div class="players-grid">${starting.map(p => `<div class="player-item"><div class="player-number">${p.number}</div><div class="player-name">${escapeHtml(p.name)}</div></div>`).join('')}</div>${substitutes.length ? `<div class="subs-section"><div class="subs-title">Substitutes</div><div class="subs-grid">${substitutes.map(s => `<div class="sub-item"><span class="sub-number">${s.number}</span> ${escapeHtml(s.name)}</div>`).join('')}</div></div>` : ''}</div>`;
-    }
-    
-    function renderMatches(matches) {
-      const container = document.getElementById('matchesList');
-      if(!matches || Object.keys(matches).length === 0) {
-        showComingSoon();
-        return;
-      }
-      const matchesArray = Object.values(matches);
-      container.innerHTML = matchesArray.map((match, idx) => {
-        const isLive = match.status === 'LIVE';
-        const statusClass = isLive ? 'status-live' : (match.status==='ENDED' ? 'status-ended' : 'status-upcoming');
-        const statusText = isLive ? '⚡ LIVE' : (match.status==='ENDED' ? '🏁 ENDED' : '📅 UPCOMING');
-        const timeDisplay = match.time || (isLive ? '45\'' : match.status==='ENDED' ? 'FT' : '--');
-        const timeBlinkClass = isLive ? 'blink-time' : '';
-        
-        return `
-          <div class="match-card">
-            <div class="match-header"><div class="team"><div class="team-name">${escapeHtml(match.homeTeam)}</div><div class="team-score">${match.homeScore||0}</div></div><div class="vs">VS</div><div class="team"><div class="team-name">${escapeHtml(match.awayTeam)}</div><div class="team-score">${match.awayScore||0}</div></div></div>
-            <div class="status-row"><span class="match-time ${timeBlinkClass}">⏱️ ${escapeHtml(timeDisplay)}</span><span class="match-status ${statusClass}">${statusText}</span></div>
-            <div class="stadium">🏟️ ${escapeHtml(match.stadium || 'TBD')}</div>
-            ${match.manOfTheMatch ? `<div style="background: #fef9e6; margin: 0 1rem 0.5rem 1rem; padding: 4px 8px; border-radius: 20px; text-align: center; font-size: 0.65rem; font-weight: 600; color: #b45309; border: 1px solid #ffdf7e;">⭐ MAN OF THE MATCH: ${escapeHtml(match.manOfTheMatch)}</div>` : ''}
-            <div class="tabs"><button class="tab-btn active" data-tab="summary-${idx}">Summary</button><button class="tab-btn" data-tab="lineup-${idx}">Line-ups</button><button class="tab-btn" data-tab="stats-${idx}">Stats</button></div>
-            <div id="summary-${idx}" class="tab-content active"><ul class="events-list">${renderEvents(match)}</ul></div>
-            <div id="lineup-${idx}" class="tab-content"><div class="lineup-container">${renderLineup(match.homeLineup || [], match.homeSubs || [], match.homeTeam, match.homeFormation)}${renderLineup(match.awayLineup || [], match.awaySubs || [], match.awayTeam, match.awayFormation)}</div></div>
-            <div id="stats-${idx}" class="tab-content">${renderStats(match)}</div>
-          </div>
-        `;
-      }).join('');
-      
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const parent = btn.closest('.match-card');
-          const tabId = btn.dataset.tab;
-          const content = document.getElementById(tabId);
-          const isActive = content.classList.contains('active');
-          parent.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
-          parent.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-          if (!isActive) { content.classList.add('active'); btn.classList.add('active'); }
-        });
-      });
-    }
-    
-    onValue(matchesRef, (snapshot) => {
-      const newMatches = snapshot.val();
-      if (newMatches && Object.keys(newMatches).length > 0) {
-        if (previousMatches && newMatches) {
-          Object.keys(newMatches).forEach(mid => {
-            const oldMatch = previousMatches[mid];
-            const newMatch = newMatches[mid];
-            if (oldMatch && newMatch) checkForNewGoals(oldMatch, newMatch);
-          });
-        }
-        previousMatches = newMatches || {};
-        renderMatches(newMatches);
-      } else {
-        showComingSoon();
-      }
-    });
-  </script>
+
+        <div class="vs">VS</div>
+
+        <div class="team">
+          <div class="team-name">420 FC</div>
+          <div class="score">1</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="match-info">
+      <div class="live">LIVE</div>
+      <div class="time">78'</div>
+    </div>
+
+    <div class="events">
+      <h4>Match Events</h4>
+      <ul>
+        <li>⚽ 12' Adekunle scores for White Walkers</li>
+        <li>⚽ 40' Tobi scores for 420 FC</li>
+        <li>⚽ 67' James scores for White Walkers</li>
+        <li>🟨 73' Yellow Card - 420 FC</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- SECOND MATCH -->
+  <div class="match-card">
+
+    <div class="match-top">
+      <div class="teams">
+
+        <div class="team">
+          <div class="team-name">Valhalla</div>
+          <div class="score">0</div>
+        </div>
+
+        <div class="vs">VS</div>
+
+        <div class="team">
+          <div class="team-name">Broovas</div>
+          <div class="score">0</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="match-info">
+      <div class="upcoming">UPCOMING</div>
+      <div class="time">4:00 PM</div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+Powered by UNIMED APROKO | MEDSPHERE Livescore
+</footer>
+
 </body>
 </html>
