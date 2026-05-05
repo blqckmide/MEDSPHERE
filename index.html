@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MEDSPHERE powered by UNIMED APROKO Live Score</title>
+  <title>MEDSPHERE Live Score</title>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -596,6 +596,27 @@ main {
   color: var(--muted-mid);
 }
 .empty-state p { font-size: 0.8rem; }
+
+/* ─── FOOTER ─── */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--border);
+  padding: 1rem;
+  text-align: center;
+}
+.footer-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.footer-text span {
+  color: var(--red-bright);
+  font-weight: 800;
+}
 ```
 
   </style>
@@ -633,7 +654,11 @@ main {
   </div>
 </main>
 
+<!-- Footer -->
 
+<footer class="site-footer">
+  <div class="footer-text">Powered by <span>UNIMED APROKO</span></div>
+</footer>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
@@ -803,8 +828,6 @@ main {
   function renderPitch(homeTeam, awayTeam, homePlayers, awayPlayers, homeSubs, awaySubs) {
     const W = 300, H = 480;
 
-    // Group players by position category → rows on pitch
-    // Home: attacks top→bottom (GK at bottom), Away: GK at top
     function getRows(players) {
       const order = { GK:0, CB:1, RB:1, LB:1, LWB:1, RWB:1, CDM:2, CM:2, DM:2, RM:2, LM:2, CAM:3, AM:3, LW:3, RW:3, SS:3, ST:4, CF:4, FW:4 };
       const rows = {};
@@ -863,47 +886,25 @@ main {
       </div>
       <div class="pitch-wrap">
         <svg class="pitch-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-          <!-- Pitch background -->
           <rect width="${W}" height="${H}" fill="#1a4a2e" rx="8"/>
-
-          <!-- Grass stripes -->
           ${Array.from({length:8},(_,i)=>`<rect x="0" y="${i*60}" width="${W}" height="30" fill="rgba(0,0,0,0.06)"/>`).join('')}
-
-          <!-- Outer border -->
           <rect x="10" y="10" width="${W-20}" height="${H-20}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" rx="4"/>
-
-          <!-- Centre line -->
           <line x1="10" y1="${H/2}" x2="${W-10}" y2="${H/2}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
-
-          <!-- Centre circle -->
           <circle cx="${W/2}" cy="${H/2}" r="36" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
           <circle cx="${W/2}" cy="${H/2}" r="2.5" fill="rgba(255,255,255,0.4)"/>
-
-          <!-- Home penalty box (bottom) -->
           <rect x="${W*0.2}" y="${H-10-80}" width="${W*0.6}" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
-          <!-- Home 6-yard box -->
           <rect x="${W*0.35}" y="${H-10-32}" width="${W*0.3}" height="32" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          <!-- Home goal -->
           <rect x="${W*0.38}" y="${H-10}" width="${W*0.24}" height="10" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-
-          <!-- Away penalty box (top) -->
           <rect x="${W*0.2}" y="10" width="${W*0.6}" height="80" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
-          <!-- Away 6-yard box -->
           <rect x="${W*0.35}" y="10" width="${W*0.3}" height="32" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          <!-- Away goal -->
           <rect x="${W*0.38}" y="0" width="${W*0.24}" height="10" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-
-          <!-- Penalty spots -->
           <circle cx="${W/2}" cy="${H-10-58}" r="2" fill="rgba(255,255,255,0.35)"/>
           <circle cx="${W/2}" cy="${10+58}" r="2" fill="rgba(255,255,255,0.35)"/>
-
-          <!-- Players -->
           ${noHome ? `<text x="${W/2}" y="${H*0.75}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="10" font-family="Barlow Condensed">Lineup not available</text>` : homeDots}
           ${noAway ? `<text x="${W/2}" y="${H*0.25}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="10" font-family="Barlow Condensed">Lineup not available</text>` : awayDots}
         </svg>
       </div>`;
 
-    // Subs section
     const subSection = (subs, color, label) => {
       if (!subs.length) return '';
       return `
