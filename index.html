@@ -181,6 +181,31 @@ main {
 .clock-inner.live-time { color: var(--red-bright); }
 .clock-inner.ended { color: var(--muted-mid); }
 
+/* ── MOTM Block ── */
+.motm-block {
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, rgba(251,191,36,0.1) 0%, rgba(251,191,36,0.04) 100%);
+  border: 1px solid rgba(251,191,36,0.3); border-radius: 8px;
+  padding: 9px 13px; margin-bottom: 0.6rem;
+}
+.motm-star {
+  font-size: 1.2rem; flex-shrink: 0;
+  filter: drop-shadow(0 0 8px rgba(251,191,36,0.8));
+  animation: star-pulse 2s ease-in-out infinite;
+}
+@keyframes star-pulse { 0%,100%{transform:scale(1);filter:drop-shadow(0 0 8px rgba(251,191,36,0.8));} 50%{transform:scale(1.15);filter:drop-shadow(0 0 14px rgba(251,191,36,1));} }
+.motm-info { flex: 1; min-width: 0; }
+.motm-label {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.55rem; font-weight: 800;
+  letter-spacing: 2px; text-transform: uppercase; color: #F59E0B; margin-bottom: 2px;
+}
+.motm-name {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 900;
+  letter-spacing: 0.5px; color: #FFFFFF; text-shadow: 0 0 12px rgba(251,191,36,0.4);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.motm-team { font-size: 0.6rem; color: var(--muted-mid); margin-top: 1px; }
+
 .divider { height: 1px; background: var(--border); margin: 0 -1rem; }
 
 .tabs-bar { display: flex; padding: 0.4rem 0 0; gap: 2px; }
@@ -207,38 +232,49 @@ main {
 .bar-home { background: #F59E0B; height: 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); border-radius: 2px 0 0 2px; }
 .bar-away { background: #38BDF8; height: 100%; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); border-radius: 0 2px 2px 0; }
 
-.pitch-wrap { position: relative; width: 100%; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+/* ── Pitch / Lineup ── */
+.pitch-outer { width: 100%; }
+
+/* Side-by-side team headers above each half */
+.pitch-teams-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+.pitch-team-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.72rem; font-weight: 800;
+  letter-spacing: 1px; text-transform: uppercase;
+}
+.pitch-team-label.home { color: #60A5FA; }
+.pitch-team-label.away { color: #F87171; }
+
+.pitch-wrap { position: relative; width: 100%; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
 .pitch-svg { width: 100%; display: block; }
-.pitch-teams-label { display: flex; justify-content: space-between; margin-bottom: 8px; }
-.pitch-team-name {
-  font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 800;
-  letter-spacing: 1px; text-transform: uppercase;
-}
-/* 6-aside badge on pitch */
-.pitch-format-badge {
-  font-family: 'Barlow Condensed', sans-serif; font-size: 0.55rem; font-weight: 800;
-  letter-spacing: 1px; text-transform: uppercase;
-  background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.3);
-  color: #A78BFA; padding: 2px 6px; border-radius: 3px; margin-left: 5px;
-  vertical-align: middle;
-}
 
 .player-dot-group { cursor: default; }
 .player-circle { transition: r 0.2s; }
-.player-dot-group:hover .player-circle { r: 11; }
+.player-dot-group:hover .player-circle { r: 10; }
 .player-label {
   font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
   pointer-events: none; dominant-baseline: middle; text-anchor: middle;
 }
 
-.subs-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
-.subs-title { font-size: 0.58rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-.sub-chip {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: var(--surface-2); border: 1px solid var(--border);
-  border-radius: 4px; padding: 3px 7px; font-size: 0.62rem; color: var(--muted-mid);
+.subs-section { display: flex; gap: 12px; margin-top: 4px; }
+.subs-half { flex: 1; }
+.subs-title {
+  font-size: 0.55rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 5px;
 }
-.sub-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.68rem; }
+.subs-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.sub-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 2px 6px; font-size: 0.58rem; color: var(--muted-mid);
+}
+.sub-num { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 0.64rem; }
 
 .event-list { display: flex; flex-direction: column; gap: 6px; }
 .event-row {
@@ -248,6 +284,13 @@ main {
 }
 .event-icon { font-size: 0.85rem; flex-shrink: 0; }
 .event-text { color: var(--muted-mid); flex: 1; }
+.event-team-tag {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 2px 6px; border-radius: 3px;
+}
+.event-team-tag.home { background: rgba(245,158,11,0.15); color: #F59E0B; border: 1px solid rgba(245,158,11,0.3); }
+.event-team-tag.away { background: rgba(56,189,248,0.15); color: #38BDF8; border: 1px solid rgba(56,189,248,0.3); }
 .event-time { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; color: var(--muted); }
 .no-events { text-align: center; font-size: 0.7rem; color: var(--muted); padding: 1rem 0; }
 
@@ -274,24 +317,6 @@ main {
   font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700;
   letter-spacing: 4px; text-transform: uppercase; color: rgba(255,255,255,0.5);
 }
-
-.motm-block {
-  display: flex; align-items: center; gap: 12px;
-  background: linear-gradient(135deg, rgba(251,191,36,0.08) 0%, rgba(251,191,36,0.03) 100%);
-  border: 1px solid rgba(251,191,36,0.25); border-radius: 8px;
-  padding: 10px 14px; margin-bottom: 1rem;
-}
-.motm-trophy { font-size: 1.4rem; flex-shrink: 0; filter: drop-shadow(0 0 6px rgba(251,191,36,0.6)); }
-.motm-info { flex: 1; }
-.motm-label {
-  font-family: 'Barlow Condensed', sans-serif; font-size: 0.55rem; font-weight: 800;
-  letter-spacing: 2px; text-transform: uppercase; color: #F59E0B; margin-bottom: 2px;
-}
-.motm-name {
-  font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 900;
-  letter-spacing: 0.5px; color: #FFFFFF; text-shadow: 0 0 12px rgba(251,191,36,0.4);
-}
-.motm-team { font-size: 0.62rem; color: var(--muted-mid); margin-top: 1px; }
 
 .empty-state { text-align: center; padding: 4rem 1rem; color: var(--muted); }
 .empty-state h2 {
@@ -357,10 +382,6 @@ main {
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 6-aside formations list (must match admin)
-  const formations6 = ['1-2-2 (6-aside)','1-3-1 (6-aside)','1-2-1-1 (6-aside)','1-1-3 (6-aside)','2-3 (6-aside)'];
-  const is6aside = (f) => formations6.includes(f);
-
   onValue(ref(db, 'globalSettings/newsTicker'), (s) => {
     document.getElementById('tickerText').textContent =
       s.val() || "Welcome to the MedSphere Student Union Cup!";
@@ -388,28 +409,48 @@ main {
       if (prevScores[id] !== undefined && total > prevScores[id]) triggerGoal();
       prevScores[id] = total;
 
-      const stats = m.stats || { possession: {home:50,away:50}, totalShots:{home:0,away:0}, shotsOnTarget:{home:0,away:0}, bigChances:{home:0,away:0} };
-      const isLive = m.status === 'LIVE';
-      const isEnded = m.status === 'ENDED';
+      // Stats — removed totalShots, added shotsOffTarget
+      const stats = m.stats || {
+        possession:     { home: 50, away: 50 },
+        shotsOnTarget:  { home: 0,  away: 0  },
+        shotsOffTarget: { home: 0,  away: 0  },
+        bigChances:     { home: 0,  away: 0  }
+      };
 
-      // Check if either team uses 6-aside formation
-      const homeIs6 = is6aside(m.homeFormation);
-      const awayIs6 = is6aside(m.awayFormation);
-      const matchIs6 = homeIs6 || awayIs6;
+      const isLive  = m.status === 'LIVE';
+      const isEnded = m.status === 'ENDED';
 
       const card = document.createElement('div');
       card.className = `match-card status-${m.status}`;
+
+      // Build events list with team tags
+      const goals  = (m.scorers || []).map(s => ({ type: 'goal', name: s.name, time: s.time, team: s.team }));
+      const events = [...goals].sort((a, b) => parseInt(a.time) - parseInt(b.time));
+
+      const eventsHtml = events.length
+        ? events.map(e => {
+            const isHome = e.team === 'home';
+            const teamName = isHome ? (m.homeTeam || 'Home') : (m.awayTeam || 'Away');
+            return `<div class="event-row">
+              <span class="event-icon">⚽</span>
+              <span class="event-text">${esc(e.name)}</span>
+              <span class="event-team-tag ${isHome ? 'home' : 'away'}">${esc(teamName)}</span>
+              <span class="event-time">${e.time}'</span>
+            </div>`;
+          }).join('')
+        : '<div class="no-events">No events recorded yet</div>';
+
       card.innerHTML = `
         <div class="card-stripe"></div>
         <div class="card-body">
           <div class="match-meta">
-            <span class="stage-tag">${m.stage || 'Group Stage'}${matchIs6 ? ' · <span style="color:#A78BFA">6-aside</span>' : ''}</span>
-            <span class="status-tag ${isLive ? 'live' : ''}">${isLive ? 'Live' : isEnded ? 'Full Time' : m.status}</span>
+            <span class="stage-tag">${esc(m.stage || 'Group Stage')} · <span style="color:#A78BFA">6-aside</span></span>
+            <span class="status-tag ${isLive ? 'live' : ''}">${isLive ? 'Live' : isEnded ? 'Full Time' : esc(m.status)}</span>
           </div>
 
           <div class="score-section">
             <div class="team-block home">
-              <div class="team-name">${m.homeTeam}</div>
+              <div class="team-name">${esc(m.homeTeam)}</div>
             </div>
             <div class="score-display">
               <span class="score-num">${m.homeScore || 0}</span>
@@ -417,23 +458,23 @@ main {
               <span class="score-num">${m.awayScore || 0}</span>
             </div>
             <div class="team-block away">
-              <div class="team-name">${m.awayTeam}</div>
+              <div class="team-name">${esc(m.awayTeam)}</div>
             </div>
           </div>
 
           <div class="match-clock">
             <div class="clock-inner ${isLive ? 'live-time' : 'ended'}">
-              ${isLive ? `<span>${m.time}'</span>` : isEnded ? '<span>Ended</span>' : ''}
+              ${isLive ? `<span>${esc(String(m.time))}'</span>` : isEnded ? '<span>Ended</span>' : ''}
             </div>
           </div>
 
           ${m.motm ? `
           <div class="motm-block">
-            <div class="motm-trophy">🏆</div>
+            <div class="motm-star">⭐</div>
             <div class="motm-info">
-              <div class="motm-label">Man of the Match</div>
-              <div class="motm-name">${m.motm.name}</div>
-              ${m.motm.team ? `<div class="motm-team">${m.motm.team}</div>` : ''}
+              <div class="motm-label">Player of the Match</div>
+              <div class="motm-name">${esc(m.motm.name)}</div>
+              ${m.motm.team ? `<div class="motm-team">${esc(m.motm.team)}</div>` : ''}
             </div>
           </div>` : ''}
 
@@ -445,32 +486,33 @@ main {
             <button class="tab-btn" onclick="switchTab(this,'events-${id}')">Events</button>
           </div>
 
+          <!-- STATS: Possession, Shots on Target, Shots off Target, Big Chances -->
           <div id="stats-${id}" class="tab-panel">
-            ${renderStat('Possession', stats.possession?.home??50, stats.possession?.away??50, '%')}
-            ${renderStat('Total Shots', stats.totalShots?.home??0, stats.totalShots?.away??0)}
-            ${renderStat('Shots on Target', stats.shotsOnTarget?.home??0, stats.shotsOnTarget?.away??0)}
-            ${renderStat('Big Chances', stats.bigChances?.home??0, stats.bigChances?.away??0)}
+            ${renderStat('Possession', stats.possession?.home ?? 50, stats.possession?.away ?? 50, '%')}
+            ${renderStat('Shots on Target', stats.shotsOnTarget?.home ?? 0, stats.shotsOnTarget?.away ?? 0)}
+            ${renderStat('Shots off Target', stats.shotsOffTarget?.home ?? 0, stats.shotsOffTarget?.away ?? 0)}
+            ${renderStat('Big Chances', stats.bigChances?.home ?? 0, stats.bigChances?.away ?? 0)}
           </div>
 
           <div id="lineup-${id}" class="tab-panel">
-            ${renderPitch(m.homeTeam, m.awayTeam, m.homeLineup||[], m.awayLineup||[], m.homeSubs||[], m.awaySubs||[], m.homeFormation||'', m.awayFormation||'')}
+            ${renderPitch(m.homeTeam, m.awayTeam, m.homeLineup || [], m.awayLineup || [], m.homeSubs || [], m.awaySubs || [], m.homeFormation || '', m.awayFormation || '')}
           </div>
 
           <div id="events-${id}" class="tab-panel">
-            <div class="event-list">
-              ${[...(m.scorers||[]).map(s=>({type:'goal',name:s.name,time:s.time})), ...(m.subs||[]).map(s=>({type:'sub',pIn:s.pIn,pOut:s.pOut,time:s.time}))]
-                .sort((a,b)=>a.time-b.time)
-                .map(e => e.type==='goal'
-                  ? `<div class="event-row"><span class="event-icon">⚽</span><span class="event-text">${e.name}</span><span class="event-time">${e.time}'</span></div>`
-                  : `<div class="event-row"><span class="event-icon">🔄</span><span class="event-text">${e.pIn} <span style="color:var(--muted)">for</span> ${e.pOut}</span><span class="event-time">${e.time}'</span></div>`
-                ).join('') || '<div class="no-events">No events recorded yet</div>'}
-            </div>
+            <div class="event-list">${eventsHtml}</div>
           </div>
         </div>
       `;
       container.appendChild(card);
     });
   });
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, c =>
+      ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])
+    );
+  }
 
   function renderStat(label, h, a, unit = '') {
     const total = (h + a) || 1;
@@ -505,138 +547,159 @@ main {
     setTimeout(() => el.classList.remove('show'), 3200);
   }
 
-  // ─── Pitch Lineup Renderer — supports both 11-aside and 6-aside ───
+  // ─── Pitch Lineup Renderer — 6-aside only ───────────────────────────────────
+  // Layout: home team attacks UPWARD (GK at bottom), away team attacks DOWNWARD (GK at top)
   function renderPitch(homeTeam, awayTeam, homePlayers, awayPlayers, homeSubs, awaySubs, homeFormation, awayFormation) {
-    const formations6 = ['1-2-2 (6-aside)','1-3-1 (6-aside)','1-2-1-1 (6-aside)','1-1-3 (6-aside)','2-3 (6-aside)'];
-    const homeIs6 = formations6.includes(homeFormation);
-    const awayIs6 = formations6.includes(awayFormation);
+    const W = 280;   // narrower
+    const H = 360;   // shorter pitch
 
-    // Use a shorter pitch for 6-aside matches to keep spacing proportional
-    const W = 300;
-    const H = (homeIs6 && awayIs6) ? 360 : 480;
+    // Position row priority (lower = closer to own goal)
+    const posOrder = {
+      GK: 0,
+      CB: 1, RB: 1, LB: 1, LWB: 1, RWB: 1,
+      CDM: 2, CM: 2, DM: 2, DMF: 2, RM: 2, LM: 2, LMF: 2, RMF: 2,
+      CAM: 3, AM: 3, AMF: 3, LW: 3, RW: 3, LWF: 3, RWF: 3, SS: 3,
+      ST: 4, CF: 4, FW: 4
+    };
 
-    function getRows(players) {
-      const order = {
-        GK:0,
-        CB:1, RB:1, LB:1, LWB:1, RWB:1,
-        CDM:2, CM:2, DM:2, DMF:2, RM:2, LM:2, LMF:2, RMF:2,
-        CAM:3, AM:3, AMF:3, LW:3, RW:3, LWF:3, RWF:3, SS:3,
-        ST:4, CF:4, FW:4
-      };
+    function getRow(player) {
+      const pos = (player.position || '').toUpperCase();
+      for (const key of Object.keys(posOrder)) {
+        if (pos.includes(key)) return posOrder[key];
+      }
+      return 2; // default midfield
+    }
+
+    function groupByRow(players) {
       const rows = {};
       players.forEach(p => {
-        const pos = (p.position || '').toUpperCase();
-        let row = 1;
-        for (const key of Object.keys(order)) {
-          if (pos.includes(key)) { row = order[key]; break; }
-        }
-        if (!rows[row]) rows[row] = [];
-        rows[row].push(p);
+        const r = getRow(p);
+        if (!rows[r]) rows[r] = [];
+        rows[r].push(p);
       });
       return rows;
     }
 
-    function placePlayers(players, colorFill, colorText, isHome) {
+    // Place players in their half of the pitch
+    // isHome=true  → home team plays in bottom half, GK near bottom
+    // isHome=false → away team plays in top half, GK near top
+    function placePlayers(players, colorFill, isHome) {
       if (!players.length) return '';
-      const rows = getRows(players);
-      const rowKeys = Object.keys(rows).sort((a,b) => isHome ? b-a : a-b);
-      const totalRows = rowKeys.length;
-      const halfH = H / 2;
-      const margin = 30;
-      const usableH = halfH - margin - 18;
-      let dots = '';
+      const rows = groupByRow(players);
+      const rowKeys = Object.keys(rows).map(Number).sort((a, b) => a - b);
+      const count = rowKeys.length;
 
+      // Each half: top=10, bottom=H/2-10
+      const halfTop    = isHome ? H / 2 + 10  : 10;
+      const halfBottom = isHome ? H - 10       : H / 2 - 10;
+      const usable = halfBottom - halfTop;
+
+      let dots = '';
       rowKeys.forEach((rk, ri) => {
         const group = rows[rk];
-        const yFrac = totalRows <= 1 ? 0.5 : ri / (totalRows - 1);
+        // Home: GK row (0) → bottom; Away: GK row (0) → top
+        const frac = count <= 1 ? 0.5 : ri / (count - 1);
         const y = isHome
-          ? (H - margin) - yFrac * usableH
-          : margin + yFrac * usableH;
+          ? halfBottom - frac * usable   // row 0 (GK) near bottom
+          : halfTop    + frac * usable;  // row 0 (GK) near top
 
         group.forEach((p, pi) => {
           const xFrac = group.length <= 1 ? 0.5 : pi / (group.length - 1);
-          const x = 24 + xFrac * (W - 48);
+          const x = 20 + xFrac * (W - 40);
           const shortName = p.name ? p.name.split(' ').pop() : '?';
           dots += `
             <g class="player-dot-group">
-              <circle class="player-circle" cx="${x}" cy="${y}" r="13" fill="${colorFill}" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
-              <text class="player-label" x="${x}" y="${y - 1}" fill="${colorText}" font-size="9">${p.number||''}</text>
-              <text class="player-label" x="${x}" y="${y + 22}" fill="rgba(255,255,255,0.75)" font-size="7.5">${shortName}</text>
+              <circle class="player-circle" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="11" fill="${colorFill}" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+              <text class="player-label" x="${x.toFixed(1)}" y="${(y - 0.5).toFixed(1)}" fill="#fff" font-size="8">${esc(String(p.number || ''))}</text>
+              <text class="player-label" x="${x.toFixed(1)}" y="${(y + 19).toFixed(1)}" fill="rgba(255,255,255,0.78)" font-size="7">${esc(shortName)}</text>
             </g>`;
         });
       });
       return dots;
     }
 
-    const homeDots = placePlayers(homePlayers, '#1d4ed8', '#fff', true);
-    const awayDots = placePlayers(awayPlayers, '#b91c1c', '#fff', false);
+    const homeDots = placePlayers(homePlayers, '#1d4ed8', true);
+    const awayDots = placePlayers(awayPlayers, '#b91c1c', false);
 
     const noHome = !homePlayers.length;
     const noAway = !awayPlayers.length;
 
-    // Build pitch labels with 6-aside badge if applicable
-    const homeLabel = `<span class="pitch-team-name" style="color:#60A5FA">${homeTeam}${homeIs6 ? '<span class="pitch-format-badge">6-aside</span>' : ''}</span>`;
-    const awayLabel = `<span class="pitch-team-name" style="color:#F87171">${awayTeam}${awayIs6 ? '<span class="pitch-format-badge">6-aside</span>' : ''}</span>`;
-
-    // Penalty boxes — scale to pitch height
-    const penH  = Math.round(H * 0.167);  // ~80px of 480 = 16.7%
-    const sixYd = Math.round(H * 0.067);  // ~32px of 480 = 6.7%
-    const goalW = Math.round(W * 0.24);   // goal mouth width
-    const penX  = Math.round(W * 0.20);   // penalty box x start
-    const penW  = Math.round(W * 0.60);   // penalty box width
+    // Proportional pitch markings
+    const penH  = Math.round(H * 0.155);
+    const sixYd = Math.round(H * 0.063);
+    const penX  = Math.round(W * 0.20);
+    const penW  = Math.round(W * 0.60);
     const sixX  = Math.round(W * 0.35);
     const sixW  = Math.round(W * 0.30);
-    const goalX = Math.round(W * 0.38);
+    const goalX = Math.round(W * 0.375);
+    const goalW = Math.round(W * 0.25);
 
-    const pitch = `
-      <div class="pitch-teams-label">
-        ${homeLabel}
-        ${awayLabel}
-      </div>
+    const pitchSvg = `
       <div class="pitch-wrap">
         <svg class="pitch-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-          <rect width="${W}" height="${H}" fill="#1a4a2e" rx="8"/>
-          ${Array.from({length: Math.ceil(H/60)}, (_,i) =>
-            `<rect x="0" y="${i*60}" width="${W}" height="30" fill="rgba(0,0,0,0.06)"/>`
+          <!-- background -->
+          <rect width="${W}" height="${H}" fill="#1a4a2e" rx="6"/>
+          ${Array.from({length: Math.ceil(H / 55)}, (_, i) =>
+            `<rect x="0" y="${i * 55}" width="${W}" height="27" fill="rgba(0,0,0,0.055)"/>`
           ).join('')}
-          <!-- pitch outline -->
-          <rect x="10" y="10" width="${W-20}" height="${H-20}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" rx="4"/>
+          <!-- outline -->
+          <rect x="8" y="8" width="${W - 16}" height="${H - 16}" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" rx="3"/>
           <!-- halfway line -->
-          <line x1="10" y1="${H/2}" x2="${W-10}" y2="${H/2}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+          <line x1="8" y1="${H / 2}" x2="${W - 8}" y2="${H / 2}" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
           <!-- centre circle -->
-          <circle cx="${W/2}" cy="${H/2}" r="${Math.round(H*0.075)}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-          <circle cx="${W/2}" cy="${H/2}" r="2.5" fill="rgba(255,255,255,0.4)"/>
-          <!-- bottom penalty box -->
-          <rect x="${penX}" y="${H-10-penH}" width="${penW}" height="${penH}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
-          <rect x="${sixX}" y="${H-10-sixYd}" width="${sixW}" height="${sixYd}" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          <rect x="${goalX}" y="${H-10}" width="${goalW}" height="10" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-          <!-- top penalty box -->
-          <rect x="${penX}" y="10" width="${penW}" height="${penH}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
-          <rect x="${sixX}" y="10" width="${sixW}" height="${sixYd}" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-          <rect x="${goalX}" y="0" width="${goalW}" height="10" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <circle cx="${W / 2}" cy="${H / 2}" r="${Math.round(H * 0.072)}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+          <circle cx="${W / 2}" cy="${H / 2}" r="2.5" fill="rgba(255,255,255,0.4)"/>
+          <!-- home penalty box (bottom) -->
+          <rect x="${penX}" y="${H - 8 - penH}" width="${penW}" height="${penH}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+          <rect x="${sixX}" y="${H - 8 - sixYd}" width="${sixW}" height="${sixYd}" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <rect x="${goalX}" y="${H - 8}" width="${goalW}" height="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <!-- away penalty box (top) -->
+          <rect x="${penX}" y="8" width="${penW}" height="${penH}" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+          <rect x="${sixX}" y="8" width="${sixW}" height="${sixYd}" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+          <rect x="${goalX}" y="0" width="${goalW}" height="8" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
           <!-- penalty spots -->
-          <circle cx="${W/2}" cy="${H-10-Math.round(penH*0.725)}" r="2" fill="rgba(255,255,255,0.35)"/>
-          <circle cx="${W/2}" cy="${10+Math.round(penH*0.725)}" r="2" fill="rgba(255,255,255,0.35)"/>
+          <circle cx="${W / 2}" cy="${H - 8 - Math.round(penH * 0.72)}" r="2" fill="rgba(255,255,255,0.35)"/>
+          <circle cx="${W / 2}" cy="${8 + Math.round(penH * 0.72)}" r="2" fill="rgba(255,255,255,0.35)"/>
+          <!-- team label inside pitch (small) -->
+          <text x="${W / 2}" y="${H * 0.82}" text-anchor="middle" fill="rgba(96,165,250,0.35)" font-size="8" font-family="Barlow Condensed" font-weight="800" letter-spacing="1">${esc(homeTeam.toUpperCase())}</text>
+          <text x="${W / 2}" y="${H * 0.18}" text-anchor="middle" fill="rgba(248,113,113,0.35)" font-size="8" font-family="Barlow Condensed" font-weight="800" letter-spacing="1">${esc(awayTeam.toUpperCase())}</text>
           <!-- players -->
-          ${noHome ? `<text x="${W/2}" y="${H*0.75}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="10" font-family="Barlow Condensed">Lineup not available</text>` : homeDots}
-          ${noAway ? `<text x="${W/2}" y="${H*0.25}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="10" font-family="Barlow Condensed">Lineup not available</text>` : awayDots}
+          ${noHome
+            ? `<text x="${W/2}" y="${H*0.75}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Barlow Condensed">Lineup TBA</text>`
+            : homeDots}
+          ${noAway
+            ? `<text x="${W/2}" y="${H*0.25}" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Barlow Condensed">Lineup TBA</text>`
+            : awayDots}
         </svg>
       </div>`;
 
-    const subSection = (subs, color, label) => {
-      if (!subs.length) return '';
+    // Subs displayed side by side below pitch
+    const subHalf = (subs, color, team) => {
+      if (!subs.length) return `<div class="subs-half"><div class="subs-title" style="color:${color}">${esc(team)} — Subs</div><div class="subs-row"><span style="color:var(--muted);font-size:0.62rem">None</span></div></div>`;
       return `
-        <div style="margin-bottom:10px;">
-          <div class="subs-title" style="color:${color}">${label} — Substitutes</div>
+        <div class="subs-half">
+          <div class="subs-title" style="color:${color}">${esc(team)} — Subs</div>
           <div class="subs-row">
-            ${subs.map(p=>`<div class="sub-chip"><span class="sub-num" style="color:${color}">${p.number||'–'}</span>${p.name||'Unknown'}</div>`).join('')}
+            ${subs.map(p => `<div class="sub-chip"><span class="sub-num" style="color:${color}">${esc(String(p.number || '–'))}</span>${esc(p.name || 'Unknown')}</div>`).join('')}
           </div>
         </div>`;
     };
 
-    return pitch
-      + subSection(homeSubs, '#60A5FA', homeTeam)
-      + subSection(awaySubs, '#F87171', awayTeam);
+    // Team name headers flush with each half
+    const teamHeaders = `
+      <div class="pitch-teams-row">
+        <span class="pitch-team-label away">${esc(awayTeam)}</span>
+        <span style="font-size:0.55rem;color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">LINEUPS</span>
+        <span class="pitch-team-label home">${esc(homeTeam)}</span>
+      </div>`;
+
+    const subsSection = `
+      <div class="subs-section">
+        ${subHalf(homeSubs, '#60A5FA', homeTeam)}
+        ${subHalf(awaySubs, '#F87171', awayTeam)}
+      </div>`;
+
+    return `<div class="pitch-outer">${teamHeaders}${pitchSvg}${subsSection}</div>`;
   }
 </script>
 
