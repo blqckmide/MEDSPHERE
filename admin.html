@@ -18,6 +18,7 @@
       --amber:     #F59E0B;
       --cyan:      #38BDF8;
       --green:     #4ADE80;
+      --violet:    #A78BFA;
       --muted:     #4B5060;
       --muted-mid: #7B8096;
       --white:     #F5F6FF;
@@ -81,9 +82,7 @@ body::before {
   padding:0.85rem 1.25rem;
   background:var(--surface-2); border-bottom:1px solid var(--border);
 }
-.card-head-dot {
-  width:6px; height:6px; border-radius:50%; background:var(--red); flex-shrink:0;
-}
+.card-head-dot { width:6px; height:6px; border-radius:50%; background:var(--red); flex-shrink:0; }
 .card-head-title {
   font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:800;
   letter-spacing:2px; text-transform:uppercase; color:var(--muted-mid);
@@ -160,16 +159,14 @@ input[type="number"] { -moz-appearance:textfield; }
   padding-bottom:8px; border-bottom:1px solid var(--border); margin:1.25rem 0 1rem;
 }
 
-/* Formation type badge */
-.formation-badge {
+/* 6-aside only badge */
+.formation-badge-6 {
   display:inline-block;
   font-family:'Barlow Condensed',sans-serif; font-size:0.55rem; font-weight:800;
   letter-spacing:1.5px; text-transform:uppercase;
-  padding:2px 6px; border-radius:3px; margin-left:6px;
-  vertical-align:middle;
+  padding:2px 6px; border-radius:3px; margin-left:6px; vertical-align:middle;
+  background:rgba(167,139,250,0.15); color:#A78BFA; border:1px solid rgba(167,139,250,0.3);
 }
-.badge-11 { background:rgba(56,189,248,0.15); color:#38BDF8; border:1px solid rgba(56,189,248,0.3); }
-.badge-6  { background:rgba(167,139,250,0.15); color:#A78BFA; border:1px solid rgba(167,139,250,0.3); }
 
 .pool {
   display:flex; flex-wrap:wrap; gap:5px;
@@ -201,7 +198,12 @@ input[type="number"] { -moz-appearance:textfield; }
 .lineup-wrap { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
 .lineup-col h4 {
   font-family:'Barlow Condensed',sans-serif; font-size:0.7rem; font-weight:800;
-  letter-spacing:1px; text-transform:uppercase; color:var(--muted-mid); margin-bottom:8px;
+  letter-spacing:1px; text-transform:uppercase; color:var(--muted-mid); margin-bottom:4px;
+}
+.lineup-hint {
+  font-size:0.58rem; color:var(--violet); background:rgba(167,139,250,0.1);
+  border:1px solid rgba(167,139,250,0.2); border-radius:4px;
+  padding:3px 8px; margin-bottom:8px; display:inline-block;
 }
 .sub-lbl { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:var(--muted); margin:10px 0 6px; }
 
@@ -337,17 +339,19 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
 
   const positions = ['GK','LB','CB','RB','LWB','RWB','DMF','CMF','AMF','LMF','RMF','LWF','RWF','SS','CF'];
 
-  // ── Formations: 11-aside and 6-aside ──
-  const formations11 = ['4-4-2','4-3-3','3-5-2','4-2-3-1','5-3-2','4-5-1','3-4-3'];
-  const formations6  = ['1-2-2 (6-aside)','1-3-1 (6-aside)','1-2-1-1 (6-aside)','1-1-3 (6-aside)','2-3 (6-aside)'];
+  // ── 6-aside formations ONLY (1 GK + 6 = 7 total per team) ──
+  const formations6 = [
+    '1-2-2 (6-aside)',
+    '1-3-1 (6-aside)',
+    '1-2-1-1 (6-aside)',
+    '1-1-3 (6-aside)',
+    '2-3 (6-aside)',
+    '1-4 (6-aside)',
+    '2-2-1 (6-aside)'
+  ];
 
   function buildFormationOptions(current) {
-    let opts = `<optgroup label="── 11-aside ──">`;
-    opts += formations11.map(f => `<option ${current===f?'selected':''}>${f}</option>`).join('');
-    opts += `</optgroup><optgroup label="── 6-aside ──">`;
-    opts += formations6.map(f => `<option ${current===f?'selected':''}>${f}</option>`).join('');
-    opts += `</optgroup>`;
-    return opts;
+    return formations6.map(f => `<option value="${f}" ${current === f ? 'selected' : ''}>${f}</option>`).join('');
   }
 
   onValue(ref(db, 'matches'), snap => {
@@ -386,10 +390,6 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
       ...(m.awaySubs||[]).map(p=>({...p,team:'away'})),
     ];
 
-    // Detect if 6-aside formations are in use
-    const homeIs6 = formations6.includes(m.homeFormation);
-    const awayIs6 = formations6.includes(m.awayFormation);
-
     document.getElementById('liveControls').innerHTML = `
       <div class="score-editor">
         <div class="score-team">
@@ -414,7 +414,7 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
         </div>
         <div>
           <label>Match Time / Minute</label>
-          <input type="text" id="editTime" placeholder="e.g. 45, HT, FT" value="${esc(m.time||'')}" style="margin-bottom:0">
+          <input type="text" id="editTime" placeholder="e.g. 20, HT, FT" value="${esc(m.time||'')}" style="margin-bottom:0">
         </div>
         <div>
           <label>Stage</label>
@@ -425,32 +425,26 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
 
       <div class="sec">
         Formations
-        <span style="font-size:0.58rem;color:var(--muted-mid);font-weight:500;letter-spacing:0;text-transform:none;margin-left:8px">— select 6-aside options for women's matches</span>
+        <span style="font-size:0.58rem;color:var(--violet);font-weight:600;letter-spacing:0;text-transform:none;margin-left:8px">— 6-aside (GK + 6 outfield = 7 players)</span>
       </div>
       <div class="g2">
         <div>
-          <label>
-            ${H} Formation
-            ${homeIs6 ? '<span class="formation-badge badge-6">6-aside</span>' : '<span class="formation-badge badge-11">11-aside</span>'}
-          </label>
-          <select id="editHomeFormation" style="margin-bottom:0" onchange="renderAll('${id}')">${buildFormationOptions(m.homeFormation)}</select>
+          <label>${H} Formation <span class="formation-badge-6">6-aside</span></label>
+          <select id="editHomeFormation" style="margin-bottom:0">${buildFormationOptions(m.homeFormation)}</select>
         </div>
         <div>
-          <label>
-            ${A} Formation
-            ${awayIs6 ? '<span class="formation-badge badge-6">6-aside</span>' : '<span class="formation-badge badge-11">11-aside</span>'}
-          </label>
-          <select id="editAwayFormation" style="margin-bottom:0" onchange="renderAll('${id}')">${buildFormationOptions(m.awayFormation)}</select>
+          <label>${A} Formation <span class="formation-badge-6">6-aside</span></label>
+          <select id="editAwayFormation" style="margin-bottom:0">${buildFormationOptions(m.awayFormation)}</select>
         </div>
       </div>
 
-      <div class="sec">Man of the Match</div>
+      <div class="sec">Player of the Match ⭐</div>
       <div class="row">
         <select id="motmSelect" style="margin-bottom:0">
           <option value="">— Select player —</option>
           ${allPlayers.map(p=>`<option value="${esc(p.name)}" ${m.manOfTheMatch===p.name?'selected':''}>${p.number}. ${esc(p.name)} (${p.position}) — ${p.team==='home'?H:A}</option>`).join('')}
         </select>
-        <button class="btn btn-ghost" onclick="setMotm()">Set MOTM</button>
+        <button class="btn btn-ghost" onclick="setMotm()">Set POTM</button>
       </div>
 
       <hr>
@@ -463,9 +457,9 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
     const H = esc(m.homeTeam), A = esc(m.awayTeam);
     const s = m.stats || {
       possession:     { home:50, away:50 },
-      totalShots:     { home:0,  away:0  },
       shotsOnTarget:  { home:0,  away:0  },
-      shotsOffTarget: { home:0,  away:0  }
+      shotsOffTarget: { home:0,  away:0  },
+      bigChances:     { home:0,  away:0  }
     };
 
     document.getElementById('statsPanel').innerHTML = `
@@ -473,11 +467,6 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
       <div class="g2">
         <div><label>${H}</label><input type="number" id="homePoss" value="${s.possession?.home??50}" style="margin-bottom:0"></div>
         <div><label>${A}</label><input type="number" id="awayPoss" value="${s.possession?.away??50}" style="margin-bottom:0"></div>
-      </div>
-      <div class="sec">Total Shots</div>
-      <div class="g2">
-        <div><label>${H}</label><input type="number" id="homeTotalShots" value="${s.totalShots?.home??0}" style="margin-bottom:0"></div>
-        <div><label>${A}</label><input type="number" id="awayTotalShots" value="${s.totalShots?.away??0}" style="margin-bottom:0"></div>
       </div>
       <div class="sec">Shots on Target</div>
       <div class="g2">
@@ -488,6 +477,11 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
       <div class="g2">
         <div><label>${H}</label><input type="number" id="homeSOFF" value="${s.shotsOffTarget?.home??0}" style="margin-bottom:0"></div>
         <div><label>${A}</label><input type="number" id="awaySOFF" value="${s.shotsOffTarget?.away??0}" style="margin-bottom:0"></div>
+      </div>
+      <div class="sec">Big Chances</div>
+      <div class="g2">
+        <div><label>${H}</label><input type="number" id="homeBig" value="${s.bigChances?.home??0}" style="margin-bottom:0"></div>
+        <div><label>${A}</label><input type="number" id="awayBig" value="${s.bigChances?.away??0}" style="margin-bottom:0"></div>
       </div>
       <br>
       <button class="btn btn-red" onclick="updateStats()">💾 Save Stats</button>
@@ -511,7 +505,7 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
         <div>
           <label>Minute</label>
           <input type="text" id="scorerTime" placeholder="e.g. 23">
-          <label>Team</label>
+          <label>Team that scored</label>
           <select id="scorerTeam" style="margin-bottom:0">${teamOpts}</select>
         </div>
       </div>
@@ -544,27 +538,19 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
     const H = esc(m.homeTeam), A = esc(m.awayTeam);
     const posOpts = positions.map(p=>`<option>${p}</option>`).join('');
 
-    // Show squad size hint based on formation
-    const homeIs6 = formations6.includes(m.homeFormation);
-    const awayIs6 = formations6.includes(m.awayFormation);
-    const homeHint = homeIs6 ? '(6-aside: 1 GK + 5 outfield)' : '(11-aside: 1 GK + 10 outfield)';
-    const awayHint = awayIs6 ? '(6-aside: 1 GK + 5 outfield)' : '(11-aside: 1 GK + 10 outfield)';
-
     const playerChips = (list, team, isSub) => list.map(p=>`
       <div class="chip">
-        <span class="chip-num">${p.number}</span>
+        <span class="chip-num">${esc(String(p.number||''))}</span>
         ${esc(p.name)}
-        <span class="chip-pos">${p.position}</span>
-        <button class="chip-rm" onclick="${isSub?'removeSub':'removePlayer'}('${team}','${esc(p.name)}')")>✕</button>
+        <span class="chip-pos">${esc(p.position||'')}</span>
+        <button class="chip-rm" onclick="${isSub?'removeSub':'removePlayer'}('${team}','${esc(p.name)}')">✕</button>
       </div>`).join('') || `<span style="color:var(--muted);font-size:0.72rem">None yet</span>`;
 
     document.getElementById('lineupPanel').innerHTML = `
       <div class="lineup-wrap">
         <div class="lineup-col">
-          <h4>🏠 ${H} — Starting XI
-            ${homeIs6 ? '<span class="formation-badge badge-6">6-aside</span>' : ''}
-          </h4>
-          <div style="font-size:0.62rem;color:var(--muted);margin-bottom:8px">${homeHint}</div>
+          <h4>🏠 ${H}</h4>
+          <div class="lineup-hint">6-aside · GK + 6 outfield = 7 players</div>
           <div class="pool">${playerChips(homeLineup,'home',false)}</div>
           <div class="row" style="flex-wrap:nowrap;gap:6px">
             <div style="flex:0;min-width:55px"><label>#</label><input type="number" id="homePlayerNum" placeholder="#" style="margin-bottom:0"></div>
@@ -583,10 +569,8 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
         </div>
 
         <div class="lineup-col">
-          <h4>✈️ ${A} — Starting XI
-            ${awayIs6 ? '<span class="formation-badge badge-6">6-aside</span>' : ''}
-          </h4>
-          <div style="font-size:0.62rem;color:var(--muted);margin-bottom:8px">${awayHint}</div>
+          <h4>✈️ ${A}</h4>
+          <div class="lineup-hint">6-aside · GK + 6 outfield = 7 players</div>
           <div class="pool">${playerChips(awayLineup,'away',false)}</div>
           <div class="row" style="flex-wrap:nowrap;gap:6px">
             <div style="flex:0;min-width:55px"><label>#</label><input type="number" id="awayPlayerNum" placeholder="#" style="margin-bottom:0"></div>
@@ -615,7 +599,7 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
       <div class="ev-box">
         <div class="ev-label">⚽ Goals</div>
         <div class="ev-tags">
-          ${(m.scorers||[]).map(s=>`<div class="ev-tag">${esc(s.name)} ${s.time}' (${s.team==='home'?H:A})${s.assist?` · ${esc(s.assist)}`:''}</div>`).join('')||'<span style="color:var(--muted)">None</span>'}
+          ${(m.scorers||[]).map(s=>`<div class="ev-tag">${esc(s.name)} ${s.time}' — ${s.team==='home'?`<span style="color:#F59E0B">${H}</span>`:`<span style="color:#38BDF8">${A}</span>`}${s.assist?` · assist: ${esc(s.assist)}`:''}</div>`).join('')||'<span style="color:var(--muted)">None</span>'}
         </div>
       </div>
       <div class="ev-box">
@@ -633,6 +617,8 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
     `;
   }
 
+  // ── Write functions ──────────────────────────────────────────────────────────
+
   window.updateMatch = async () => {
     await update(ref(db,`matches/${cid}`), {
       homeScore:     parseInt(document.getElementById('editHomeScore').value),
@@ -649,10 +635,10 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
   window.updateStats = async () => {
     await update(ref(db,`matches/${cid}`), {
       stats: {
-        possession:     { home:+document.getElementById('homePoss').value,        away:+document.getElementById('awayPoss').value },
-        totalShots:     { home:+document.getElementById('homeTotalShots').value,  away:+document.getElementById('awayTotalShots').value },
-        shotsOnTarget:  { home:+document.getElementById('homeSOT').value,         away:+document.getElementById('awaySOT').value },
-        shotsOffTarget: { home:+document.getElementById('homeSOFF').value,        away:+document.getElementById('awaySOFF').value },
+        possession:     { home:+document.getElementById('homePoss').value,  away:+document.getElementById('awayPoss').value },
+        shotsOnTarget:  { home:+document.getElementById('homeSOT').value,   away:+document.getElementById('awaySOT').value },
+        shotsOffTarget: { home:+document.getElementById('homeSOFF').value,  away:+document.getElementById('awaySOFF').value },
+        bigChances:     { home:+document.getElementById('homeBig').value,   away:+document.getElementById('awayBig').value },
       }
     });
     flash('Stats saved!');
@@ -661,139 +647,149 @@ hr { border:none; border-top:1px solid var(--border); margin:1rem 0; }
   window.setMotm = async () => {
     const val = document.getElementById('motmSelect').value;
     const m = matches[cid];
-    const all = [...(m.homeLineup||[]).map(p=>({...p,team:'home'})),...(m.awayLineup||[]).map(p=>({...p,team:'away'})),...(m.homeSubs||[]).map(p=>({...p,team:'home'})),...(m.awaySubs||[]).map(p=>({...p,team:'away'}))];
-    const player = all.find(p=>p.name===val);
+    const all = [
+      ...(m.homeLineup||[]).map(p=>({...p,team:'home'})),
+      ...(m.awayLineup||[]).map(p=>({...p,team:'away'})),
+      ...(m.homeSubs||[]).map(p=>({...p,team:'home'})),
+      ...(m.awaySubs||[]).map(p=>({...p,team:'away'}))
+    ];
+    const player = all.find(p => p.name === val);
     await update(ref(db,`matches/${cid}`), {
-      motm: val ? { name:val, team: player?(player.team==='home'?m.homeTeam:m.awayTeam):'' } : null,
-      manOfTheMatch: val||null
+      motm: val ? { name: val, team: player ? (player.team === 'home' ? m.homeTeam : m.awayTeam) : '' } : null,
+      manOfTheMatch: val || null
     });
-    flash('MOTM set!');
+    flash('Player of the Match set! ⭐');
   };
 
   window.addGoal = async () => {
-    const name=document.getElementById('scorerName').value.trim();
-    const min=document.getElementById('scorerTime').value.trim();
-    const assist=document.getElementById('scorerAssist').value.trim();
-    const team=document.getElementById('scorerTeam').value;
-    if(!name||!min) return flash('Enter name and minute','err');
-    const scorers=[...(matches[cid].scorers||[])];
-    const e={name,time:min,team}; if(assist) e.assist=assist;
+    const name   = document.getElementById('scorerName').value.trim();
+    const min    = document.getElementById('scorerTime').value.trim();
+    const assist = document.getElementById('scorerAssist').value.trim();
+    const team   = document.getElementById('scorerTeam').value;
+    if (!name || !min) return flash('Enter scorer name and minute', 'err');
+    const scorers = [...(matches[cid].scorers || [])];
+    const e = { name, time: min, team };
+    if (assist) e.assist = assist;
     scorers.push(e);
-    await update(ref(db,`matches/${cid}`),{scorers});
-    ['scorerName','scorerTime','scorerAssist'].forEach(id=>document.getElementById(id).value='');
+    await update(ref(db,`matches/${cid}`), { scorers });
+    ['scorerName','scorerTime','scorerAssist'].forEach(id => document.getElementById(id).value = '');
     flash('Goal added!');
   };
 
   window.addYellow = async () => {
-    const player=document.getElementById('yellowPlayer').value.trim();
-    const min=document.getElementById('yellowTime').value.trim();
-    const team=document.getElementById('yellowTeam').value;
-    if(!player||!min) return flash('Enter name and minute','err');
-    const cards=[...(matches[cid].yellowCards||[])];
-    cards.push({player,time:min,team});
-    await update(ref(db,`matches/${cid}`),{yellowCards:cards});
-    ['yellowPlayer','yellowTime'].forEach(id=>document.getElementById(id).value='');
+    const player = document.getElementById('yellowPlayer').value.trim();
+    const min    = document.getElementById('yellowTime').value.trim();
+    const team   = document.getElementById('yellowTeam').value;
+    if (!player || !min) return flash('Enter name and minute', 'err');
+    const cards = [...(matches[cid].yellowCards || [])];
+    cards.push({ player, time: min, team });
+    await update(ref(db,`matches/${cid}`), { yellowCards: cards });
+    ['yellowPlayer','yellowTime'].forEach(id => document.getElementById(id).value = '');
     flash('Yellow card logged!');
   };
 
   window.addRed = async () => {
-    const player=document.getElementById('redPlayer').value.trim();
-    const min=document.getElementById('redTime').value.trim();
-    const team=document.getElementById('redTeam').value;
-    if(!player||!min) return flash('Enter name and minute','err');
-    const cards=[...(matches[cid].redCards||[])];
-    cards.push({player,time:min,team});
-    await update(ref(db,`matches/${cid}`),{redCards:cards});
-    ['redPlayer','redTime'].forEach(id=>document.getElementById(id).value='');
+    const player = document.getElementById('redPlayer').value.trim();
+    const min    = document.getElementById('redTime').value.trim();
+    const team   = document.getElementById('redTeam').value;
+    if (!player || !min) return flash('Enter name and minute', 'err');
+    const cards = [...(matches[cid].redCards || [])];
+    cards.push({ player, time: min, team });
+    await update(ref(db,`matches/${cid}`), { redCards: cards });
+    ['redPlayer','redTime'].forEach(id => document.getElementById(id).value = '');
     flash('Red card logged!');
   };
 
   window.addPlayer = async (team) => {
-    const num=document.getElementById(`${team}PlayerNum`).value.trim();
-    const name=document.getElementById(`${team}PlayerName`).value.trim();
-    const pos=document.getElementById(`${team}PlayerPos`).value;
-    if(!num||!name) return flash('Enter # and name','err');
-    const key=team==='home'?'homeLineup':'awayLineup';
-    const cur=[...(matches[cid][key]||[])]; cur.push({number:num,name,position:pos});
-    await update(ref(db,`matches/${cid}`),{[key]:cur});
-    document.getElementById(`${team}PlayerNum`).value='';
-    document.getElementById(`${team}PlayerName`).value='';
+    const num  = document.getElementById(`${team}PlayerNum`).value.trim();
+    const name = document.getElementById(`${team}PlayerName`).value.trim();
+    const pos  = document.getElementById(`${team}PlayerPos`).value;
+    if (!num || !name) return flash('Enter # and name', 'err');
+    const key = team === 'home' ? 'homeLineup' : 'awayLineup';
+    const cur = [...(matches[cid][key] || [])];
+    cur.push({ number: num, name, position: pos });
+    await update(ref(db,`matches/${cid}`), { [key]: cur });
+    document.getElementById(`${team}PlayerNum`).value = '';
+    document.getElementById(`${team}PlayerName`).value = '';
   };
 
-  window.removePlayer = async (team,playerName) => {
-    const key=team==='home'?'homeLineup':'awayLineup';
-    const updated=(matches[cid][key]||[]).filter(p=>p.name!==playerName);
-    await update(ref(db,`matches/${cid}`),{[key]:updated});
+  window.removePlayer = async (team, playerName) => {
+    const key = team === 'home' ? 'homeLineup' : 'awayLineup';
+    const updated = (matches[cid][key] || []).filter(p => p.name !== playerName);
+    await update(ref(db,`matches/${cid}`), { [key]: updated });
   };
 
   window.addSub = async (team) => {
-    const num=document.getElementById(`${team}SubNum`).value.trim();
-    const name=document.getElementById(`${team}SubName`).value.trim();
-    const pos=document.getElementById(`${team}SubPos`).value;
-    if(!num||!name) return flash('Enter # and name','err');
-    const key=team==='home'?'homeSubs':'awaySubs';
-    const cur=[...(matches[cid][key]||[])]; cur.push({number:num,name,position:pos});
-    await update(ref(db,`matches/${cid}`),{[key]:cur});
-    document.getElementById(`${team}SubNum`).value='';
-    document.getElementById(`${team}SubName`).value='';
+    const num  = document.getElementById(`${team}SubNum`).value.trim();
+    const name = document.getElementById(`${team}SubName`).value.trim();
+    const pos  = document.getElementById(`${team}SubPos`).value;
+    if (!num || !name) return flash('Enter # and name', 'err');
+    const key = team === 'home' ? 'homeSubs' : 'awaySubs';
+    const cur = [...(matches[cid][key] || [])];
+    cur.push({ number: num, name, position: pos });
+    await update(ref(db,`matches/${cid}`), { [key]: cur });
+    document.getElementById(`${team}SubNum`).value = '';
+    document.getElementById(`${team}SubName`).value = '';
   };
 
-  window.removeSub = async (team,playerName) => {
-    const key=team==='home'?'homeSubs':'awaySubs';
-    const updated=(matches[cid][key]||[]).filter(p=>p.name!==playerName);
-    await update(ref(db,`matches/${cid}`),{[key]:updated});
+  window.removeSub = async (team, playerName) => {
+    const key = team === 'home' ? 'homeSubs' : 'awaySubs';
+    const updated = (matches[cid][key] || []).filter(p => p.name !== playerName);
+    await update(ref(db,`matches/${cid}`), { [key]: updated });
   };
 
   window.deleteMatch = async () => {
-    if(!confirm('Permanently delete this match?')) return;
-    await remove(ref(db,`matches/${cid}`));
+    if (!confirm('Permanently delete this match?')) return;
+    await remove(ref(db, `matches/${cid}`));
     flash('Match deleted.');
   };
 
   window.createMatch = async () => {
-    const home=document.getElementById('newHomeTeam').value.trim();
-    const away=document.getElementById('newAwayTeam').value.trim();
-    if(!home||!away) return flash('Enter both team names','err');
-    const newRef=push(ref(db,'matches'));
-    await set(newRef,{
-      homeTeam:home, awayTeam:away, homeScore:0, awayScore:0,
-      scorers:[], yellowCards:[], redCards:[],
-      homeLineup:[], awayLineup:[], homeSubs:[], awaySubs:[],
-      status:'UPCOMING', time:'--', stage:'Group Stage',
-      homeFormation:'4-4-2', awayFormation:'4-4-2',
-      stats:{
-        possession:    {home:50,away:50},
-        totalShots:    {home:0,away:0},
-        shotsOnTarget: {home:0,away:0},
-        shotsOffTarget:{home:0,away:0}
+    const home = document.getElementById('newHomeTeam').value.trim();
+    const away = document.getElementById('newAwayTeam').value.trim();
+    if (!home || !away) return flash('Enter both team names', 'err');
+    const newRef = push(ref(db, 'matches'));
+    await set(newRef, {
+      homeTeam: home, awayTeam: away, homeScore: 0, awayScore: 0,
+      scorers: [], yellowCards: [], redCards: [],
+      homeLineup: [], awayLineup: [], homeSubs: [], awaySubs: [],
+      status: 'UPCOMING', time: '--', stage: 'Group Stage',
+      homeFormation: '1-2-2 (6-aside)', awayFormation: '1-2-2 (6-aside)',
+      stats: {
+        possession:     { home: 50, away: 50 },
+        shotsOnTarget:  { home: 0,  away: 0  },
+        shotsOffTarget: { home: 0,  away: 0  },
+        bigChances:     { home: 0,  away: 0  }
       }
     });
-    document.getElementById('newHomeTeam').value='';
-    document.getElementById('newAwayTeam').value='';
+    document.getElementById('newHomeTeam').value = '';
+    document.getElementById('newAwayTeam').value = '';
     flash('Match created!');
   };
 
-  function flash(msg, type='ok') {
+  // ── Utilities ────────────────────────────────────────────────────────────────
+
+  function flash(msg, type = 'ok') {
     let t = document.getElementById('_toast');
     if (!t) {
       t = document.createElement('div');
       t.id = '_toast';
       Object.assign(t.style, {
-        position:'fixed', bottom:'24px', left:'50%', transform:'translateX(-50%)',
-        fontFamily:"'Barlow Condensed',sans-serif", fontWeight:'800',
-        fontSize:'0.78rem', letterSpacing:'1px', textTransform:'uppercase',
-        padding:'10px 24px', borderRadius:'8px', zIndex:'9999',
-        boxShadow:'0 8px 32px rgba(0,0,0,0.5)'
+        position: 'fixed', bottom: '24px', left: '50%', transform: 'translateX(-50%)',
+        fontFamily: "'Barlow Condensed',sans-serif", fontWeight: '800',
+        fontSize: '0.78rem', letterSpacing: '1px', textTransform: 'uppercase',
+        padding: '10px 24px', borderRadius: '8px', zIndex: '9999',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
       });
       document.body.appendChild(t);
     }
     t.textContent = msg;
     t.style.display = 'block';
-    t.style.background = type==='err'?'#7f1d1d':'#14532d';
-    t.style.border = `1px solid ${type==='err'?'rgba(220,38,38,0.4)':'rgba(74,222,128,0.3)'}`;
-    t.style.color = type==='err'?'#fca5a5':'#86efac';
+    t.style.background = type === 'err' ? '#7f1d1d' : '#14532d';
+    t.style.border = `1px solid ${type === 'err' ? 'rgba(220,38,38,0.4)' : 'rgba(74,222,128,0.3)'}`;
+    t.style.color = type === 'err' ? '#fca5a5' : '#86efac';
     clearTimeout(t._to);
-    t._to = setTimeout(() => { t.style.display='none'; }, 2200);
+    t._to = setTimeout(() => { t.style.display = 'none'; }, 2200);
   }
 
   function esc(str) {
