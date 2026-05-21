@@ -294,7 +294,7 @@ onValue(ref(db, 'matches'), snap => {
 });
 
 // ─────────────────────────────────────────────
-// MATCHES
+// MATCHES — oldest first (Firebase key insertion order)
 // ─────────────────────────────────────────────
 function renderMatches(data) {
   const container = document.getElementById('matchDisplay');
@@ -304,10 +304,8 @@ function renderMatches(data) {
   }
   container.innerHTML = '';
 
-  const entries = Object.entries(data).sort(([,a],[,b]) => {
-    const order = {LIVE:0, UPCOMING:1, ENDED:2};
-    return (order[a.status]??1) - (order[b.status]??1);
-  });
+  // No sort — Firebase returns keys in insertion order (oldest first)
+  const entries = Object.entries(data);
 
   entries.forEach(([id, m]) => {
     const stats = m.stats || {possession:{home:50,away:50},shotsOnTarget:{home:0,away:0},shotsOffTarget:{home:0,away:0},bigChances:{home:0,away:0}};
@@ -373,8 +371,7 @@ function renderMatches(data) {
 }
 
 // ─────────────────────────────────────────────
-// STANDINGS — LIVE + ENDED matches, no lineup required
-// Points only awarded for ENDED. Goals shown for both.
+// STANDINGS
 // ─────────────────────────────────────────────
 function renderStandings(data) {
   const teams = {};
@@ -433,12 +430,9 @@ function renderStandings(data) {
 }
 
 // ─────────────────────────────────────────────
-// TOP SCORERS — counts every entry in scorers array
-// Each entry = 1 goal. No lineup needed.
-// Same player across multiple matches stacks correctly.
+// TOP SCORERS
 // ─────────────────────────────────────────────
 function renderScorers(data) {
-  // key = "PlayerName|||TeamName" → total goals
   const scorerMap = {};
 
   Object.values(data).forEach(m => {
