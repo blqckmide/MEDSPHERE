@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -29,7 +28,7 @@
     body::after{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(220,38,38,.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
 
     /* ── Header ── */
-    .header{position:sticky;top:0;z-index:200;background:rgba(7,8,16,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1rem;height:60px;display:flex;align-items:center;gap:.75rem;}
+    .header{position:sticky;top:0;z-index:200;background:rgba(7,8,16,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.2rem;height:60px;display:flex;align-items:center;gap:.75rem;}
     .header::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--red);}
     .logo{display:flex;align-items:baseline;gap:2px;flex-shrink:0;}
     .logo-med{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;color:var(--red);letter-spacing:.5px;text-transform:uppercase;}
@@ -37,18 +36,6 @@
     .live-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);color:var(--red-b);font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 8px;border-radius:4px;animation:pill-blink 1.2s ease-in-out infinite;}
     @keyframes pill-blink{0%,100%{opacity:1}50%{opacity:.35}}
     .live-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red-b);}
-
-    .bell-btn{flex-shrink:0;margin-left:auto;background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--mid);transition:all .2s;}
-    .bell-btn:hover{border-color:rgba(251,191,36,.4);color:var(--gold);}
-    .bell-btn.subscribed{border-color:rgba(251,191,36,.4);color:var(--gold);background:rgba(251,191,36,.08);}
-    .bell-icon{font-size:1rem;}
-
-    /* ── Ticker ── */
-    .ticker-wrap{flex:1;min-width:0;height:32px;background:var(--s2);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;overflow:hidden;}
-    .ticker-label{flex-shrink:0;background:var(--red);height:100%;display:flex;align-items:center;padding:0 10px;font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
-    .ticker-track{overflow:hidden;flex:1;}
-    .ticker-move{display:inline-block;white-space:nowrap;padding-left:100%;animation:ticker 30s linear infinite;font-size:.78rem;font-weight:500;color:var(--mid);}
-    @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
 
     /* ── Page nav tabs ── */
     .page-nav{position:sticky;top:60px;z-index:190;background:rgba(7,8,16,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;padding:0 1rem;}
@@ -199,9 +186,6 @@
     #scrollTop svg{width:16px;height:16px;stroke:var(--mid);}
     #scrollTop:hover svg{stroke:var(--red-b);}
 
-    #subToast{position:fixed;bottom:72px;right:18px;z-index:501;background:var(--s1);border:1px solid rgba(251,191,36,.35);border-radius:8px;padding:11px 15px;font-size:.78rem;color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.5px;max-width:230px;opacity:0;transform:translateY(8px);transition:opacity .3s,transform .3s;pointer-events:none;}
-    #subToast.show{opacity:1;transform:translateY(0);}
-
     .footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.1rem;text-align:center;}
     .footer-text{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
     .footer-text span{color:var(--red-b);font-weight:800;}
@@ -218,17 +202,12 @@
   <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
 </button>
 
-<div id="subToast"></div>
-
+<!-- ── Header: logo + live pill only ── -->
 <header class="header">
-  <div class="logo"><span class="logo-med">Med</span><span class="logo-sphere">Sphere</span><span class="live-pill">Livescore</span></div>
-  <div class="ticker-wrap">
-    <div class="ticker-label">News</div>
-    <div class="ticker-track"><span class="ticker-move" id="tickerText">Welcome to the MedSphere Student Union Cup!</span></div>
+  <div class="logo">
+    <span class="logo-med">Med</span><span class="logo-sphere">Sphere</span>
+    <span class="live-pill" style="margin-left:8px">Livescore</span>
   </div>
-  <button class="bell-btn" id="bellBtn" onclick="toggleSubscribe()" title="Get goal notifications">
-    <span class="bell-icon">🔔</span><span id="bellLabel">Notify</span>
-  </button>
 </header>
 
 <nav class="page-nav">
@@ -281,11 +260,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getDatabase(app);
 
-// ── Ticker ──
-onValue(ref(db,'globalSettings/newsTicker'), s => {
-  document.getElementById('tickerText').textContent = s.val() || "Welcome to the MedSphere Student Union Cup!";
-});
-
 // ── Scroll-to-top ──
 window.addEventListener('scroll', () => {
   document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
@@ -299,39 +273,6 @@ window.showPage = (page, btn) => {
   btn.classList.add('active');
 };
 
-// ── Subscribe ──
-window.toggleSubscribe = async () => {
-  const btn = document.getElementById('bellBtn');
-  const label = document.getElementById('bellLabel');
-  if (!('Notification' in window)) { showSubToast('Notifications not supported on this device.'); return; }
-  if (Notification.permission === 'granted') {
-    showSubToast('You are already subscribed to goal alerts! 🔔');
-    btn.classList.add('subscribed'); label.textContent = 'On';
-    return;
-  }
-  const perm = await Notification.requestPermission();
-  if (perm === 'granted') {
-    btn.classList.add('subscribed'); label.textContent = 'On';
-    showSubToast("Subscribed! You'll get a notification when a goal is scored. ⚽");
-  } else {
-    showSubToast('Permission denied. Enable notifications in your browser settings.');
-  }
-};
-function showSubToast(msg) {
-  const t = document.getElementById('subToast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-function pushGoalNotif(homeTeam, awayTeam, hScore, aScore) {
-  if (Notification.permission === 'granted') {
-    new Notification('⚽ GOAL! — MedSphere Cup', {
-      body: `${homeTeam} ${hScore} – ${aScore} ${awayTeam}`,
-      icon: 'https://cdn-icons-png.flaticon.com/512/33/33736.png'
-    });
-  }
-}
-
 // ── Single realtime listener — drives EVERYTHING ──
 let prevScores = {};
 
@@ -343,15 +284,13 @@ onValue(ref(db, 'matches'), snap => {
     const total = (m.homeScore || 0) + (m.awayScore || 0);
     if (prevScores[id] !== undefined && total > prevScores[id]) {
       triggerGoal();
-      pushGoalNotif(m.homeTeam, m.awayTeam, m.homeScore || 0, m.awayScore || 0);
     }
     prevScores[id] = total;
   });
 
-  // Re-render everything from the same fresh snapshot
   renderMatches(data);
-  renderStandings(data);   // ← now includes LIVE matches
-  renderScorers(data);     // ← now includes LIVE match scorers
+  renderStandings(data);
+  renderScorers(data);
 });
 
 // ─────────────────────────────────────────────
@@ -365,7 +304,6 @@ function renderMatches(data) {
   }
   container.innerHTML = '';
 
-  // Sort: LIVE first, then by id
   const entries = Object.entries(data).sort(([,a],[,b]) => {
     const order = {LIVE:0, UPCOMING:1, ENDED:2};
     return (order[a.status]??1) - (order[b.status]??1);
@@ -435,7 +373,8 @@ function renderMatches(data) {
 }
 
 // ─────────────────────────────────────────────
-// STANDINGS — includes LIVE + ENDED matches
+// STANDINGS — LIVE + ENDED matches, no lineup required
+// Points only awarded for ENDED. Goals shown for both.
 // ─────────────────────────────────────────────
 function renderStandings(data) {
   const teams = {};
@@ -447,19 +386,18 @@ function renderStandings(data) {
   Object.values(data).forEach(m => {
     const isEnded = m.status === 'ENDED';
     const isLive  = m.status === 'LIVE';
-    if (!isEnded && !isLive) return; // skip UPCOMING
+    if (!isEnded && !isLive) return;
 
     const h = m.homeTeam, a = m.awayTeam;
+    if (!h || !a) return;
     const hg = m.homeScore || 0, ag = m.awayScore || 0;
 
     ensureTeam(h); ensureTeam(a);
 
-    // Goals always counted (live or ended)
     teams[h].gf += hg; teams[h].ga += ag;
     teams[a].gf += ag; teams[a].ga += hg;
 
     if (isEnded) {
-      // Points only from finished matches
       teams[h].p++; teams[a].p++;
       if (hg > ag)       { teams[h].w++; teams[h].pts+=3; teams[a].l++; }
       else if (hg === ag){ teams[h].d++; teams[h].pts++;  teams[a].d++; teams[a].pts++; }
@@ -478,7 +416,7 @@ function renderStandings(data) {
 
   const body = document.getElementById('standingsBody');
   if (!sorted.length) {
-    body.innerHTML = '<div class="empty-state" style="padding:1.5rem"><p>No completed matches yet.</p></div>';
+    body.innerHTML = '<div class="empty-state" style="padding:1.5rem"><p>No match data yet.</p></div>';
     return;
   }
 
@@ -495,21 +433,22 @@ function renderStandings(data) {
 }
 
 // ─────────────────────────────────────────────
-// TOP SCORERS — all matches (live + ended)
+// TOP SCORERS — counts every entry in scorers array
+// Each entry = 1 goal. No lineup needed.
+// Same player across multiple matches stacks correctly.
 // ─────────────────────────────────────────────
 function renderScorers(data) {
+  // key = "PlayerName|||TeamName" → total goals
   const scorerMap = {};
 
   Object.values(data).forEach(m => {
-    const isLive  = m.status === 'LIVE';
-    const isEnded = m.status === 'ENDED';
-    if (!isLive && !isEnded) return; // skip UPCOMING
+    if (m.status !== 'LIVE' && m.status !== 'ENDED') return;
 
     (m.scorers || []).forEach(s => {
-      const teamName = s.team === 'home' ? m.homeTeam : m.awayTeam;
-      // Key by player name + team to avoid clashes across matches
-      const key = s.name + '|||' + teamName;
-      if (!scorerMap[key]) scorerMap[key] = {name:s.name, team:teamName, goals:0};
+      if (!s || !s.name) return;
+      const teamName = s.team === 'home' ? (m.homeTeam || 'Home') : (m.awayTeam || 'Away');
+      const key = s.name.trim().toLowerCase() + '|||' + teamName.trim().toLowerCase();
+      if (!scorerMap[key]) scorerMap[key] = {name: s.name, team: teamName, goals: 0};
       scorerMap[key].goals++;
     });
   });
