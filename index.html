@@ -1,575 +1,777 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MEDSPHERE Live Score</title>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg:        #070810;
-      --s1:        #0C0D18;
-      --s2:        #11121F;
-      --s3:        #181928;
-      --border:    rgba(255,255,255,0.07);
-      --red:       #DC2626;
-      --red-b:     #EF4444;
-      --cyan:      #22D3EE;
-      --green:     #4ADE80;
-      --gold:      #FBBF24;
-      --violet:    #A78BFA;
-      --muted:     #4B5060;
-      --mid:       #7B8096;
-      --white:     #F5F6FF;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;overflow-x:hidden;}
-    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.6;}
-    body::after{content:'';position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:600px;height:300px;background:radial-gradient(ellipse,rgba(220,38,38,.08) 0%,transparent 70%);pointer-events:none;z-index:0;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ACUMEN ACADEMY O'LEVEL</title>
+<style>
+  :root{
+    --fs:18;
+    --ink:#1c2b24;
+    --paper:#f6f3ea;
+    --panel:#ffffff;
+    --line:#d8d2c0;
+    --accent:#2f5d4c;
+    --accent-2:#b5482a;
+    --muted:#5b5547;
+  }
+  *{box-sizing:border-box;}
+  html{ font-size:calc(var(--fs) * 1px); }
+  body{
+    margin:0;
+    font-family:'Segoe UI', Roboto, Arial, sans-serif;
+    font-size:1rem;
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  header{
+    background:var(--ink);
+    color:var(--paper);
+    padding:12px 18px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  header h1{ font-size:1.1rem; margin:0; font-weight:700; }
+  header .sub{ font-size:0.75rem; color:#c9c2ab; margin-top:2px; }
+  .hdr-right{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .hbtn{
+    background:#2d4238; color:#fff; border:1px solid #4a6256;
+    font-size:0.9rem; padding:8px 12px; border-radius:4px; cursor:pointer;
+    min-height:44px; font-family:inherit;
+  }
+  .hbtn:hover{ background:#3a5547; }
+  #timer{
+    font-family:'Courier New', monospace;
+    font-size:1.5rem;
+    font-weight:bold;
+    background:var(--accent-2);
+    padding:6px 14px;
+    border-radius:4px;
+    min-width:110px;
+    text-align:center;
+  }
+  #timer.warn{ background:#8a1f1f; animation:pulse 1s infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.6;} }
 
-    /* ── Header ── */
-    .header{position:sticky;top:0;z-index:200;background:rgba(7,8,16,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 1.2rem;height:60px;display:flex;align-items:center;gap:.75rem;}
-    .header::before{content:'';position:absolute;left:0;top:0;height:100%;width:3px;background:var(--red);}
-    .logo{display:flex;align-items:baseline;gap:2px;flex-shrink:0;}
-    .logo-med{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;color:var(--red);letter-spacing:.5px;text-transform:uppercase;}
-    .logo-sphere{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;color:var(--white);letter-spacing:.5px;text-transform:uppercase;}
-    .live-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);color:var(--red-b);font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:4px 8px;border-radius:4px;animation:pill-blink 1.2s ease-in-out infinite;}
-    @keyframes pill-blink{0%,100%{opacity:1}50%{opacity:.35}}
-    .live-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red-b);}
+  main{ max-width:820px; margin:0 auto; padding:20px 16px 120px; }
 
-    /* ── Page nav tabs ── */
-    .page-nav{position:sticky;top:60px;z-index:190;background:rgba(7,8,16,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;padding:0 1rem;}
-    .page-tab{flex:1;max-width:180px;padding:12px 4px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);transition:color .2s,border-color .2s;}
-    .page-tab:hover{color:var(--mid);}
-    .page-tab.active{color:var(--white);border-bottom-color:var(--red);}
+  #start-screen{
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:28px 24px;
+    margin-top:16px;
+  }
+  #start-screen h2{ margin-top:0; font-size:1.6rem; color:var(--accent);}
+  #start-screen ul{ font-size:1rem; line-height:1.8; color:#2e2e2e; padding-left:22px;}
+  #start-screen li{margin-bottom:6px;}
+  #start-btn, #submit-btn{
+    background:var(--accent);
+    color:#fff;
+    border:none;
+    padding:14px 28px;
+    font-size:1.05rem;
+    font-family:inherit;
+    font-weight:bold;
+    cursor:pointer;
+    border-radius:4px;
+    margin-top:12px;
+    min-height:48px;
+  }
+  #start-btn:hover, #submit-btn:hover{ background:#254b3c; }
 
-    /* ── Pages ── */
-    .page{display:none;position:relative;z-index:1;max-width:640px;margin:0 auto;padding:1rem .85rem 5rem;}
-    .page.active{display:block;}
+  .progress-bar{
+    font-size:0.85rem;
+    color:var(--muted);
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+  }
+  .track{ height:6px; background:var(--line); margin-bottom:18px; border-radius:3px; overflow:hidden; }
+  .track-fill{ height:100%; background:var(--accent-2); width:0%; transition:width 0.2s; }
 
-    /* ── Match card ── */
-    .match-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:.85rem;box-shadow:0 4px 20px rgba(0,0,0,.4);transition:border-color .3s;}
-    .match-card.status-LIVE{border-color:rgba(220,38,38,.3);box-shadow:0 8px 40px rgba(0,0,0,.5),0 0 0 1px rgba(220,38,38,.1);}
-    .match-card.status-LIVE .card-stripe{background:linear-gradient(90deg,var(--red) 0%,transparent 60%);}
-    .card-stripe{height:2px;width:100%;background:var(--s3);}
-    .card-body{padding:.8rem 1.1rem;}
+  .q-card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:5px solid var(--accent);
+    padding:22px 22px;
+    margin-bottom:16px;
+  }
+  .q-tag{
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    color:var(--accent-2);
+    font-weight:bold;
+    margin-bottom:8px;
+  }
+  .q-text{
+    font-size:1.35rem;
+    line-height:1.55;
+    margin:0 0 18px 0;
+    font-weight:500;
+  }
+  .opt{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    width:100%;
+    text-align:left;
+    background:var(--paper);
+    border:2px solid var(--line);
+    padding:14px 16px;
+    margin-bottom:10px;
+    font-family:inherit;
+    font-size:1.15rem;
+    line-height:1.45;
+    cursor:pointer;
+    border-radius:5px;
+    color:var(--ink);
+    min-height:52px;
+  }
+  .opt:hover{ border-color:var(--accent); }
+  .opt .lbl{ font-weight:bold; color:var(--accent-2); min-width:24px; }
+  .opt.selected{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .opt.selected .lbl{ color:#fff; }
 
-    .match-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;}
-    .stage-tag{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);background:var(--s3);border:1px solid var(--border);padding:4px 9px;border-radius:4px;}
-    .status-tag{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--mid);}
-    .status-tag.live{color:var(--red-b);display:flex;align-items:center;gap:5px;}
-    .status-tag.live::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--red-b);animation:pulse-dot 1.2s ease-in-out infinite;}
-    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+  .nav-row{ display:flex; justify-content:space-between; margin-top:18px; gap:10px; }
+  .nav-btn{
+    background:#fff; border:2px solid var(--line);
+    padding:12px 22px; cursor:pointer; font-size:1.05rem; border-radius:5px;
+    font-family:inherit; min-height:48px; flex:1;
+  }
+  .nav-btn:disabled{ opacity:0.35; cursor:not-allowed; }
 
-    .score-section{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-bottom:.4rem;}
-    .team-block{display:flex;flex-direction:column;align-items:center;}
-    .team-name{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;text-align:center;color:#CBD5E1;line-height:1.2;}
-    .score-display{display:flex;align-items:center;gap:8px;}
-    .score-num{font-family:'Barlow Condensed',sans-serif;font-size:2.6rem;font-weight:900;line-height:1;color:#fff;}
-    .score-sep{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:400;color:var(--muted);line-height:1;}
+  #jumpgrid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(46px, 1fr));
+    gap:6px;
+    margin:20px 0;
+  }
+  .jbtn{
+    font-family:inherit; font-size:0.85rem; padding:10px 0;
+    border:1px solid var(--line); background:#fff; cursor:pointer; border-radius:3px;
+    min-height:42px;
+  }
+  .jbtn.answered{ background:var(--accent); color:#fff; border-color:var(--accent);}
+  .jbtn.current{ outline:3px solid var(--accent-2); }
 
-    .match-clock{text-align:center;margin-bottom:.55rem;}
-    .clock-inner{display:inline-flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:1px;}
-    .clock-inner.live-time{color:var(--red-b);}
-    .clock-inner.ended{color:var(--mid);}
+  #result-screen{
+    display:none; background:var(--panel); border:1px solid var(--line);
+    padding:36px 28px; text-align:center; margin-top:20px;
+  }
+  #result-screen .score{ font-size:3.4rem; color:var(--accent); font-weight:bold; margin:10px 0; }
+  #result-screen .label{ color:var(--muted); font-size:0.9rem; text-transform:uppercase; letter-spacing:1px; }
+  .hidden{ display:none !important; }
+  footer{ text-align:center; font-size:0.75rem; color:var(--muted); padding:20px; }
 
-    /* MOTM */
-    .motm-block{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(251,191,36,.03));border:1px solid rgba(251,191,36,.3);border-radius:8px;padding:10px 14px;margin-bottom:.7rem;}
-    .motm-star{font-size:1.3rem;flex-shrink:0;animation:star-pulse 2s ease-in-out infinite;}
-    @keyframes star-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
-    .motm-info{flex:1;min-width:0;}
-    .motm-label{font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:2px;}
-    .motm-name{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .motm-team{font-size:.68rem;color:var(--mid);margin-top:1px;}
+  .name-box{ margin:18px 0 6px; }
+  .name-box label{ display:block; font-weight:700; margin-bottom:6px; }
+  #student-name{
+    width:100%; font-size:1.15rem; font-family:inherit; padding:13px 14px;
+    border:2px solid var(--line); border-radius:5px; background:var(--paper); color:var(--ink);
+  }
+  #student-name:focus{ outline:none; border-color:var(--accent); }
+  #name-err{ color:#8a1f1f; font-size:0.9rem; min-height:1.3em; margin-top:6px; }
+  #save-status{ margin-top:18px; font-size:1rem; color:var(--muted); }
+  #save-status.ok{ color:var(--accent); font-weight:700; }
+  #save-status.bad{ color:#8a1f1f; font-weight:700; }
+  #retry-btn{
+    margin-top:10px; background:var(--accent-2); color:#fff; border:none; border-radius:4px;
+    padding:12px 22px; font-size:1rem; font-family:inherit; font-weight:bold; cursor:pointer;
+  }
 
-    .divider{height:1px;background:var(--border);margin:0 -1.1rem;}
-    .tabs-bar{display:flex;padding:.5rem 0 0;gap:2px;}
-    .tab-btn{flex:1;padding:7px 4px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);transition:color .2s,border-color .2s;}
-    .tab-btn:hover{color:var(--mid);}
-    .tab-btn.active{color:var(--white);border-bottom-color:var(--red);}
-    .tab-panel{display:none;padding-top:.75rem;}
-    .tab-panel.active{display:block;}
+  /* ---------- Calculator ---------- */
+  #calc{
+    position:fixed; right:16px; bottom:16px; width:350px; max-width:calc(100% - 16px);
+    background:#1f2a25; color:#fff; border-radius:10px; padding:12px;
+    box-shadow:0 8px 30px rgba(0,0,0,.45); z-index:50; font-size:16px;
+    user-select:none;
+  }
+  #calc .c-top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:14px; }
+  #calc .c-top button{ background:none; border:none; color:#c9c2ab; font-size:20px; cursor:pointer; padding:2px 8px; }
+  #c-screen{ background:#d9e4cf; color:#111; border-radius:6px; padding:8px 10px; margin-bottom:10px; text-align:right; min-height:70px; }
+  #c-expr{ font-family:'Courier New', monospace; font-size:18px; min-height:26px; word-break:break-all; }
+  #c-res{ font-family:'Courier New', monospace; font-size:28px; font-weight:bold; min-height:38px; word-break:break-all; }
+  #c-keys{ display:grid; grid-template-columns:repeat(5, 1fr); gap:6px; }
+  #c-keys button{
+    background:#36463f; color:#fff; border:none; border-radius:5px;
+    font-size:17px; padding:11px 0; cursor:pointer; font-family:inherit;
+  }
+  #c-keys button:active{ background:#4d6258; }
+  #c-keys button.fn{ background:#2b3a34; font-size:14px; }
+  #c-keys button.op{ background:#b5482a; }
+  #c-keys button.num{ background:#4a5c54; }
+  #c-keys button.eq{ background:#2f8f5f; }
+  #c-keys button.ac{ background:#8a1f1f; }
+  #c-mode{ background:#2b3a34; color:#fff; border:1px solid #4a6256; border-radius:4px; padding:3px 10px; cursor:pointer; font-size:13px; }
 
-    /* Stats */
-    .stat-item{margin-bottom:11px;}
-    .stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-    .stat-val{font-family:'Barlow Condensed',sans-serif;font-size:.9rem;font-weight:700;min-width:32px;}
-    .stat-val.home{color:#F59E0B;text-align:left;}
-    .stat-val.away{color:#38BDF8;text-align:right;}
-    .stat-name{font-size:.72rem;font-weight:600;letter-spacing:.5px;color:var(--mid);text-align:center;flex:1;}
-    .stat-bar{height:4px;background:var(--s3);border-radius:2px;display:flex;overflow:hidden;}
-    .bar-home{background:#F59E0B;height:100%;transition:width .6s cubic-bezier(.4,0,.2,1);border-radius:2px 0 0 2px;}
-    .bar-away{background:#38BDF8;height:100%;transition:width .6s cubic-bezier(.4,0,.2,1);border-radius:0 2px 2px 0;}
-
-    /* Pitch */
-    .pitch-outer{width:100%;}
-    .pitch-teams-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;padding:0 2px;}
-    .pitch-team-label{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;}
-    .pitch-team-label.home{color:#60A5FA;}
-    .pitch-team-label.away{color:#F87171;}
-    .pitch-wrap{position:relative;width:100%;border-radius:8px;overflow:hidden;margin-bottom:8px;}
-    .pitch-svg{width:100%;display:block;}
-    .player-dot-group{cursor:default;}
-    .player-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;pointer-events:none;dominant-baseline:middle;text-anchor:middle;}
-    .subs-section{display:flex;gap:12px;margin-top:4px;}
-    .subs-half{flex:1;}
-    .subs-title{font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-    .subs-row{display:flex;flex-wrap:wrap;gap:4px;}
-    .sub-chip{display:inline-flex;align-items:center;gap:4px;background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:.66rem;color:var(--mid);}
-    .sub-num{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.72rem;}
-
-    /* Events */
-    .event-list{display:flex;flex-direction:column;gap:7px;}
-    .event-row{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--s2);border:1px solid var(--border);border-radius:7px;font-size:.78rem;}
-    .event-icon{font-size:.95rem;flex-shrink:0;}
-    .event-text{color:var(--mid);flex:1;font-size:.78rem;}
-    .event-team-tag{font-family:'Barlow Condensed',sans-serif;font-size:.66rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:3px 7px;border-radius:3px;}
-    .event-team-tag.home{background:rgba(245,158,11,.15);color:#F59E0B;border:1px solid rgba(245,158,11,.3);}
-    .event-team-tag.away{background:rgba(56,189,248,.15);color:#38BDF8;border:1px solid rgba(56,189,248,.3);}
-    .event-time{font-family:'Barlow Condensed',sans-serif;font-size:.76rem;font-weight:700;color:var(--muted);}
-    .no-events{text-align:center;font-size:.78rem;color:var(--muted);padding:1.2rem 0;}
-
-    /* ── Standings page ── */
-    .section-title{font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--mid);display:flex;align-items:center;gap:8px;margin-bottom:.85rem;}
-    .section-title::after{content:'';flex:1;height:1px;background:var(--border);}
-
-    .standings-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.4rem;box-shadow:0 4px 20px rgba(0,0,0,.4);}
-    .standings-head{background:var(--s2);padding:.7rem 1rem;display:grid;grid-template-columns:28px 1fr 34px 34px 34px 34px 42px;gap:6px;align-items:center;}
-    .sh-label{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-align:center;}
-    .sh-label.left{text-align:left;}
-    .standings-row{display:grid;grid-template-columns:28px 1fr 34px 34px 34px 34px 42px;gap:6px;align-items:center;padding:.65rem 1rem;border-top:1px solid var(--border);transition:background .15s;}
-    .standings-row:hover{background:var(--s2);}
-    .standings-row.top{background:rgba(251,191,36,.04);border-left:2px solid var(--gold);}
-    .s-pos{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:900;color:var(--muted);text-align:center;}
-    .s-team{font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .s-val{font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:700;text-align:center;color:var(--mid);}
-    .s-pts{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:900;text-align:center;color:var(--white);}
-    .s-pts-top{color:var(--gold);}
-
-    /* Top scorers */
-    .scorer-card{background:var(--s1);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.4rem;box-shadow:0 4px 20px rgba(0,0,0,.4);}
-    .scorer-row{display:flex;align-items:center;gap:13px;padding:.7rem 1.1rem;border-top:1px solid var(--border);transition:background .15s;}
-    .scorer-row:first-child{border-top:none;}
-    .scorer-row:hover{background:var(--s2);}
-    .scorer-rank{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;color:var(--muted);min-width:24px;text-align:center;}
-    .scorer-rank.gold{color:var(--gold);}
-    .scorer-rank.silver{color:#94A3B8;}
-    .scorer-rank.bronze{color:#B87333;}
-    .scorer-info{flex:1;min-width:0;}
-    .scorer-name{font-family:'Barlow Condensed',sans-serif;font-size:.98rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .scorer-team{font-size:.7rem;color:var(--mid);margin-top:2px;}
-    .scorer-goals{display:flex;align-items:center;gap:5px;}
-    .scorer-num{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;color:var(--white);line-height:1;}
-    .scorer-ball{font-size:.95rem;}
-    .scorer-bar-wrap{width:80px;height:4px;background:var(--s3);border-radius:2px;overflow:hidden;margin-top:4px;}
-    .scorer-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--red-b));border-radius:2px;transition:width .6s cubic-bezier(.4,0,.2,1);}
-
-    /* Live badge on table */
-    .live-badge{display:inline-flex;align-items:center;gap:4px;font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--red-b);background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.3);border-radius:3px;padding:1px 5px;margin-left:5px;vertical-align:middle;}
-    .live-badge::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--red-b);animation:pulse-dot 1.2s ease-in-out infinite;}
-
-    .empty-state{text-align:center;padding:3rem 1rem;color:var(--muted);}
-    .empty-state h2{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:1px;margin-bottom:8px;color:var(--mid);}
-    .empty-state p{font-size:.85rem;}
-
-    /* Goal alert */
-    #goalAlert{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);z-index:999;display:none;flex-direction:column;align-items:center;gap:4px;pointer-events:none;}
-    #goalAlert.show{display:flex;animation:goalPop .3s cubic-bezier(.175,.885,.32,1.275) forwards;}
-    @keyframes goalPop{0%{transform:translate(-50%,-50%) scale(.6);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
-    .goal-main{background:var(--red);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:3.5rem;font-weight:900;letter-spacing:4px;text-transform:uppercase;padding:18px 48px;border-radius:8px;box-shadow:0 0 60px rgba(220,38,38,.6),0 20px 60px rgba(0,0,0,.7);}
-    .goal-sub{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.5);}
-
-    /* Scroll-to-top */
-    #scrollTop{position:fixed;bottom:24px;right:18px;z-index:500;width:42px;height:42px;background:var(--s2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:0;transform:translateY(12px);transition:opacity .3s,transform .3s,border-color .2s;pointer-events:none;}
-    #scrollTop.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
-    #scrollTop:hover{border-color:var(--red);background:rgba(220,38,38,.12);}
-    #scrollTop svg{width:16px;height:16px;stroke:var(--mid);}
-    #scrollTop:hover svg{stroke:var(--red-b);}
-
-    .footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:1.1rem;text-align:center;}
-    .footer-text{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
-    .footer-text span{color:var(--red-b);font-weight:800;}
-  </style>
+  @media (max-width:600px){
+    #calc{ left:8px; right:8px; bottom:8px; width:auto; }
+    #c-keys button{ padding:10px 0; }
+    main{ padding-bottom:420px; }
+  }
+</style>
 </head>
 <body>
 
-<div id="goalAlert">
-  <div class="goal-main">GOAL!</div>
-  <div class="goal-sub">Student Union Cup</div>
-</div>
-
-<button id="scrollTop" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-  <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
-</button>
-
-<!-- ── Header: logo + live pill only ── -->
-<header class="header">
-  <div class="logo">
-    <span class="logo-med">Med</span><span class="logo-sphere">Sphere</span>
-    <span class="live-pill" style="margin-left:8px">Livescore</span>
+<header>
+  <div>
+    <h1>ACUMEN ACADEMY O'LEVEL</h1>
+    <div class="sub">100 Questions · Mathematics · English · Physics · Chemistry</div>
+  </div>
+  <div class="hdr-right">
+    <button class="hbtn" id="font-dec" title="Smaller text" aria-label="Decrease text size">A−</button>
+    <button class="hbtn" id="font-inc" title="Larger text" aria-label="Increase text size">A+</button>
+    <button class="hbtn" id="calc-toggle">🖩 Calculator</button>
+    <div id="timer">60:00</div>
   </div>
 </header>
 
-<nav class="page-nav">
-  <button class="page-tab active" onclick="showPage('matches',this)">⚽ Matches</button>
-  <button class="page-tab" onclick="showPage('table',this)">📊 Table & Scorers</button>
-</nav>
+<main>
 
-<div class="page active" id="page-matches">
-  <div id="matchDisplay">
-    <div class="empty-state"><h2>No Matches Yet</h2><p>Live scores will appear here once matches begin.</p></div>
-  </div>
-</div>
-
-<div class="page" id="page-table">
-  <div class="section-title">🏆 Group Standings</div>
-  <div class="standings-card">
-    <div class="standings-head">
-      <div class="sh-label">#</div>
-      <div class="sh-label left">Team</div>
-      <div class="sh-label">P</div>
-      <div class="sh-label">W</div>
-      <div class="sh-label">D</div>
-      <div class="sh-label">L</div>
-      <div class="sh-label">Pts</div>
+  <div id="start-screen">
+    <h2>Before you begin</h2>
+    <ul>
+      <li>100 O'Level standard questions: 25 each in Mathematics, English Language, Physics and Chemistry.</li>
+      <li>You have <strong>60 minutes</strong>. The exam auto-submits when time runs out.</li>
+      <li>A <strong>scientific calculator</strong> is built in. Tap <strong>🖩 Calculator</strong> at the top to open or close it.</li>
+      <li>Use <strong>A−</strong> and <strong>A+</strong> at the top to make the text smaller or bigger.</li>
+      <li>Take g = 10 m/s² unless told otherwise.</li>
+      <li>You will not be told whether an answer is right or wrong as you go. You can jump between questions and change answers before submitting.</li>
+      <li>At the end you will see your final score only.</li>
+    </ul>
+    <div class="name-box">
+      <label for="student-name">Enter your full name to begin</label>
+      <input id="student-name" type="text" maxlength="60" autocomplete="name" placeholder="e.g. Adebayo Tunde">
+      <div id="name-err"></div>
     </div>
-    <div id="standingsBody"><div class="empty-state" style="padding:1.5rem"><p>No match data yet.</p></div></div>
+    <button id="start-btn">Start Exam</button>
   </div>
 
-  <div class="section-title">⚽ Top Goal Scorers</div>
-  <div class="scorer-card">
-    <div id="scorersBody"><div class="empty-state" style="padding:1.5rem"><p>No goals recorded yet.</p></div></div>
+  <div id="exam-screen" class="hidden">
+    <div class="progress-bar">
+      <span id="answered-count">0 of 100 answered</span>
+      <span id="q-position">Question 1 of 100</span>
+    </div>
+    <div class="track"><div class="track-fill" id="track-fill"></div></div>
+
+    <div class="q-card">
+      <div class="q-tag" id="q-tag"></div>
+      <p class="q-text" id="q-text"></p>
+      <div id="opts"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" id="prev-btn">← Previous</button>
+      <button class="nav-btn" id="next-btn">Next →</button>
+    </div>
+
+    <div id="jumpgrid"></div>
+
+    <button id="submit-btn">Submit Exam</button>
   </div>
+
+  <div id="result-screen">
+    <div class="label">Exam Complete</div>
+    <div class="score" id="final-score">0 / 100</div>
+    <div class="label" id="student-line"></div>
+    <div class="label" id="time-used"></div>
+    <div id="save-status"></div>
+    <button id="retry-btn" class="hidden">Retry sending result</button>
+  </div>
+
+</main>
+
+<footer>ACUMEN ACADEMY O'LEVEL · Timed practice · Answers are not disclosed during or after the exam.</footer>
+
+<!-- Calculator -->
+<div id="calc" class="hidden" role="dialog" aria-label="Scientific calculator">
+  <div class="c-top">
+    <span>Scientific Calculator</span>
+    <span><button id="c-mode" title="Switch between degrees and radians">DEG</button>
+    <button id="c-close" aria-label="Close calculator">✕</button></span>
+  </div>
+  <div id="c-screen"><div id="c-expr"></div><div id="c-res">0</div></div>
+  <div id="c-keys"></div>
 </div>
 
-<footer class="footer"><div class="footer-text">Powered by <span>UNIMED APROKO</span></div></footer>
+<script>
+/* =====================================================================
+   QUESTION BANK
+   Format: [subject, question, [CORRECT, wrong, wrong, wrong]]
+   The correct answer is always written first here; options are shuffled
+   when the page loads so the position of the right answer is random.
+   ===================================================================== */
+const EXAM_MINUTES = 60;
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
+const RAW = [
+// ===================== MATHEMATICS =====================
+["Mathematics","Evaluate: log<sub>2</sub>8 + log<sub>3</sub>81 − log<sub>5</sub>5",["6","5","7","8"]],
+["Mathematics","Solve for x: 2<sup>x+1</sup> = 32 ÷ 2<sup>x−2</sup>",["3","2","4","2.5"]],
+["Mathematics","Find the quadratic equation whose roots are −<sup>2</sup>⁄<sub>3</sub> and 4.",["3x² − 10x − 8 = 0","3x² + 10x − 8 = 0","3x² − 10x + 8 = 0","3x² − 14x − 8 = 0"]],
+["Mathematics","P varies directly as the square of Q and inversely as R. If P = 12 when Q = 2 and R = 3, find P when Q = 3 and R = 6.",["13.5","9","18","27"]],
+["Mathematics","If 3x − 2y = 7 and x + 4y = 0, find the value of x − y.",["2.5","1.5","−2.5","3.5"]],
+["Mathematics","Rationalise the denominator: 6 ÷ (√5 − √2)",["2√5 + 2√2","2√5 − 2√2","6(√5 + √2) ÷ 7","√5 + √2"]],
+["Mathematics","In a class of 40 students, 25 offer Mathematics, 22 offer Physics and 5 offer neither subject. How many students offer both Mathematics and Physics?",["12","10","8","17"]],
+["Mathematics","The mean of five numbers is 12. When a sixth number is added, the mean becomes 14. What is the sixth number?",["24","26","28","20"]],
+["Mathematics","A bag contains 4 red, 6 blue and 5 green balls. Two balls are drawn one after the other without replacement. What is the probability that both are the same colour?",["31/105","77/225","1/3","11/35"]],
+["Mathematics","A chord of length 24 cm is drawn in a circle, and it is 5 cm from the centre. Find the radius of the circle.",["13 cm","12 cm","17 cm","15 cm"]],
+["Mathematics","A cone has base radius 6 cm and slant height 10 cm. Find its total surface area in terms of π.",["96π cm²","60π cm²","156π cm²","132π cm²"]],
+["Mathematics","A triangle has two sides of lengths 7 cm and 8 cm with an included angle of 30°. Find its area.",["14 cm²","28 cm²","14√3 cm²","56 cm²"]],
+["Mathematics","The bearing of A from B is 060°. What is the bearing of B from A?",["240°","120°","300°","030°"]],
+["Mathematics","The 5th term of an arithmetic progression is 17 and the 9th term is 33. Find the 15th term.",["57","61","53","55"]],
+["Mathematics","Find the sum to infinity of the geometric series 18 + 6 + 2 + ...",["27","24","36","9"]],
+["Mathematics","Solve the inequality: (2x − 1)/3 − (x + 2)/4 ≥ 1",["x ≥ 22/5","x ≤ 22/5","x ≥ 14/5","x ≥ 2"]],
+["Mathematics","Make r the subject of the formula V = ⅓πr²h.",["r = √(3V ÷ πh)","r = √(V ÷ 3πh)","r = 3V ÷ πh","r = √(3Vh ÷ π)"]],
+["Mathematics","Evaluate 1101<sub>two</sub> + 111<sub>two</sub>, leaving your answer in base two.",["10100<sub>two</sub>","10010<sub>two</sub>","11000<sub>two</sub>","10110<sub>two</sub>"]],
+["Mathematics","A shirt is sold for ₦4,500, making a profit of 25%. Find the cost price.",["₦3,600","₦3,375","₦5,625","₦3,000"]],
+["Mathematics","Evaluate (3.2 × 10<sup>5</sup>) ÷ (1.6 × 10<sup>−3</sup>), leaving your answer in standard form.",["2 × 10<sup>8</sup>","2 × 10<sup>2</sup>","5.12 × 10<sup>2</sup>","2 × 10<sup>7</sup>"]],
+["Mathematics","Find the equation of the straight line passing through the points (2, −1) and (5, 8).",["y = 3x − 7","y = 3x + 7","y = 3x − 5","y = ⅓x − 5/3"]],
+["Mathematics","Given that the determinant of the matrix with rows (x, 3) and (2, x + 1) equals zero, find the possible values of x.",["2 or −3","−2 or 3","1 or −6","−1 or 6"]],
+["Mathematics","Each exterior angle of a regular polygon is 18°. What is the sum of the interior angles of the polygon?",["3240°","3600°","3420°","2880°"]],
+["Mathematics","Factorise completely: 2x² − 5x − 12",["(2x + 3)(x − 4)","(2x − 3)(x + 4)","(2x + 4)(x − 3)","(2x − 4)(x + 3)"]],
+["Mathematics","The numbers 4, 6, 6, 7, 9, 11 and x have a mean of 8. Find the median of the seven numbers.",["7","6","8","9"]],
 
-const firebaseConfig = {
-  apiKey:"AIzaSyB8Lgw7WzFuCBw5OaYTQebQ8I4JgjuohFU",
-  authDomain:"medsphere-c794d.firebaseapp.com",
-  projectId:"medsphere-c794d",
-  storageBucket:"medsphere-c794d.firebasestorage.app",
-  messagingSenderId:"962864542783",
-  appId:"1:962864542783:web:b59e6abda9c6f1a9fc348a"
-};
+// ===================== ENGLISH =====================
+["English","Choose the option nearest in meaning to the word in capitals: The judge was LENIENT with the first-time offender.",["Gentle in imposing punishment","Strict in applying the law","Biased in favour of the accused","Reluctant to give a verdict"]],
+["English","Choose the option opposite in meaning to the word in capitals: Despite the pressure, the chairman remained ADAMANT.",["Flexible","Stubborn","Stern","Calm"]],
+["English","Choose the option opposite in meaning to the word in capitals: The reasons behind his decision remained OBSCURE.",["Evident","Hidden","Doubtful","Complex"]],
+["English","Choose the option that best completes the sentence: Neither the principal nor the teachers ______ aware of the new directive.",["were","was","is","has been"]],
+["English","Choose the option that best completes the sentence: The number of applicants ______ increased this year, but a number of them ______ unqualified.",["has; are","have; are","has; is","have; is"]],
+["English","Choose the option that best completes the sentence: If I ______ the answer, I would have told you.",["had known","knew","have known","would know"]],
+["English","Choose the option that best completes the sentence: Many young people are averse ______ taking risks.",["to","from","with","for"]],
+["English","Choose the option that best explains the expression: After weeks of exams, Kemi was burning the candle at both ends.",["Wearing herself out by doing too much","Wasting resources carelessly","Working in a poorly lit room","Studying only at night"]],
+["English","Choose the option that best explains the expression: The new manager decided to bite the bullet and sack the unproductive staff.",["Face an unpleasant task with courage","Act in anger without thinking","Delay a difficult decision","Seek advice from senior officials"]],
+["English","Choose the grammatically correct sentence.",["Neither of the boys has submitted his assignment.","Neither of the boys have submitted his assignment.","Neither of the boys are submitting his assignments.","Neither of the boy has submitted his assignment."]],
+["English","Choose the correctly spelt word.",["Embarrassment","Embarassment","Embarrasment","Embarassement"]],
+["English","Choose the word that rhymes with the word: WEIGH",["They","Tea","High","Toe"]],
+["English","Choose the word that has the same vowel sound as the one in: <u>ear</u>n",["H<u>ear</u>d","F<u>ear</u>","B<u>ear</u>","B<u>ear</u>d"]],
+["English","Read the passage and answer.<br><br><em>Although the village had no electricity, its inhabitants refused to regard themselves as deprived. Evenings were spent around fires where elders told stories, and children learned the names of the stars. When the government finally extended power lines to the village, some residents were quietly ambivalent: they welcomed the light, yet feared it would silence the stories.</em><br><br>The word <strong>ambivalent</strong> as used in the passage means:",["Having mixed feelings","Openly hostile","Completely indifferent","Eagerly excited"]],
+["English","Read the passage and answer.<br><br><em>Although the village had no electricity, its inhabitants refused to regard themselves as deprived. Evenings were spent around fires where elders told stories, and children learned the names of the stars. When the government finally extended power lines to the village, some residents were quietly ambivalent: they welcomed the light, yet feared it would silence the stories.</em><br><br>Which statement best reflects the writer's implied message?",["Development is welcome but may erode valued traditions","Rural people are unwilling to accept any change","Electricity brings no real benefit to villages","The children were unhappy without modern amusements"]],
+["English","Identify the figure of speech in the sentence: When the teacher left, the classroom became a zoo.",["Metaphor","Simile","Hyperbole","Irony"]],
+["English","Choose the option that best completes the sentence: Hardly had the bell rung ______ the students rushed out of the hall.",["when","than","before long","while"]],
+["English","Choose the option that correctly reports the sentence: 'Where did you put my keys?' she asked me.",["She asked me where I had put her keys.","She asked me where did I put her keys.","She asked me where I put my keys.","She asked me where had I put her keys."]],
+["English","Choose the correct passive form of: The committee is reviewing the proposal.",["The proposal is being reviewed by the committee.","The proposal is reviewed by the committee.","The proposal was being reviewed by the committee.","The proposal has been reviewed by the committee."]],
+["English","Choose the word that best fits the meaning: A system of government in which power is held by a small group of people.",["Oligarchy","Autocracy","Democracy","Theocracy"]],
+["English","What type of clause is underlined? <u>Whoever finishes first</u> will be rewarded.",["Noun clause","Adjectival clause","Adverbial clause of time","Main clause"]],
+["English","Choose the correctly punctuated sentence.",["The children's toys were scattered all over the floor.","The childrens' toys were scattered all over the floor.","The childrens toys were scattered all over the floor.","The children toy's were scattered all over the floor."]],
+["English","Choose the option nearest in meaning to the word in capitals: The explorers were DAUNTED by the steep cliff.",["Discouraged","Amused","Attracted","Relieved"]],
+["English","Choose the correct question tag: Nobody called while I was away, ______?",["did they","didn't they","did he","didn't he"]],
+["English","Choose the option that best completes the sentence: The manager, together with his assistants, ______ expected at the meeting.",["is","are","were","have been"]],
 
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
+// ===================== PHYSICS =====================
+["Physics","A car accelerates uniformly from rest to 20 m/s in 8 s, moves at constant speed for 10 s, then decelerates uniformly to rest in 4 s. What is the total distance travelled?",["320 m","360 m","280 m","240 m"]],
+["Physics","A 4 kg block is pulled along a rough horizontal surface by a force of 20 N. If the frictional force is 8 N, what is the acceleration of the block?",["3 m/s²","5 m/s²","7 m/s²","2 m/s²"]],
+["Physics","A crane lifts a load of mass 500 kg through a height of 12 m in 20 s. What power does the crane develop? (g = 10 m/s²)",["3,000 W","300 W","6,000 W","60,000 W"]],
+["Physics","A block measuring 0.2 m × 0.1 m × 0.05 m has a mass of 4 kg. What is the maximum pressure it can exert on a horizontal surface? (g = 10 m/s²)",["8,000 Pa","2,000 Pa","4,000 Pa","800 Pa"]],
+["Physics","A solid weighs 12 N in air and 8 N when fully immersed in water. What is the relative density of the solid?",["3","1.5","2","0.5"]],
+["Physics","How much heat is needed to raise the temperature of 2 kg of water from 10°C to 60°C? (Specific heat capacity of water = 4,200 J/kg K)",["4.2 × 10<sup>5</sup> J","5.04 × 10<sup>5</sup> J","8.4 × 10<sup>4</sup> J","8.4 × 10<sup>5</sup> J"]],
+["Physics","How much heat is required to melt 0.5 kg of ice at 0°C? (Specific latent heat of fusion of ice = 3.4 × 10<sup>5</sup> J/kg)",["1.7 × 10<sup>5</sup> J","3.4 × 10<sup>5</sup> J","6.8 × 10<sup>5</sup> J","1.7 × 10<sup>4</sup> J"]],
+["Physics","A gas occupies 300 cm³ at 27°C. If it is heated to 127°C at constant pressure, what is its new volume?",["400 cm³","450 cm³","1,411 cm³","380 cm³"]],
+["Physics","A wave has a frequency of 50 Hz and a wavelength of 6 m. How long will it take the wave to travel 1.5 km?",["5 s","0.2 s","50 s","7.5 s"]],
+["Physics","An object is placed 20 cm in front of a concave mirror of focal length 15 cm. Find the image distance.",["60 cm","8.6 cm","35 cm","17.5 cm"]],
+["Physics","A ray of light enters glass of refractive index 1.5 from air at an angle of incidence of 45°. What is the angle of refraction, to the nearest degree?",["28°","30°","35°","19°"]],
+["Physics","A 12 V battery of negligible internal resistance is connected to a 3 Ω resistor in series with a parallel combination of 4 Ω and 12 Ω resistors. What current flows from the battery?",["2 A","0.75 A","4 A","1 A"]],
+["Physics","Five 60 W bulbs are used for 8 hours daily for 30 days. If electricity costs ₦60 per kWh, what is the total cost?",["₦4,320","₦432","₦8,640","₦2,160"]],
+["Physics","A transformer steps 240 V down to 12 V. If the primary coil has 2,000 turns, how many turns does the secondary coil have?",["100","40","400","50"]],
+["Physics","A radioactive source has a half-life of 6 hours. What mass of an 80 g sample remains after 24 hours?",["5 g","10 g","20 g","2.5 g"]],
+["Physics","A 0.4 kg ball hits a wall at 10 m/s and rebounds along the same line at 6 m/s. What is the magnitude of the impulse exerted on the ball?",["6.4 N s","1.6 N s","4.0 N s","2.4 N s"]],
+["Physics","A diver is 15 m below the surface of a lake. What is the total pressure on the diver? (Density of water = 1,000 kg/m³, atmospheric pressure = 1.0 × 10<sup>5</sup> Pa, g = 10 m/s²)",["2.5 × 10<sup>5</sup> Pa","1.5 × 10<sup>5</sup> Pa","1.15 × 10<sup>5</sup> Pa","2.5 × 10<sup>4</sup> Pa"]],
+["Physics","A uniform metre rule of weight 2 N is pivoted at the 30 cm mark. What weight must be hung at the 5 cm mark to keep the rule horizontal?",["1.6 N","0.8 N","2.5 N","4.0 N"]],
+["Physics","A machine uses an effort of 50 N, moving through 1.2 m, to raise a load of 150 N through 0.3 m. What is its efficiency?",["75%","60%","133%","25%"]],
+["Physics","A man hears the echo of his shout 1.5 s after shouting. If the speed of sound is 340 m/s, how far away is the reflecting wall?",["255 m","510 m","127.5 m","340 m"]],
+["Physics","In a vacuum, which of the following electromagnetic waves travels fastest?",["They all travel at the same speed","Gamma rays","Visible light","Radio waves"]],
+["Physics","A converging lens forms an image three times the height of an object placed 10 cm from the lens. What is the image distance from the lens?",["30 cm","3.3 cm","15 cm","50 cm"]],
+["Physics","A shiny silver teapot keeps tea hot longer than a dull black one mainly because the shiny surface:",["Is a poor emitter of thermal radiation","Is a good absorber of thermal radiation","Is a poor conductor of heat","Prevents convection inside the pot"]],
+["Physics","A stone is thrown vertically downwards at 5 m/s from the top of a cliff and hits the ground after 3 s. How high is the cliff? (g = 10 m/s²)",["60 m","45 m","30 m","90 m"]],
+["Physics","A simple pendulum makes 20 complete oscillations in 24 s. What is its period?",["1.2 s","0.83 s","0.05 s","4.8 s"]],
 
-// ── Scroll-to-top ──
-window.addEventListener('scroll', () => {
-  document.getElementById('scrollTop').classList.toggle('visible', window.scrollY > 300);
-}, {passive:true});
+// ===================== CHEMISTRY =====================
+["Chemistry","How many moles are present in 5.3 g of Na<sub>2</sub>CO<sub>3</sub>? (Na = 23, C = 12, O = 16)",["0.05 mol","0.5 mol","0.025 mol","0.1 mol"]],
+["Chemistry","A compound contains 40% carbon, 6.7% hydrogen and 53.3% oxygen by mass. What is its empirical formula? (C = 12, H = 1, O = 16)",["CH<sub>2</sub>O","C<sub>2</sub>H<sub>4</sub>O","CHO","C<sub>2</sub>H<sub>2</sub>O"]],
+["Chemistry","Element X has atomic number 12 and element Y has atomic number 17. What is the formula of the compound they form?",["XY<sub>2</sub>","X<sub>2</sub>Y","XY","X<sub>2</sub>Y<sub>3</sub>"]],
+["Chemistry","25 cm³ of sodium hydroxide solution required 20 cm³ of 0.1 mol/dm³ H<sub>2</sub>SO<sub>4</sub> for complete neutralisation. What is the concentration of the NaOH solution?",["0.16 mol/dm³","0.08 mol/dm³","0.32 mol/dm³","0.04 mol/dm³"]],
+["Chemistry","250 cm³ of a gas is collected at 27°C and 760 mmHg. What is its volume at s.t.p.?",["227.5 cm³","274.7 cm³","250 cm³","305 cm³"]],
+["Chemistry","What volume of carbon(IV) oxide at s.t.p. is produced when 10 g of CaCO<sub>3</sub> is completely decomposed by heating? (Ca = 40, C = 12, O = 16; molar volume = 22.4 dm³)",["2.24 dm³","22.4 dm³","4.48 dm³","1.12 dm³"]],
+["Chemistry","What is the oxidation number of chromium in K<sub>2</sub>Cr<sub>2</sub>O<sub>7</sub>?",["+6","+3","+7","+12"]],
+["Chemistry","What quantity of electricity is required to deposit 6.35 g of copper from copper(II) sulphate solution? (Cu = 63.5; 1 Faraday = 96,500 C)",["19,300 C","9,650 C","96,500 C","38,600 C"]],
+["Chemistry","What is the IUPAC name of CH<sub>3</sub>CH<sub>2</sub>CH(CH<sub>3</sub>)CH<sub>2</sub>OH?",["2-methylbutan-1-ol","3-methylbutan-1-ol","2-methylbutan-2-ol","Pentan-2-ol"]],
+["Chemistry","Which of the following is an isomer of butan-1-ol?",["Ethoxyethane","Butanal","Butanoic acid","Propan-1-ol"]],
+["Chemistry","The reaction between methane and chlorine in the presence of sunlight is an example of:",["Substitution","Addition","Polymerisation","Hydrolysis"]],
+["Chemistry","A catalyst increases the rate of a chemical reaction because it:",["Provides an alternative pathway with lower activation energy","Increases the kinetic energy of the reacting molecules","Increases the amount of product at equilibrium","Raises the temperature of the reaction mixture"]],
+["Chemistry","For the equilibrium N<sub>2</sub>O<sub>4</sub> ⇌ 2NO<sub>2</sub>, the equilibrium concentrations are [N<sub>2</sub>O<sub>4</sub>] = 0.5 mol/dm³ and [NO<sub>2</sub>] = 2.0 mol/dm³. What is the value of K<sub>c</sub>?",["8","4","2","16"]],
+["Chemistry","What is the pH of a 0.01 mol/dm³ solution of sodium hydroxide at 25°C?",["12","2","10","13"]],
+["Chemistry","Which of these salts forms an acidic solution when dissolved in water?",["NH<sub>4</sub>Cl","Na<sub>2</sub>CO<sub>3</sub>","KNO<sub>3</sub>","CH<sub>3</sub>COONa"]],
+["Chemistry","A solution gives a white precipitate with sodium hydroxide solution. The precipitate dissolves in excess NaOH and also in excess ammonia solution. The cation present is:",["Zn²⁺","Al³⁺","Pb²⁺","Ca²⁺"]],
+["Chemistry","A gas turns acidified potassium dichromate(VI) paper from orange to green. The gas is:",["SO<sub>2</sub>","CO<sub>2</sub>","NH<sub>3</sub>","Cl<sub>2</sub>"]],
+["Chemistry","Which property decreases across Period 3 from sodium to chlorine?",["Atomic radius","Electronegativity","First ionisation energy","Nuclear charge"]],
+["Chemistry","Which of the following compounds contains both ionic and covalent bonds?",["NaOH","MgO","HCl","CO<sub>2</sub>"]],
+["Chemistry","The enthalpy of combustion of methane is −890 kJ/mol. How much heat is released when 8 g of methane burns completely? (C = 12, H = 1)",["445 kJ","890 kJ","222.5 kJ","1,780 kJ"]],
+["Chemistry","Which change will increase the yield of ammonia in the Haber process, N<sub>2</sub> + 3H<sub>2</sub> ⇌ 2NH<sub>3</sub> (ΔH negative)?",["Increasing the pressure","Increasing the temperature","Removing the catalyst","Adding more ammonia to the mixture"]],
+["Chemistry","In the extraction of iron in the blast furnace, limestone is added mainly to:",["Remove silica impurities as slag","Reduce iron(III) oxide to iron","Act as the main fuel","Supply the carbon monoxide for reduction"]],
+["Chemistry","Temporary hardness of water can be removed by boiling because boiling:",["Decomposes calcium hydrogencarbonate to insoluble calcium carbonate","Converts calcium sulphate to calcium oxide","Evaporates the dissolved calcium chloride","Neutralises the dissolved magnesium ions"]],
+["Chemistry","Soap is manufactured by:",["Boiling fats or oils with concentrated sodium hydroxide","Reacting fats or oils with hydrochloric acid","Adding water to sodium chloride and fatty acids","Heating glycerol with sulphuric acid"]],
+["Chemistry","What volume of oxygen is needed to burn 10 cm³ of ethane completely, assuming all gases are measured under the same conditions? (2C<sub>2</sub>H<sub>6</sub> + 7O<sub>2</sub> → 4CO<sub>2</sub> + 6H<sub>2</sub>O)",["35 cm³","70 cm³","20 cm³","17.5 cm³"]],
+];
 
-// ── Page switcher ──
-window.showPage = (page, btn) => {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.page-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  btn.classList.add('active');
-};
-
-// ── Single realtime listener — drives EVERYTHING ──
-let prevScores = {};
-
-onValue(ref(db, 'matches'), snap => {
-  const data = snap.val() || {};
-
-  // Goal detection
-  Object.entries(data).forEach(([id, m]) => {
-    const total = (m.homeScore || 0) + (m.awayScore || 0);
-    if (prevScores[id] !== undefined && total > prevScores[id]) {
-      triggerGoal();
-    }
-    prevScores[id] = total;
-  });
-
-  renderMatches(data);
-  renderStandings(data);
-  renderScorers(data);
+/* Build the exam: shuffle the options of every question once per page load */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const QUESTIONS = RAW.map(([s, q, opts]) => {
+  const correct = opts[0];
+  const o = shuffle(opts);
+  return { s, q, o, a: o.indexOf(correct) };
 });
 
-// ─────────────────────────────────────────────
-// MATCHES — oldest first (Firebase key insertion order)
-// ─────────────────────────────────────────────
-function renderMatches(data) {
-  const container = document.getElementById('matchDisplay');
-  if (!Object.keys(data).length) {
-    container.innerHTML = `<div class="empty-state"><h2>No Matches Yet</h2><p>Live scores will appear here once matches begin.</p></div>`;
+const LETTERS = ['A','B','C','D'];
+let current = 0;
+let answers = new Array(QUESTIONS.length).fill(null);
+let timeLeft = EXAM_MINUTES * 60;
+let timerInterval = null;
+
+const startScreen = document.getElementById('start-screen');
+const examScreen = document.getElementById('exam-screen');
+const resultScreen = document.getElementById('result-screen');
+const timerEl = document.getElementById('timer');
+const qTag = document.getElementById('q-tag');
+const qText = document.getElementById('q-text');
+const optsDiv = document.getElementById('opts');
+const jumpgrid = document.getElementById('jumpgrid');
+const answeredCount = document.getElementById('answered-count');
+const qPosition = document.getElementById('q-position');
+const trackFill = document.getElementById('track-fill');
+
+let studentName = '';
+document.getElementById('start-btn').addEventListener('click', () => {
+  const nm = document.getElementById('student-name').value.replace(/\s+/g,' ').trim();
+  if(nm.length < 3){
+    document.getElementById('name-err').textContent = 'Please enter your full name (at least 3 characters).';
+    document.getElementById('student-name').focus();
     return;
   }
-  container.innerHTML = '';
+  studentName = nm;
+  startScreen.classList.add('hidden');
+  examScreen.classList.remove('hidden');
+  buildJumpGrid();
+  renderQuestion();
+  startTimer();
+});
 
-  // No sort — Firebase returns keys in insertion order (oldest first)
-  const entries = Object.entries(data);
-
-  entries.forEach(([id, m]) => {
-    const stats = m.stats || {possession:{home:50,away:50},shotsOnTarget:{home:0,away:0},shotsOffTarget:{home:0,away:0},bigChances:{home:0,away:0}};
-    const isLive  = m.status === 'LIVE';
-    const isEnded = m.status === 'ENDED';
-
-    const goals = (m.scorers || []).map(s => ({
-      type:'goal', name:s.name, time:parseInt(s.time)||0, team:s.team
-    }));
-    const evHtml = goals.length
-      ? goals.sort((a,b) => a.time - b.time).map(e => {
-          const isHome = e.team === 'home';
-          const tName  = isHome ? (m.homeTeam||'Home') : (m.awayTeam||'Away');
-          return `<div class="event-row"><span class="event-icon">⚽</span><span class="event-text">${esc(e.name)}</span><span class="event-team-tag ${isHome?'home':'away'}">${esc(tName)}</span><span class="event-time">${e.time}'</span></div>`;
-        }).join('')
-      : '<div class="no-events">No events recorded yet</div>';
-
-    const card = document.createElement('div');
-    card.className = `match-card status-${m.status}`;
-    card.innerHTML = `
-      <div class="card-stripe"></div>
-      <div class="card-body">
-        <div class="match-meta">
-          <span class="stage-tag">${esc(m.stage||'Group Stage')} · <span style="color:#A78BFA">6-aside</span></span>
-          <span class="status-tag ${isLive?'live':''}">${isLive?'Live':isEnded?'Full Time':esc(m.status)}</span>
-        </div>
-        <div class="score-section">
-          <div class="team-block"><div class="team-name">${esc(m.homeTeam)}</div></div>
-          <div class="score-display">
-            <span class="score-num">${m.homeScore||0}</span>
-            <span class="score-sep">:</span>
-            <span class="score-num">${m.awayScore||0}</span>
-          </div>
-          <div class="team-block"><div class="team-name">${esc(m.awayTeam)}</div></div>
-        </div>
-        <div class="match-clock">
-          <div class="clock-inner ${isLive?'live-time':'ended'}">
-            ${isLive?`<span>${esc(String(m.time))}'</span>`:isEnded?'<span>Ended</span>':''}
-          </div>
-        </div>
-        ${m.motm?`<div class="motm-block"><div class="motm-star">⭐</div><div class="motm-info"><div class="motm-label">Player of the Match</div><div class="motm-name">${esc(m.motm.name)}</div>${m.motm.team?`<div class="motm-team">${esc(m.motm.team)}</div>`:''}</div></div>`:''}
-        <div class="divider"></div>
-        <div class="tabs-bar">
-          <button class="tab-btn" onclick="switchTab(this,'stats-${id}')">Stats</button>
-          <button class="tab-btn" onclick="switchTab(this,'lineup-${id}')">Lineups</button>
-          <button class="tab-btn" onclick="switchTab(this,'events-${id}')">Events</button>
-        </div>
-        <div id="stats-${id}" class="tab-panel">
-          ${rStat('Possession',stats.possession?.home??50,stats.possession?.away??50,'%')}
-          ${rStat('Shots on Target',stats.shotsOnTarget?.home??0,stats.shotsOnTarget?.away??0)}
-          ${rStat('Shots off Target',stats.shotsOffTarget?.home??0,stats.shotsOffTarget?.away??0)}
-          ${rStat('Big Chances',stats.bigChances?.home??0,stats.bigChances?.away??0)}
-        </div>
-        <div id="lineup-${id}" class="tab-panel">
-          ${renderPitch(m.homeTeam,m.awayTeam,m.homeLineup||[],m.awayLineup||[],m.homeSubs||[],m.awaySubs||[])}
-        </div>
-        <div id="events-${id}" class="tab-panel">
-          <div class="event-list">${evHtml}</div>
-        </div>
-      </div>`;
-    container.appendChild(card);
-  });
-}
-
-// ─────────────────────────────────────────────
-// STANDINGS
-// ─────────────────────────────────────────────
-function renderStandings(data) {
-  const teams = {};
-
-  function ensureTeam(name) {
-    if (!teams[name]) teams[name] = {name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0, hasLive:false};
-  }
-
-  Object.values(data).forEach(m => {
-    const isEnded = m.status === 'ENDED';
-    const isLive  = m.status === 'LIVE';
-    if (!isEnded && !isLive) return;
-
-    const h = m.homeTeam, a = m.awayTeam;
-    if (!h || !a) return;
-    const hg = m.homeScore || 0, ag = m.awayScore || 0;
-
-    ensureTeam(h); ensureTeam(a);
-
-    teams[h].gf += hg; teams[h].ga += ag;
-    teams[a].gf += ag; teams[a].ga += hg;
-
-    if (isEnded) {
-      teams[h].p++; teams[a].p++;
-      if (hg > ag)       { teams[h].w++; teams[h].pts+=3; teams[a].l++; }
-      else if (hg === ag){ teams[h].d++; teams[h].pts++;  teams[a].d++; teams[a].pts++; }
-      else               { teams[a].w++; teams[a].pts+=3; teams[h].l++; }
+function startTimer(){
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft <= 0){
+      clearInterval(timerInterval);
+      submitExam();
     }
+  }, 1000);
+}
 
-    if (isLive) {
-      teams[h].hasLive = true;
-      teams[a].hasLive = true;
+function updateTimerDisplay(){
+  const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+  const s = (timeLeft%60).toString().padStart(2,'0');
+  timerEl.textContent = `${m}:${s}`;
+  if(timeLeft <= 300){ timerEl.classList.add('warn'); }
+}
+
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  qTag.textContent = item.s;
+  qText.innerHTML = `${current+1}. ${item.q}`;
+  optsDiv.innerHTML = '';
+  item.o.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt' + (answers[current]===idx ? ' selected' : '');
+    btn.innerHTML = `<span class="lbl">${LETTERS[idx]}.</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => {
+      answers[current] = idx;
+      renderQuestion();
+    });
+    optsDiv.appendChild(btn);
+  });
+  qPosition.textContent = `Question ${current+1} of ${QUESTIONS.length}`;
+  document.getElementById('prev-btn').disabled = current===0;
+  document.getElementById('next-btn').disabled = current===QUESTIONS.length-1;
+  updateProgress();
+  updateJumpGrid();
+}
+
+function updateProgress(){
+  const n = answers.filter(a => a!==null).length;
+  answeredCount.textContent = `${n} of ${QUESTIONS.length} answered`;
+  trackFill.style.width = `${(n/QUESTIONS.length)*100}%`;
+}
+
+function buildJumpGrid(){
+  jumpgrid.innerHTML = '';
+  QUESTIONS.forEach((_, idx) => {
+    const b = document.createElement('button');
+    b.className = 'jbtn';
+    b.textContent = idx+1;
+    b.addEventListener('click', () => { current = idx; renderQuestion(); window.scrollTo(0,0); });
+    jumpgrid.appendChild(b);
+  });
+}
+
+function updateJumpGrid(){
+  jumpgrid.querySelectorAll('.jbtn').forEach((b, idx) => {
+    b.classList.toggle('answered', answers[idx]!==null);
+    b.classList.toggle('current', idx===current);
+  });
+}
+
+document.getElementById('prev-btn').addEventListener('click', () => { if(current>0){ current--; renderQuestion(); window.scrollTo(0,0);} });
+document.getElementById('next-btn').addEventListener('click', () => { if(current<QUESTIONS.length-1){ current++; renderQuestion(); window.scrollTo(0,0);} });
+
+document.getElementById('submit-btn').addEventListener('click', () => {
+  const unanswered = answers.filter(a => a===null).length;
+  const msg = unanswered > 0
+    ? `You still have ${unanswered} unanswered question(s). Submit the exam now? You will not be able to change your answers afterward.`
+    : 'Submit the exam now? You will not be able to change your answers afterward.';
+  if(confirm(msg)){
+    clearInterval(timerInterval);
+    submitExam();
+  }
+});
+
+let submitted = false;
+let lastPayload = null;
+function submitExam(){
+  if(submitted) return;
+  submitted = true;
+  let score = 0;
+  answers.forEach((ans, idx) => { if(ans === QUESTIONS[idx].a) score++; });
+  examScreen.classList.add('hidden');
+  document.getElementById('calc').classList.add('hidden');
+  resultScreen.style.display = 'block';
+  document.getElementById('final-score').textContent = `${score} / ${QUESTIONS.length}`;
+  const used = EXAM_MINUTES*60 - timeLeft;
+  document.getElementById('time-used').textContent = `Time used: ${Math.floor(used/60)}m ${used%60}s`;
+  document.getElementById('student-line').textContent = studentName;
+  window.scrollTo(0,0);
+  lastPayload = { name: studentName, score: score, total: QUESTIONS.length, timeUsed: used };
+  sendResult();
+}
+
+async function sendResult(){
+  const st = document.getElementById('save-status');
+  const rb = document.getElementById('retry-btn');
+  rb.classList.add('hidden');
+  st.className = '';
+  st.textContent = 'Sending your result…';
+  try{
+    if(!window.saveResult) throw new Error('not ready');
+    await Promise.race([
+      window.saveResult(lastPayload),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 10000))
+    ]);
+    st.className = 'ok';
+    st.textContent = '✓ Your result has been submitted.';
+  }catch(e){
+    st.className = 'bad';
+    st.textContent = 'Could not send your result. Check your internet connection and tap retry. Do not close this page.';
+    rb.classList.remove('hidden');
+  }
+}
+document.getElementById('retry-btn').addEventListener('click', sendResult);
+
+/* ---------------- Text size controls ---------------- */
+let fs = 18;
+try{ const saved = parseInt(localStorage.getItem('olevel_fs'),10); if(saved >= 14 && saved <= 28) fs = saved; }catch(e){}
+function applyFs(){
+  document.documentElement.style.setProperty('--fs', fs);
+  try{ localStorage.setItem('olevel_fs', fs); }catch(e){}
+}
+document.getElementById('font-inc').addEventListener('click', () => { if(fs < 28){ fs += 2; applyFs(); } });
+document.getElementById('font-dec').addEventListener('click', () => { if(fs > 14){ fs -= 2; applyFs(); } });
+applyFs();
+
+/* ---------------- Scientific calculator ---------------- */
+const calc = document.getElementById('calc');
+const cExpr = document.getElementById('c-expr');
+const cRes = document.getElementById('c-res');
+const cKeys = document.getElementById('c-keys');
+const cMode = document.getElementById('c-mode');
+let expr = '', lastAns = 0, justEvaluated = false, degMode = true;
+
+document.getElementById('calc-toggle').addEventListener('click', () => calc.classList.toggle('hidden'));
+document.getElementById('c-close').addEventListener('click', () => calc.classList.add('hidden'));
+cMode.addEventListener('click', () => { degMode = !degMode; cMode.textContent = degMode ? 'DEG' : 'RAD'; });
+
+// [label, insert text, css class, action]
+const KEYS = [
+  ['sin','sin(','fn'],['cos','cos(','fn'],['tan','tan(','fn'],['(','(','fn'],[')',')','fn'],
+  ['sin⁻¹','asin(','fn'],['cos⁻¹','acos(','fn'],['tan⁻¹','atan(','fn'],['π','π','fn'],['Ans','Ans','fn'],
+  ['log','log(','fn'],['ln','ln(','fn'],['√','√(','fn'],['x²','^2','fn'],['xʸ','^','fn'],
+  ['7','7','num'],['8','8','num'],['9','9','num'],['DEL',null,'ac','del'],['AC',null,'ac','clear'],
+  ['4','4','num'],['5','5','num'],['6','6','num'],['×','×','op'],['÷','÷','op'],
+  ['1','1','num'],['2','2','num'],['3','3','num'],['+','+','op'],['−','-','op'],
+  ['0','0','num'],['.','.','num'],['EXP','×10^','fn'],['(−)','-','fn'],['=',null,'eq','eval']
+];
+KEYS.forEach(k => {
+  const b = document.createElement('button');
+  b.textContent = k[0];
+  b.className = k[2];
+  b.addEventListener('click', () => pressKey(k));
+  cKeys.appendChild(b);
+});
+
+function showCalc(){ cExpr.textContent = expr; }
+function pressKey(k){
+  const action = k[3];
+  if(action === 'clear'){ expr = ''; cRes.textContent = '0'; justEvaluated = false; showCalc(); return; }
+  if(action === 'del'){
+    expr = expr.replace(/(asin\(|acos\(|atan\(|sin\(|cos\(|tan\(|log\(|ln\(|√\(|×10\^|Ans|.)$/, '');
+    showCalc(); return;
+  }
+  if(action === 'eval'){ doEval(); return; }
+  const txt = k[1];
+  if(justEvaluated){
+    // after "=", an operator continues from the answer, anything else starts fresh
+    if(k[2]==='op' || txt==='^' || txt==='^2' || txt==='×10^') expr = 'Ans';
+    else expr = '';
+    justEvaluated = false;
+  }
+  expr += txt;
+  showCalc();
+}
+
+function doEval(){
+  if(!expr){ return; }
+  try{
+    const r = evaluate(expr);
+    if(!isFinite(r) || isNaN(r)) throw new Error('bad');
+    lastAns = r;
+    cRes.textContent = String(Number(r.toPrecision(10)));
+  }catch(e){
+    cRes.textContent = 'Error';
+  }
+  justEvaluated = true;
+}
+
+/* Small safe expression parser (no eval) */
+function evaluate(str){
+  const re = /\s*(\d+\.?\d*|\.\d+|asin|acos|atan|sin|cos|tan|log|ln|Ans|π|√|[+\-×÷*\/^()])/gy;
+  const toks = [];
+  let m, last = 0;
+  while((m = re.exec(str)) !== null){ toks.push(m[1]); last = re.lastIndex; }
+  if(last !== str.length) throw new Error('syntax');
+  let p = 0;
+  const peek = () => toks[p];
+  const next = () => toks[p++];
+  const FUNCS = ['asin','acos','atan','sin','cos','tan','log','ln'];
+  const startsPrimary = t => t !== undefined && (/^[\d.]/.test(t) || t==='π' || t==='Ans' || t==='(' || t==='√' || FUNCS.includes(t));
+  const toRad = x => degMode ? x*Math.PI/180 : x;
+  const fromRad = x => degMode ? x*180/Math.PI : x;
+
+  function expression(){
+    let v = term();
+    while(peek()==='+' || peek()==='-'){
+      const op = next(); const r = term();
+      v = op==='+' ? v + r : v - r;
     }
-  });
-
-  const sorted = Object.values(teams).sort((a,b) =>
-    b.pts - a.pts || (b.gf-b.ga) - (a.gf-a.ga) || b.gf - a.gf
-  );
-
-  const body = document.getElementById('standingsBody');
-  if (!sorted.length) {
-    body.innerHTML = '<div class="empty-state" style="padding:1.5rem"><p>No match data yet.</p></div>';
-    return;
+    return v;
   }
-
-  body.innerHTML = sorted.map((t,i) => `
-    <div class="standings-row ${i===0?'top':''}">
-      <div class="s-pos">${i+1}</div>
-      <div class="s-team">${esc(t.name)}${t.hasLive?'<span class="live-badge">live</span>':''}</div>
-      <div class="s-val">${t.p}</div>
-      <div class="s-val">${t.w}</div>
-      <div class="s-val">${t.d}</div>
-      <div class="s-val">${t.l}</div>
-      <div class="s-pts ${i===0?'s-pts-top':''}">${t.pts}</div>
-    </div>`).join('');
+  function term(){
+    let v = unary();
+    while(true){
+      const t = peek();
+      if(t==='×' || t==='*'){ next(); v *= unary(); }
+      else if(t==='÷' || t==='/'){ next(); v /= unary(); }
+      else if(startsPrimary(t)){ v *= unary(); }   // implicit multiplication: 2π, 3(4+1)
+      else break;
+    }
+    return v;
+  }
+  function unary(){
+    if(peek()==='-'){ next(); return -unary(); }
+    if(peek()==='+'){ next(); return unary(); }
+    return power();
+  }
+  function power(){
+    const b = primary();
+    if(peek()==='^'){ next(); return Math.pow(b, unary()); }
+    return b;
+  }
+  function primary(){
+    const t = next();
+    if(t === undefined) throw new Error('syntax');
+    if(/^[\d.]/.test(t)) return parseFloat(t);
+    if(t === 'π') return Math.PI;
+    if(t === 'Ans') return lastAns;
+    if(t === '('){ const v = expression(); if(peek()===')') next(); return v; }
+    if(t === '√'){ return Math.sqrt(power_arg()); }
+    if(FUNCS.includes(t)){
+      if(next() !== '(') throw new Error('syntax');
+      const v = expression(); if(peek()===')') next();
+      switch(t){
+        case 'sin': return Math.sin(toRad(v));
+        case 'cos': return Math.cos(toRad(v));
+        case 'tan': return Math.tan(toRad(v));
+        case 'asin': return fromRad(Math.asin(v));
+        case 'acos': return fromRad(Math.acos(v));
+        case 'atan': return fromRad(Math.atan(v));
+        case 'log': return Math.log10(v);
+        case 'ln': return Math.log(v);
+      }
+    }
+    throw new Error('syntax');
+  }
+  function power_arg(){ // argument of √: a bracket group or a number
+    const t = peek();
+    if(t === '('){ next(); const v = expression(); if(peek()===')') next(); return v; }
+    return primary();
+  }
+  const result = expression();
+  if(p < toks.length) throw new Error('syntax');
+  return result;
 }
 
-// ─────────────────────────────────────────────
-// TOP SCORERS
-// ─────────────────────────────────────────────
-function renderScorers(data) {
-  const scorerMap = {};
+updateTimerDisplay();
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getDatabase, ref, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
-  Object.values(data).forEach(m => {
-    if (m.status !== 'LIVE' && m.status !== 'ENDED') return;
+  const firebaseConfig = {
+    apiKey: "AIzaSyB8Lgw7WzFuCBw5OaYTQebQ8I4JgjuohFU",
+    authDomain: "medsphere-c794d.firebaseapp.com",
+    projectId: "medsphere-c794d",
+    storageBucket: "medsphere-c794d.firebasestorage.app",
+    messagingSenderId: "962864542783",
+    appId: "1:962864542783:web:b59e6abda9c6f1a9fc348a",
+    measurementId: "G-HPQ46648M4"
+  };
 
-    (m.scorers || []).forEach(s => {
-      if (!s || !s.name) return;
-      const teamName = s.team === 'home' ? (m.homeTeam || 'Home') : (m.awayTeam || 'Away');
-      const key = s.name.trim().toLowerCase() + '|||' + teamName.trim().toLowerCase();
-      if (!scorerMap[key]) scorerMap[key] = {name: s.name, team: teamName, goals: 0};
-      scorerMap[key].goals++;
+  const db = getDatabase(initializeApp(firebaseConfig));
+
+  // One result record per attempt; a retry reuses the same record so nothing is saved twice.
+  let myRef = null;
+  window.saveResult = (data) => {
+    if(!myRef) myRef = push(ref(db, 'oLevelResults'));
+    return set(myRef, {
+      name: data.name,
+      score: data.score,
+      total: data.total,
+      timeUsed: data.timeUsed,
+      submittedAt: serverTimestamp()
     });
-  });
-
-  const sorted = Object.values(scorerMap).sort((a,b) => b.goals - a.goals);
-  const body = document.getElementById('scorersBody');
-
-  if (!sorted.length) {
-    body.innerHTML = '<div class="empty-state" style="padding:1.5rem"><p>No goals recorded yet.</p></div>';
-    return;
-  }
-
-  const maxGoals = sorted[0].goals;
-  const ranks = ['gold','silver','bronze'];
-
-  body.innerHTML = sorted.map((s,i) => `
-    <div class="scorer-row">
-      <div class="scorer-rank ${ranks[i]||''}">${i+1}</div>
-      <div class="scorer-info">
-        <div class="scorer-name">${esc(s.name)}</div>
-        <div class="scorer-team">${esc(s.team)}</div>
-        <div class="scorer-bar-wrap">
-          <div class="scorer-bar" style="width:${(s.goals/maxGoals*100).toFixed(1)}%"></div>
-        </div>
-      </div>
-      <div class="scorer-goals">
-        <span class="scorer-num">${s.goals}</span>
-        <span class="scorer-ball">⚽</span>
-      </div>
-    </div>`).join('');
-}
-
-// ─────────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────────
-function rStat(label, h, a, unit='') {
-  const total = (h+a) || 1;
-  return `<div class="stat-item">
-    <div class="stat-header">
-      <span class="stat-val home">${h}${unit}</span>
-      <span class="stat-name">${label}</span>
-      <span class="stat-val away">${a}${unit}</span>
-    </div>
-    <div class="stat-bar">
-      <div class="bar-home" style="width:${(h/total*100).toFixed(1)}%"></div>
-      <div class="bar-away" style="width:${(a/total*100).toFixed(1)}%"></div>
-    </div>
-  </div>`;
-}
-
-window.switchTab = (btn, panelId) => {
-  const card = btn.closest('.match-card');
-  const panel = document.getElementById(panelId);
-  const isActive = panel.classList.contains('active');
-  card.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  card.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  if (!isActive) { btn.classList.add('active'); panel.classList.add('active'); }
-};
-
-function triggerGoal() {
-  const el = document.getElementById('goalAlert');
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3200);
-}
-
-function esc(str) {
-  if (!str) return '';
-  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
-// ── Pitch renderer ──
-function renderPitch(homeTeam, awayTeam, homePlayers, awayPlayers, homeSubs, awaySubs) {
-  const W=320, H=480;
-  const posOrder={GK:0,CB:1,RB:1,LB:1,LWB:1,RWB:1,CDM:2,CM:2,DM:2,DMF:2,RM:2,LM:2,LMF:2,RMF:2,CAM:3,AM:3,AMF:3,LW:3,RW:3,LWF:3,RWF:3,SS:3,ST:4,CF:4,FW:4};
-  function getRow(p){const pos=(p.position||'').toUpperCase();for(const k of Object.keys(posOrder))if(pos.includes(k))return posOrder[k];return 2;}
-  function groupByRow(players){const rows={};players.forEach(p=>{const r=getRow(p);if(!rows[r])rows[r]=[];rows[r].push(p);});return rows;}
-  function placePlayers(players, color, isHome) {
-    if (!players.length) return '';
-    const rows = groupByRow(players);
-    const rowKeys = Object.keys(rows).map(Number).sort((a,b)=>a-b);
-    const count = rowKeys.length;
-    const halfTop = isHome ? H/2+10 : 10;
-    const halfBottom = isHome ? H-12 : H/2-10;
-    const usable = halfBottom - halfTop;
-    let dots = '';
-    rowKeys.forEach((rk, ri) => {
-      const group = rows[rk];
-      const frac = count <= 1 ? .5 : ri/(count-1);
-      const y = isHome ? halfBottom - frac*usable : halfTop + frac*usable;
-      group.forEach((p, pi) => {
-        const xFrac = group.length <= 1 ? .5 : pi/(group.length-1);
-        const x = 22 + xFrac*(W-44);
-        const shortName = p.name ? p.name.split(' ').pop() : '?';
-        dots += `<g class="player-dot-group"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="14" fill="${color}" stroke="rgba(255,255,255,.22)" stroke-width="1.8"/><text class="player-label" x="${x.toFixed(1)}" y="${y.toFixed(1)}" fill="#fff" font-size="10">${esc(String(p.number||''))}</text><text class="player-label" x="${x.toFixed(1)}" y="${(y+24).toFixed(1)}" fill="rgba(255,255,255,.88)" font-size="9">${esc(shortName)}</text></g>`;
-      });
-    });
-    return dots;
-  }
-  const penH=Math.round(H*.155),sixYd=Math.round(H*.063);
-  const penX=Math.round(W*.20),penW=Math.round(W*.60);
-  const sixX=Math.round(W*.35),sixW=Math.round(W*.30);
-  const goalX=Math.round(W*.375),goalW=Math.round(W*.25);
-  const hDots = placePlayers(homePlayers,'#1d4ed8',true);
-  const aDots = placePlayers(awayPlayers,'#b91c1c',false);
-  const pitchSvg = `<div class="pitch-wrap"><svg class="pitch-svg" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
-    <rect width="${W}" height="${H}" fill="#1a4a2e" rx="6"/>
-    ${Array.from({length:Math.ceil(H/55)},(_,i)=>`<rect x="0" y="${i*55}" width="${W}" height="27" fill="rgba(0,0,0,.055)"/>`).join('')}
-    <rect x="8" y="8" width="${W-16}" height="${H-16}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5" rx="3"/>
-    <line x1="8" y1="${H/2}" x2="${W-8}" y2="${H/2}" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
-    <circle cx="${W/2}" cy="${H/2}" r="${Math.round(H*.072)}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.5"/>
-    <circle cx="${W/2}" cy="${H/2}" r="2.5" fill="rgba(255,255,255,.4)"/>
-    <rect x="${penX}" y="${H-8-penH}" width="${penW}" height="${penH}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.2"/>
-    <rect x="${sixX}" y="${H-8-sixYd}" width="${sixW}" height="${sixYd}" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-    <rect x="${goalX}" y="${H-8}" width="${goalW}" height="8" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
-    <rect x="${penX}" y="8" width="${penW}" height="${penH}" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="1.2"/>
-    <rect x="${sixX}" y="8" width="${sixW}" height="${sixYd}" fill="none" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-    <rect x="${goalX}" y="0" width="${goalW}" height="8" fill="rgba(255,255,255,.1)" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
-    <circle cx="${W/2}" cy="${H-8-Math.round(penH*.72)}" r="2" fill="rgba(255,255,255,.35)"/>
-    <circle cx="${W/2}" cy="${8+Math.round(penH*.72)}" r="2" fill="rgba(255,255,255,.35)"/>
-    <text x="${W/2}" y="${H*.82}" text-anchor="middle" fill="rgba(96,165,250,.3)" font-size="8" font-family="Barlow Condensed" font-weight="800">${esc(homeTeam.toUpperCase())}</text>
-    <text x="${W/2}" y="${H*.18}" text-anchor="middle" fill="rgba(248,113,113,.3)" font-size="8" font-family="Barlow Condensed" font-weight="800">${esc(awayTeam.toUpperCase())}</text>
-    ${!homePlayers.length?`<text x="${W/2}" y="${H*.75}" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="9" font-family="Barlow Condensed">Lineup TBA</text>`:hDots}
-    ${!awayPlayers.length?`<text x="${W/2}" y="${H*.25}" text-anchor="middle" fill="rgba(255,255,255,.3)" font-size="9" font-family="Barlow Condensed">Lineup TBA</text>`:aDots}
-  </svg></div>`;
-  const subHalf = (subs, color, team) => `<div class="subs-half"><div class="subs-title" style="color:${color}">${esc(team)} — Subs</div><div class="subs-row">${subs.length?subs.map(p=>`<div class="sub-chip"><span class="sub-num" style="color:${color}">${esc(String(p.number||'–'))}</span>${esc(p.name||'?')}</div>`).join(''):'<span style="color:var(--muted);font-size:.66rem">None</span>'}</div></div>`;
-  return `<div class="pitch-outer"><div class="pitch-teams-row"><span class="pitch-team-label away">${esc(awayTeam)}</span><span style="font-size:.62rem;color:var(--muted);font-family:'Barlow Condensed',sans-serif;letter-spacing:1px">LINEUPS</span><span class="pitch-team-label home">${esc(homeTeam)}</span></div>${pitchSvg}<div class="subs-section">${subHalf(homeSubs,'#60A5FA',homeTeam)}${subHalf(awaySubs,'#F87171',awayTeam)}</div></div>`;
-}
+  };
 </script>
 </body>
 </html>
